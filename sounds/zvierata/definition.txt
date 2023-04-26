@@ -1,0 +1,9 @@
+0;0;kačka;kacka.wav
+0;1;kôň;kon.wav
+0;2;koza;koza.wav
+1;0;krava;krava.wav
+1;1;mačka;macka.wav
+1;2;sliepka;sliepka.wav
+2;0;myš;mys.wav
+2;1;prasa;prasa.wav
+2;2;pes;pes.wav
