@@ -267,7 +267,8 @@ namespace coshi2
                     this.current_canvas = this.map[i, j];
 
                 }
-                catch (IndexOutOfRangeException){}                
+                catch (IndexOutOfRangeException){}
+                this.soundsHandler.play_sound(i,j );
                 this.robot = new Ellipse();
                 this.robot.Width = 50;
                 this.robot.Height = 50;
@@ -309,7 +310,7 @@ namespace coshi2
             Canvas.SetLeft(this.robot, 10);
             Canvas.SetTop(this.robot, 10);
             this.current_canvas.Children.Add(this.robot);
-            //soundsHandler.play_sound(riadok, stlpec);
+            soundsHandler.play_sound(riadok, stlpec);
 
             
 

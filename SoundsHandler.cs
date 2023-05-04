@@ -20,7 +20,7 @@ namespace coshi2
         public SoundsHandler(Canvas[,] map)
         {
             this.map = map;
-            this.audioArray = new String[this.map.Length, this.map.Length];
+            this.audioArray = new String[this.map.GetLength(0), this.map.GetLength(0)];
             this.load_sounds();
         }
 
@@ -39,6 +39,7 @@ namespace coshi2
         public void play_sound(int riadok, int stlpec) {
             //MessageBox.Show("Hram " + riadok.ToString() + " : " + stlpec.ToString());
             //with open... zahodime player
+            if (stlpec >= this.audioArray.GetLength(0) || riadok >= this.audioArray.GetLength(0) || riadok < 0 || stlpec < 0) { return;  }
             using (this.player = new SoundPlayer(this.audioArray[riadok, stlpec])) {
                 this.player.Play();
             };
