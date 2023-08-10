@@ -212,14 +212,23 @@ namespace coshi2
             
             if (e.Key == Key.F5 && !this.is_running)
             {
+                
                 Terminal.Text = "Program beží...";
                 this.is_running = true;
                 this.index = 0;
-                this.interpreter.load(textBox.Text);
-                this.positions = this.interpreter.get_positions();
-                this.index += 1;
+
+                VirtualMachine vm = new VirtualMachine();
+                Compiler cmp = new Compiler(vm, textBox.Text);
+                Block tree = cmp.parse();
+                tree.generate();
+                vm.execute_all();
+                MessageBox.Show(Robot.position.ToString());
+                //naplnime compilatorom POSITIONS a potom to budeme kreslit ako PREDTYM GG EZ
+                //this.interpreter.load(textBox.Text);
+                //this.positions = this.interpreter.get_positions();
+                //this.index += 1;
                 this.timer.Start();
-                this.is_running = false;
+                //this.is_running = false;
 
             }
             if (e.Key == Key.F6)
