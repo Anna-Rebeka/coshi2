@@ -12,13 +12,11 @@ namespace coshi2
     public class Compiler
     {
         private LexicalAnalyzer lexAnalyzer;
-        private VirtualMachine virtualMachine;
 
-        public Compiler(VirtualMachine vm, string code) 
+        public Compiler(string code) 
         {
             lexAnalyzer = new LexicalAnalyzer();
             lexAnalyzer.initialize(code);
-            virtualMachine = vm;
         }
 
      
@@ -35,28 +33,24 @@ namespace coshi2
                 if (lexAnalyzer.token == "hore") //...vytvorí vrchol stromu pre príkaz dopredu
                 {
                     lexAnalyzer.scan();
-                    result.add(new Up(virtualMachine));
-                    lexAnalyzer.scan();
+                    result.add(new Up());
                 }
 
                 else if ("vlavo" == lexAnalyzer.token)
                 {
                     lexAnalyzer.scan();
-                    result.add(new Lt(virtualMachine));
-                    lexAnalyzer.scan();
+                    result.add(new Lt());
                 }
 
                 else if ("vpravo" == lexAnalyzer.token)
                 {
                     lexAnalyzer.scan();
-                    result.add(new Rt(virtualMachine));
-                    lexAnalyzer.scan();
+                    result.add(new Rt());
                 }
                 else if ("dole" == lexAnalyzer.token)
                 {
                     lexAnalyzer.scan();
-                    result.add(new Dw(virtualMachine));
-                    lexAnalyzer.scan();
+                    result.add(new Dw());
                 }
                 else if ("opakuj" == lexAnalyzer.token)
                 {
@@ -64,7 +58,7 @@ namespace coshi2
                     int n = int.Parse(lexAnalyzer.token);
                     lexAnalyzer.scan();
                     lexAnalyzer.scan();
-                    result.add(new Repeat(new Const(n, virtualMachine), parse(), virtualMachine));
+                    result.add(new Repeat(new Const(n), parse()));
                     lexAnalyzer.scan();
                 }
               

@@ -17,78 +17,68 @@ namespace coshi2
     public class Const : Syntax
     {
         public int value; //hodnota konštanty – typu číslo
-        public VirtualMachine virtualMachine;
 
-        public Const(int nvalue, VirtualMachine vm)
+        public Const(int nvalue)
         {
             value = nvalue;
-            virtualMachine = vm;
         }
 
         public override void generate()
         {
-            virtualMachine.poke(value);
+            VirtualMachine.poke(value);
         }
     }
 
     public class RobotCommand : Syntax
     {
-        public VirtualMachine virtualMachine;
-
-        public RobotCommand(VirtualMachine vm)
-        {
-            virtualMachine = vm;
-        }
+     
     }
 
     public class Up : RobotCommand
     {
-        public Up(VirtualMachine vm) : base(vm)
+        public Up() : base()
         {
         }
 
         public override void generate()
         {        //.. generuje inštrukcie pre príkaz dopredu
-            virtualMachine.poke(virtualMachine.INSTRUCTION_UP); //.. inštrukcia FD dĺžka
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_UP); //.. inštrukcia FD dĺžka
         }
     }
 
 
     public class Lt : RobotCommand
     {
-        public Lt(VirtualMachine vm) : base(vm)
+        public Lt() : base()
         {
         }
-
-
         public override void generate()
         {
-            virtualMachine.poke(virtualMachine.INSTRUCTION_LT);
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_LT);
         }
     }
 
     public class Rt : RobotCommand
     {
-        public Rt(VirtualMachine vm) : base(vm)
+        public Rt() : base()
         {
         }
 
-
         public override void generate()
         {
-            virtualMachine.poke(virtualMachine.INSTRUCTION_RT);
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_RT);
         }
     }
 
     public class Dw : RobotCommand
     {
-        public Dw(VirtualMachine vm) : base(vm)
+        public Dw() : base()
         {
         }
 
         public override void generate()
         {
-            virtualMachine.poke(virtualMachine.INSTRUCTION_DW);
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_DW);
         }
     }
 
@@ -121,29 +111,27 @@ namespace coshi2
     {
         public Const count;     //premenná count...počet opakovaní – typu Const
         public Block body;      //premenná body ... telo cyklu – typu Block
-        public VirtualMachine virtualMachine;
 
-        public Repeat(Const ncount, Block nbody, VirtualMachine vm)
+        public Repeat(Const ncount, Block nbody)
         {
             count = ncount;         //.. konštruktor si zapamätá počet opakovaní
             body = nbody;           //... aj telo cyklu
-            virtualMachine = vm;
         }
 
  
 
         public override void generate()      //... vygeneruje inštrukcie pre konštrukciu cyklu
         {
-            virtualMachine.poke(virtualMachine.INSTRUCTION_SET);    //... inštrukcia pre nastavenie počítadla
-            virtualMachine.poke(counter_adr);
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_SET);    //... inštrukcia pre nastavenie počítadla
+            VirtualMachine.poke(counter_adr);
             count.generate();
             counter_adr--;
-            int loop_body = virtualMachine.adr;     //... zapamätáme si začiatok tela cyklu
+            int loop_body = VirtualMachine.adr;     //... zapamätáme si začiatok tela cyklu
             body.generate();                        //... vygenerujú sa inštrukcie pre telo cyklu
             counter_adr++;
-            virtualMachine.poke(virtualMachine.INSTRUCTION_LOOP);   //... inštrukcia pre zopakovanie tela cyklu
-            virtualMachine.poke(counter_adr);
-            virtualMachine.poke(loop_body);
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_LOOP);   //... inštrukcia pre zopakovanie tela cyklu
+            VirtualMachine.poke(counter_adr);
+            VirtualMachine.poke(loop_body);
         }
     }
 }

@@ -6,68 +6,56 @@ using System.Threading.Tasks;
 
 namespace coshi2
 {
-    public class VirtualMachine
+    public static class VirtualMachine
     {
-        public int INSTRUCTION_UP = 1;
-        public int INSTRUCTION_LT = 2;
-        public int INSTRUCTION_RT = 3;
-        public int INSTRUCTION_DW = 4;
-        public int INSTRUCTION_SET = 5;
-        public int INSTRUCTION_LOOP = 6;
+        public static int INSTRUCTION_UP = 1;
+        public static int INSTRUCTION_LT = 2;
+        public static int INSTRUCTION_RT = 3;
+        public static int INSTRUCTION_DW = 4;
+        public static int INSTRUCTION_SET = 5;
+        public static int INSTRUCTION_LOOP = 6;
 
-        public int[] mem = new int[100];    //pamäť – pole celých čísel 
-        public int pc;                      //adresa inštrukcie ked sa vykonava program
-        public int adr;                     //adresa pre naplnanie mem
-        public bool terminated;             //stav procesora
-        public int map_size = 9;
-        public VirtualMachine() { }
+        public static int[] mem = new int[100];    //pamäť – pole celých čísel 
+        public static int pc;                      //adresa inštrukcie ked sa vykonava program
+        public static int adr;                     //adresa pre naplnanie mem
+        public static bool terminated;             //stav procesora
+        public static int map_size = 9;
 
-        public void reset() {
+        public static void reset()
+        {
             pc = 0;
             terminated = false;
         }
 
-        public void execute_all()
+        public static void execute_all()
         {
-
-            /*
-            
-            timer.Interval = TimeSpan.FromSeconds(1);
-            timer.Tick += execute;
-             */
             while (!terminated)
             {
                 execute();
             }
         }
 
-
-        public void execute()
+        public static void execute()
         {
             if (mem[pc] == INSTRUCTION_UP)
             {
                 pc = pc + 1;
-                
-                //forward(mem[pc]);
-                pc = pc + 1;
+                Robot.up(map_size);
             }
             else if (mem[pc] == INSTRUCTION_LT)
             {
                 pc = pc + 1;
-                //left(mem[pc]);
-                pc = pc + 1;
+                Robot.left();
             }
             else if (mem[pc] == INSTRUCTION_RT)
             {
                 pc = pc + 1;
-                //right(mem[pc]);
-                pc = pc + 1;
+                Robot.right();
             }
             else if (mem[pc] == INSTRUCTION_DW)
             {
                 pc = pc + 1;
-                //Robot.down(map_size);
-                //positions.add(Robot.down(map_size))
+                Robot.down(map_size);
             }
             else if (mem[pc] == INSTRUCTION_SET)
             {
@@ -98,7 +86,7 @@ namespace coshi2
             }
         }
 
-        public void poke(int code)
+        public static void poke(int code)
         {
             mem[adr] = code;
             adr = adr + 1;

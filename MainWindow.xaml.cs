@@ -216,19 +216,18 @@ namespace coshi2
                 Terminal.Text = "Program beží...";
                 this.is_running = true;
                 this.index = 0;
-
-                VirtualMachine vm = new VirtualMachine();
-                Compiler cmp = new Compiler(vm, textBox.Text);
+                Compiler cmp = new Compiler(textBox.Text);
                 Block tree = cmp.parse();
                 tree.generate();
-                vm.execute_all();
+                VirtualMachine.execute_all();
+                //Robot.position = 1;
                 MessageBox.Show(Robot.position.ToString());
                 //naplnime compilatorom POSITIONS a potom to budeme kreslit ako PREDTYM GG EZ
                 //this.interpreter.load(textBox.Text);
                 //this.positions = this.interpreter.get_positions();
-                //this.index += 1;
+                this.index += 1;
                 this.timer.Start();
-                //this.is_running = false;
+                this.is_running = false;
 
             }
             if (e.Key == Key.F6)
@@ -258,7 +257,6 @@ namespace coshi2
                 {
                     if (e.Key == Key.Left)
                     {
-                       
                         j -= 1;
                     }
                     else if (e.Key == Key.Up)
@@ -291,8 +289,8 @@ namespace coshi2
 
         public void Draw_Robot(object sender, EventArgs e)
         {
-            int riadok = this.positions[this.index][0];
-            int stlpec = this.positions[this.index][1];
+            int riadok = Robot.positions[this.index][0];
+            int stlpec = Robot.positions[this.index][1];
 
             if (riadok < 0 || riadok >= this.map_size || stlpec < 0 || stlpec >= this.map_size) {
                 Terminal.Focus();
@@ -324,7 +322,7 @@ namespace coshi2
             
 
             this.index += 1;
-            if (this.index >= this.positions.Count)
+            if (this.index >= Robot.positions.Count)
             {
                 this.timer.Stop();
                 Terminal.Text = "Program úpešne zbehol.";
