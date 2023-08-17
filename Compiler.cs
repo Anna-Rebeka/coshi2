@@ -25,15 +25,23 @@ namespace coshi2
         /// Procedure fills memory of virtual machine with instructions.
 		/// Consider using Parse() to create Syntax tree
         /// </summary>
-        public Block parse()
+        public Block parse(int map_size)
         {
+            int robot_position = 1;
+
             Block result = new Block(); //... vytvorí objekt pre zoznam príkazov
             while (lexAnalyzer.kind == lexAnalyzer.WORD)
             {
                 if (lexAnalyzer.token == "hore") //...vytvorí vrchol stromu pre príkaz dopredu
                 {
+                    if (robot_position / map_size == 0)
+                    {
+                        int line = lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position);
+                        throw new RobotOutOfMapException("Robot mimo mapy na riadku " + line);   
+                    }
                     lexAnalyzer.scan();
                     result.add(new Up());
+                    robot_position += map_size;
                 }
 
                 else if ("vlavo" == lexAnalyzer.token)
@@ -56,10 +64,8 @@ namespace coshi2
                 {
                     lexAnalyzer.scan();
                     int n = int.Parse(lexAnalyzer.token);
-                    lexAnalyzer.scan();
-                    lexAnalyzer.scan();
-                    result.add(new Repeat(new Const(n), parse()));
-                    lexAnalyzer.scan();
+                    lexAnalyzer.scan(); 
+                    result.add(new Repeat(new Const(n), parse(map_size)));
                 }
               
                 else

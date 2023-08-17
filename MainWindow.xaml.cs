@@ -212,23 +212,31 @@ namespace coshi2
             
             if (e.Key == Key.F5 && !this.is_running)
             {
-                
-                Terminal.Text = "Program beží...";
-                this.is_running = true;
-                this.index = 0;
-                Compiler cmp = new Compiler(textBox.Text);
-                Block tree = cmp.parse();
-                tree.generate();
-                VirtualMachine.execute_all();
-                //Robot.position = 1;
-                MessageBox.Show(Robot.position.ToString());
-                //naplnime compilatorom POSITIONS a potom to budeme kreslit ako PREDTYM GG EZ
-                //this.interpreter.load(textBox.Text);
-                //this.positions = this.interpreter.get_positions();
-                this.index += 1;
-                this.timer.Start();
-                this.is_running = false;
+                try
+                {
+                    Terminal.Text = "Program beží...";
+                    this.is_running = true;
+                    this.index = 0;
+                    VirtualMachine.reset();
+                    Robot.reset();
+                    Compiler cmp = new Compiler(textBox.Text);
+                    Block tree = cmp.parse(this.map_size);
+                    tree.generate();
+                    VirtualMachine.execute_all();
+                    //Robot.position = 1;
+                    MessageBox.Show(Robot.position.ToString());
+                    //naplnime compilatorom POSITIONS a potom to budeme kreslit ako PREDTYM GG EZ
+                    //this.interpreter.load(textBox.Text);
+                    //this.positions = this.interpreter.get_positions();
 
+                    this.index += 1;
+                    this.timer.Start();
+                }
+                catch (RobotOutOfMapException ex)
+                {
+                    Terminal.Text = "Chyba: " + ex.Message;
+                }
+                this.is_running = false;
             }
             if (e.Key == Key.F6)
             {

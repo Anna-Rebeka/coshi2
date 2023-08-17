@@ -24,7 +24,9 @@ namespace coshi2
         public static void reset()
         {
             pc = 0;
+            adr = 0;
             terminated = false;
+            mem = new int[100];
         }
 
         public static void execute_all()
@@ -45,12 +47,12 @@ namespace coshi2
             else if (mem[pc] == INSTRUCTION_LT)
             {
                 pc = pc + 1;
-                Robot.left();
+                Robot.left(map_size);
             }
             else if (mem[pc] == INSTRUCTION_RT)
             {
                 pc = pc + 1;
-                Robot.right();
+                Robot.right(map_size);
             }
             else if (mem[pc] == INSTRUCTION_DW)
             {

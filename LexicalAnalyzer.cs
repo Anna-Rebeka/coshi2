@@ -91,6 +91,11 @@ namespace coshi2
             }
         }
 
-
+        public int CalculateLineNumberOfError(int errorPosition)
+        {
+            string subString = input.Substring(0, errorPosition);
+            int lineCount = subString.Split('\n').Length;
+            return lineCount;
+        }
     }
 }
