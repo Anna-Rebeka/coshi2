@@ -232,7 +232,7 @@ namespace coshi2
                     this.index += 1;
                     this.timer.Start();
                 }
-                catch (RobotOutOfMapException ex)
+                catch (Exception ex)
                 {
                     Terminal.Text = "Chyba: " + ex.Message;
                 }

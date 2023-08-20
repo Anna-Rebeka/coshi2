@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Documents;
 
 namespace coshi2
@@ -12,9 +13,11 @@ namespace coshi2
     public class Compiler
     {
         private LexicalAnalyzer lexAnalyzer;
+        private int robot_position = 0;
 
         public Compiler(string code) 
         {
+            robot_position = 0;
             lexAnalyzer = new LexicalAnalyzer();
             lexAnalyzer.initialize(code);
         }
@@ -27,8 +30,6 @@ namespace coshi2
         /// </summary>
         public Block parse(int map_size)
         {
-            int robot_position = 1;
-
             Block result = new Block(); //... vytvorí objekt pre zoznam príkazov
             while (lexAnalyzer.kind == lexAnalyzer.WORD)
             {
@@ -37,28 +38,108 @@ namespace coshi2
                     if (robot_position / map_size == 0)
                     {
                         int line = lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position);
-                        throw new RobotOutOfMapException("Robot mimo mapy na riadku " + line);   
+                        throw new RobotOutOfMapException(line);   
                     }
                     lexAnalyzer.scan();
                     result.add(new Up());
-                    robot_position += map_size;
+                    robot_position -= map_size;
                 }
 
                 else if ("vlavo" == lexAnalyzer.token)
                 {
+                    if (robot_position % map_size == 0)
+                    {
+                        int line = lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position);
+                        throw new RobotOutOfMapException(line);
+                    }
                     lexAnalyzer.scan();
                     result.add(new Lt());
+                    robot_position -= 1;
                 }
 
                 else if ("vpravo" == lexAnalyzer.token)
                 {
+                    if ((robot_position + 1) % map_size == 0)
+                    {
+                        int line = lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position);
+                        throw new RobotOutOfMapException(line);
+                    }
                     lexAnalyzer.scan();
                     result.add(new Rt());
+                    robot_position += 1;
                 }
                 else if ("dole" == lexAnalyzer.token)
                 {
+                    if (robot_position / map_size == map_size - 1)
+                    {
+                        int line = lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position);
+                        throw new RobotOutOfMapException(line);
+                    }
                     lexAnalyzer.scan();
                     result.add(new Dw());
+                    robot_position += map_size;
+                }
+                else if ("opakuj" == lexAnalyzer.token)
+                {
+                    lexAnalyzer.scan();
+                    int n = int.Parse(lexAnalyzer.token);
+                    lexAnalyzer.scan();
+                    // Parsovanie vnútorného bloku kódu pre opakovanie
+                    Block innerBlock = parse(map_size);
+                    result.add(new Repeat(new Const(n), innerBlock)); // Pridáme vrchol stromu pre opakovanie
+                    if(lexAnalyzer.token != "koniec")
+                    {
+                        throw new SyntaxErrorException(lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position), "chýba koniec");
+                    }
+                    lexAnalyzer.scan(); // Preskočíme "koniec" 
+
+                }
+              
+                else
+                {
+                    if (lexAnalyzer.token != "koniec")
+                    {
+                        throw new SyntaxErrorException(lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position), lexAnalyzer.token);
+                    }
+                    break;
+                }
+            }
+            return result;
+        }
+
+
+
+
+
+
+        /*
+         public Block parse(int map_size)
+        {
+            int robot_position = 0;
+
+            Block result = new Block(); //... vytvorí objekt pre zoznam príkazov
+            while (lexAnalyzer.kind == lexAnalyzer.WORD)
+            {
+                if (lexAnalyzer.token == "hore") //...vytvorí vrchol stromu pre príkaz dopredu
+                {
+    
+                    lexAnalyzer.scan();
+                    result.add(new Up());
+                    robot_position -= map_size;
+                }
+
+                else if ("vlavo" == lexAnalyzer.token)
+                {
+                    ...
+                }
+
+                else if ("vpravo" == lexAnalyzer.token)
+                {
+                   ...
+                }
+                else if ("dole" == lexAnalyzer.token)
+                {
+                    ...
                 }
                 else if ("opakuj" == lexAnalyzer.token)
                 {
@@ -66,17 +147,24 @@ namespace coshi2
                     int n = int.Parse(lexAnalyzer.token);
                     lexAnalyzer.scan(); 
                     result.add(new Repeat(new Const(n), parse(map_size)));
+                    lexAnalyzer.scan();
+                    lexAnalyzer.scan();
+                    MessageBox.Show(lexAnalyzer.token);
                 }
-              
+
                 else
                 {
-                    break;
+                    throw new SyntaxErrorException(lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position), lexAnalyzer.token);
                 }
             }
             return result;
         }
+         */
 
-       
+
+
+
+
         /*
         
         public void JumpToProgramBody()
