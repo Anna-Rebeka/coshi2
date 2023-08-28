@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace coshi2
 {
@@ -13,17 +14,31 @@ namespace coshi2
         public static int INSTRUCTION_RT = 3;
         public static int INSTRUCTION_DW = 4;
         public static int INSTRUCTION_SET = 5;
-        public static int INSTRUCTION_LOOP = 6;
+        public static int INSTRUCTION_GET = 6;
+        public static int INSTRUCTION_LOOP = 7;
+
+        public static int INSTRUCTION_PRINT = 8;   //+ parameter na vrchole zásobníka
+        public static int INSTRUCTION_JUMP = 9;
+
+        public static int INSTRUCTION_ADD = 10;    //+ dva operandy na vrchole zásobníka
+        public static int INSTRUCTION_SUB = 11;    //+ dva operandy na vrchole zásobníka
+
+        public static int INSTRUCTION_MINUS = 12;  //+ jeden operand na vrchole zásobníka
+        public static int INSTRUCTION_PUSH = 13;
 
         public static int[] mem = new int[100];    //pamäť – pole celých čísel 
         public static int pc;                      //adresa inštrukcie ked sa vykonava program
+        public static int top;                     //index vrcholu zásobníka – celočíselná premenná 
         public static int adr;                     //adresa pre naplnanie mem
         public static bool terminated;             //stav procesora
         public static int map_size = 9;
+        public static Dictionary<string, int> variables = new Dictionary<string, int>();
+
 
         public static void reset()
         {
             pc = 0;
+            top = mem.Length;
             adr = 0;
             terminated = false;
             mem = new int[100];
@@ -39,7 +54,57 @@ namespace coshi2
 
         public static void execute()
         {
-            if (mem[pc] == INSTRUCTION_UP)
+            if (mem[pc] == INSTRUCTION_PUSH)
+            {
+                pc = pc + 1;
+                top = top - 1;
+                mem[top] = mem[pc];
+                pc = pc + 1;
+            }
+            else if (mem[pc] == INSTRUCTION_MINUS)
+            {
+                pc = pc + 1;
+                mem[top] = -mem[top];
+            }
+            else if (mem[pc] == INSTRUCTION_ADD)
+            {
+                pc = pc + 1;
+                mem[top + 1] = mem[top + 1] + mem[top];
+                top = top + 1;
+            }
+            else if (mem[pc] == INSTRUCTION_SUB)
+            {
+                pc = pc + 1;
+                mem[top + 1] = mem[top + 1] - mem[top];
+                top = top + 1;
+            }
+            else if (mem[pc] == INSTRUCTION_GET)
+            {
+                pc = pc + 1;
+                int index = mem[pc];
+                pc = pc + 1;
+                top = top - 1;
+                mem[top] = mem[index];
+            }
+            else if (mem[pc] == INSTRUCTION_SET)
+            {
+                pc = pc + 1;
+                int index = mem[pc];
+                pc = pc + 1;
+                mem[index] = mem[top];
+                top = top + 1;
+            }
+            else if (mem[pc] == INSTRUCTION_PRINT)
+            {
+                pc = pc + 1;
+                MessageBox.Show(mem[top].ToString());
+                top = top + 1;
+            }
+            else if (mem[pc] == INSTRUCTION_JUMP)
+            {
+                pc = mem[pc + 1];
+            }
+            else if (mem[pc] == INSTRUCTION_UP)
             {
                 pc = pc + 1;
                 Robot.up(map_size);
@@ -59,14 +124,7 @@ namespace coshi2
                 pc = pc + 1;
                 Robot.down(map_size);
             }
-            else if (mem[pc] == INSTRUCTION_SET)
-            {
-                pc = pc + 1;
-                int index = mem[pc];
-                pc = pc + 1;
-                mem[index] = mem[pc];
-                pc = pc + 1;
-            }
+            
             else if (mem[pc] == INSTRUCTION_LOOP)
             {
                 pc = pc + 1;

@@ -224,7 +224,7 @@ namespace coshi2
                     tree.generate();
                     VirtualMachine.execute_all();
                     //Robot.position = 1;
-                    MessageBox.Show(Robot.position.ToString());
+                    //MessageBox.Show(Robot.position.ToString());
                     //naplnime compilatorom POSITIONS a potom to budeme kreslit ako PREDTYM GG EZ
                     //this.interpreter.load(textBox.Text);
                     //this.positions = this.interpreter.get_positions();
@@ -297,6 +297,11 @@ namespace coshi2
 
         public void Draw_Robot(object sender, EventArgs e)
         {
+            if (Robot.positions.Count == 1)
+            {
+                this.timer.Stop();
+                return;
+            }
             int riadok = Robot.positions[this.index][0];
             int stlpec = Robot.positions[this.index][1];
 

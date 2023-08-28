@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.SymbolStore;
+using System.Security.Policy;
+using System.Xml.Linq;
 
 namespace coshi2
 {
@@ -25,6 +27,7 @@ namespace coshi2
 
         public override void generate()
         {
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_PUSH);
             VirtualMachine.poke(value);
         }
     }
@@ -134,5 +137,118 @@ namespace coshi2
             VirtualMachine.poke(loop_body);
         }
     }
+
+    public class UnaryOperation: Syntax
+    {
+        protected Syntax e;
+        public UnaryOperation(Syntax ne) {
+            e = ne;
+        }
+    }
+
+    public class BinaryOperation : Syntax
+    {
+        protected Syntax l;
+        protected Syntax r;
+        
+        public BinaryOperation(Syntax nl, Syntax nr)
+        {
+            l = nl;
+            r = nr;
+        }
+    }
+
+    public class Minus : UnaryOperation
+    {
+        
+        public Minus(Syntax ne) : base(ne) {}
+
+        public override void generate()
+        {
+            e.generate();
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_MINUS);
+        }
+    }
+
+    public class Add : BinaryOperation
+    {
+     
+        public Add(Syntax nl, Syntax nr) : base(nl, nr){}
+        
+        public override void generate() {
+            l.generate();
+            r.generate();
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_ADD);
+        }
+    }
+
+
+    public class Sub : BinaryOperation
+    {
+        public Sub(Syntax nl, Syntax nr) : base(nl, nr) { }
+
+        public override void generate()
+        {
+            l.generate();
+            r.generate();
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_SUB);
+        }
+    }
+
+    public class Variable : Syntax
+    {
+        string name;
+        public Variable(string nname)
+        {
+            name = nname;
+        }
+
+        public override void generate()
+        {
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_GET);
+            VirtualMachine.poke(VirtualMachine.variables[name]);
+        }
+
+        public void generateSet()
+        {
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_SET);
+            VirtualMachine.poke(VirtualMachine.variables[name]);
+        }
+    }
+
+    public class Assign : Syntax
+    {
+        Variable var;
+        Syntax exp;
+
+        public Assign(Variable nvar, Syntax nexp)
+        {
+            var = nvar;
+            exp = nexp;
+        }
+
+        public override void generate()
+        {
+            exp.generate();
+            var.generateSet();
+        } 
+    }
+
+    public class Print : Syntax
+    {
+        Syntax exp;
+
+        public Print(Syntax nexp)
+        {
+            exp = nexp;
+        }
+
+        public override void generate()
+        {
+            exp.generate();
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_PRINT);
+        }
+    }
+
 }
 

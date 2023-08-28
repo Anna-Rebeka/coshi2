@@ -11,6 +11,8 @@ namespace coshi2
         public int NUMBER = 1;
         public int WORD = 2;
         public int SYMBOL = 3;
+        public int END = 4;
+        public int LOOP = 5;
 
         public string token;
         public int kind;
@@ -91,11 +93,34 @@ namespace coshi2
             }
         }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         public int CalculateLineNumberOfError(int errorPosition)
         {
             string subString = input.Substring(0, errorPosition);
             int lineCount = subString.Split('\n').Length;
             return lineCount;
         }
+
+
+
+
+
     }
 }

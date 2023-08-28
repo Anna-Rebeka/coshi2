@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Security.Policy;
@@ -15,18 +16,18 @@ namespace coshi2
         private LexicalAnalyzer lexAnalyzer;
         private int robot_position = 0;
 
-        public Compiler(string code) 
+        public Compiler(string code)
         {
             robot_position = 0;
             lexAnalyzer = new LexicalAnalyzer();
             lexAnalyzer.initialize(code);
         }
 
-     
+
 
         /// <summary>
         /// Procedure fills memory of virtual machine with instructions.
-		/// Consider using Parse() to create Syntax tree
+        /// Consider using Parse() to create Syntax tree
         /// </summary>
         public Block parse(int map_size)
         {
@@ -38,7 +39,7 @@ namespace coshi2
                     if (robot_position / map_size == 0)
                     {
                         int line = lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position);
-                        throw new RobotOutOfMapException(line);   
+                        throw new RobotOutOfMapException(line);
                     }
                     lexAnalyzer.scan();
                     result.add(new Up());
@@ -82,119 +83,159 @@ namespace coshi2
                 else if ("opakuj" == lexAnalyzer.token)
                 {
                     lexAnalyzer.scan();
-                    int n = int.Parse(lexAnalyzer.token);
-                    lexAnalyzer.scan();
+                    int n = int.Parse(lexAnalyzer.token); //addsub()
+                    check(lexAnalyzer.LOOP);
+                    lexAnalyzer.scan(); // Preskočíme "krát" 
                     // Parsovanie vnútorného bloku kódu pre opakovanie
                     Block innerBlock = parse(map_size);
                     result.add(new Repeat(new Const(n), innerBlock)); // Pridáme vrchol stromu pre opakovanie
-                    if(lexAnalyzer.token != "koniec")
-                    {
-                        throw new SyntaxErrorException(lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position), "chýba koniec");
-                    }
+                    check(lexAnalyzer.END);
                     lexAnalyzer.scan(); // Preskočíme "koniec" 
-
                 }
-              
+
+                else if ("ku" == lexAnalyzer.token)
+                {
+                    lexAnalyzer.scan();
+                    string name = lexAnalyzer.token;
+                    result.add(new Assign(new Variable(name), addSub()));
+                }
+
+                else if ("vypis" == lexAnalyzer.token)
+                {
+                    lexAnalyzer.scan();
+                    result.add(new Print(addSub()));
+                }
+
                 else
                 {
-                    if (lexAnalyzer.token != "koniec")
+                    if (lexAnalyzer.token == "koniec") { }
+                    else
                     {
-                        throw new SyntaxErrorException(lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position), lexAnalyzer.token);
+                        check(lexAnalyzer.WORD, "do");
+                        lexAnalyzer.scan();
+                        string name = lexAnalyzer.token;
+                        lexAnalyzer.scan();
+                        check(lexAnalyzer.WORD, "daj");
+                        lexAnalyzer.scan();
+                        result.add(new Assign(new Variable(name), addSub()));
+                        
+                        if (!VirtualMachine.variables.ContainsKey(name)) 
+                        {
+                            VirtualMachine.variables[name] = 2 + VirtualMachine.variables.Count;
+                        }
                     }
-                    break;
                 }
             }
             return result;
         }
 
 
-
-
-
-
-        /*
-         public Block parse(int map_size)
+        public void check(int expected_kind, string expected_token = null)
         {
-            int robot_position = 0;
-
-            Block result = new Block(); //... vytvorí objekt pre zoznam príkazov
-            while (lexAnalyzer.kind == lexAnalyzer.WORD)
+            if (expected_kind == lexAnalyzer.END && lexAnalyzer.token == "koniec" ||
+                expected_kind == lexAnalyzer.LOOP && new List<string> { "krát", "krat" }.Contains(lexAnalyzer.token))
             {
-                if (lexAnalyzer.token == "hore") //...vytvorí vrchol stromu pre príkaz dopredu
-                {
-    
-                    lexAnalyzer.scan();
-                    result.add(new Up());
-                    robot_position -= map_size;
-                }
-
-                else if ("vlavo" == lexAnalyzer.token)
-                {
-                    ...
-                }
-
-                else if ("vpravo" == lexAnalyzer.token)
-                {
-                   ...
-                }
-                else if ("dole" == lexAnalyzer.token)
-                {
-                    ...
-                }
-                else if ("opakuj" == lexAnalyzer.token)
-                {
-                    lexAnalyzer.scan();
-                    int n = int.Parse(lexAnalyzer.token);
-                    lexAnalyzer.scan(); 
-                    result.add(new Repeat(new Const(n), parse(map_size)));
-                    lexAnalyzer.scan();
-                    lexAnalyzer.scan();
-                    MessageBox.Show(lexAnalyzer.token);
-                }
-
-                else
-                {
-                    throw new SyntaxErrorException(lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position), lexAnalyzer.token);
-                }
+                return;
             }
-            return result;
+            if (lexAnalyzer.kind != expected_kind)
+            {
+                throw new SyntaxError(lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position), expected_kind);
+            }
+            if (expected_token != null && lexAnalyzer.token != expected_token)
+            {
+                throw new SyntaxError(lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position), expected_kind, expected_token);
+            }
         }
-         */
 
 
-
-
-
-        /*
         
-        public void JumpToProgramBody()
-        {
-            int offset = VirtualMachine.Variables.Count;
-            Poke((int)Instruction.Jmp);
-            Poke(2 + offset);
-            VirtualMachine.adr += offset;
-        }
-
-        public Syntax Operand()
+           public Syntax operand()
         {
             Syntax result;
-            if (lexAnalyzer.kind == Kind.WORD)
+            if (lexAnalyzer.kind == lexAnalyzer.WORD)
             {
-                string name = lexAnalyzer.ToString();
-                if (!VirtualMachine.Variables.ContainsKey(name))
+                string name = lexAnalyzer.token;
+                if (!VirtualMachine.variables.ContainsKey(name))
                 {
-                    throw new System.Collections.Generic.KeyNotFoundException($"{name} nie je zadeklarovane");
+                    MessageBox.Show("Nepoznam premennu");
                 }
                 result = new Variable(name);
             }
             else
             {
-                lexAnalyzer.Check(Kind.NUMBER);
-                result = new Const(System.Convert.ToInt32(lexAnalyzer.ToString()));
+                check(lexAnalyzer.NUMBER);
+                result = new Const(System.Convert.ToInt32(lexAnalyzer.token));
             }
-            Scan();
+            lexAnalyzer.scan();
             return result;
         }
+         
+        /*
+        public int number()
+        {
+            //check(lexAnalyzer.NUMBER);
+            int result = int.Parse(lexAnalyzer.token);
+            lexAnalyzer.scan();
+            return result;
+        }
+        */
+
+        
+         public Syntax addSub()
+        {
+            var result = operand();
+            while ("+" == lexAnalyzer.token || lexAnalyzer.token == "pričítaj" || 
+                   "-" == lexAnalyzer.token || lexAnalyzer.token == "odčítaj" || lexAnalyzer.token == "pricitaj" || lexAnalyzer.token == "odcitaj")
+            {
+                if (lexAnalyzer.token == "pričítaj" || lexAnalyzer.token == "pricitaj"  || lexAnalyzer.token == "+")
+                {
+                    lexAnalyzer.scan();
+                    result = new Add(result, addSub());
+                }
+                else if (lexAnalyzer.token == "odčítaj" || lexAnalyzer.token == "odcitaj" || lexAnalyzer.token == "-")
+                {
+                    lexAnalyzer.scan();
+                    result = new Sub(result, addSub());
+                }
+            }
+            return result;
+        }
+         
+        /*
+        public int addsub()
+        {
+            int result = number();
+            while (true)
+            {
+                if (lexAnalyzer.token == "pričítaj" || lexAnalyzer.token == "+")
+                {
+                    lexAnalyzer.scan();
+                    result = result + number();
+                }
+                else if (lexAnalyzer.token == "odčítaj" || lexAnalyzer.token == "-")
+                {
+                    lexAnalyzer.scan();
+                    result = result - number();
+                }
+                else { break; }
+            }
+            return result;
+        }
+        */
+
+        public void jumpOverVariables()
+        {
+            int count = VirtualMachine.variables.Count;
+            //Poke((int)Instruction.Jmp);
+            //Poke(2 + offset);
+            VirtualMachine.adr += count;
+        }
+   }
+
+
+/*
+
+      
 
         public Syntax MulDiv()
         {
@@ -215,28 +256,11 @@ namespace coshi2
             return result;
         }
 
-        public Syntax AddSub()
-        {
-            var result = MulDiv();
-            while ("+" == lexAnalyzer.ToString() || "-" == lexAnalyzer.ToString())
-            {
-                if ("+" == lexAnalyzer.ToString())
-                {
-                    Scan();
-                    result = new Add(result, AddSub());
-                }
-                else if ("-" == lexAnalyzer.ToString())
-                {
-                    Scan();
-                    result = new Sub(result, AddSub());
-                }
-            }
-            return result;
-        }
+        
 
     }
-        */
+       
     }
-
+*/
 
 }
