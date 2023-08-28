@@ -221,6 +221,8 @@ namespace coshi2
                     Robot.reset();
                     Compiler cmp = new Compiler(textBox.Text);
                     Block tree = cmp.parse(this.map_size);
+                    //jump divoky
+                    cmp.jumpOverVariables();
                     tree.generate();
                     VirtualMachine.execute_all();
                     //Robot.position = 1;

@@ -226,8 +226,8 @@ namespace coshi2
         public void jumpOverVariables()
         {
             int count = VirtualMachine.variables.Count;
-            //Poke((int)Instruction.Jmp);
-            //Poke(2 + offset);
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_JUMP);
+            VirtualMachine.poke(count + 2);
             VirtualMachine.adr += count;
         }
    }
