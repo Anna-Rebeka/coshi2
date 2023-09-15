@@ -15,6 +15,7 @@ namespace coshi2
     {
         private LexicalAnalyzer lexAnalyzer;
         private int robot_position = 0;
+        public bool iffing = false;
 
         public Compiler(string code)
         {
@@ -105,10 +106,30 @@ namespace coshi2
                 {
                     lexAnalyzer.scan();
                     //skontroluj ci ide "je volne", potom zavolaj free(), inak ries inak
-                    Syntax test = compare();
+                    Syntax test = expr();
                     result.add(new While(test, parse(map_size)));
                     check(lexAnalyzer.END);
                     lexAnalyzer.scan();
+                }
+
+                else if ("ak" == lexAnalyzer.token)
+                {
+                    iffing = true;
+                    lexAnalyzer.scan();
+                    Syntax test = expr();
+                    check(lexAnalyzer.WORD, "tak");
+                    lexAnalyzer.scan();
+                    IfElse ifelse = new IfElse(test, parse(map_size), null);
+                    
+                    if (lexAnalyzer.token == "inak")
+                    {
+                        lexAnalyzer.scan();
+                        ifelse.bodyfalse = parse(map_size);
+                    }
+                    check(lexAnalyzer.END);
+                    lexAnalyzer.scan();
+                    result.add(ifelse);
+                    iffing = false;
                 }
 
                 else if ("vypis" == lexAnalyzer.token)
@@ -117,9 +138,10 @@ namespace coshi2
                     result.add(new Print(addSub()));
                 }
 
+
                 else
                 {
-                    if (lexAnalyzer.token == "koniec") { return result; }
+                    if (lexAnalyzer.token == "koniec" || lexAnalyzer.token == "inak" && iffing) { return result; }
                     else
                     {
                         check(lexAnalyzer.WORD, "do");
@@ -192,18 +214,6 @@ namespace coshi2
             lexAnalyzer.scan();
             return result;
         }
-
-
-         
-        /*
-        public int number()
-        {
-            //check(lexAnalyzer.NUMBER);
-            int result = int.Parse(lexAnalyzer.token);
-            lexAnalyzer.scan();
-            return result;
-        }
-        */
 
         
          public Syntax addSub()
@@ -278,28 +288,13 @@ namespace coshi2
         }
 
 
-        //pridame nove INSTRUCTION_FREERIGHT, novu triedu FreeRight
-        /*
-         * class FreeRight():
-                def generate(self):
-                    self.poke(self.INSTRUCTION_FREERIGHT)
-
-         * 
-         * 
-            elif Interpreter.mem[Interpreter.pc] == self.INSTRUCTION_FREERIGHT:
-                Interpreter.pc = Interpreter.pc + 1
-                Interpreter.mem[Interpreter.top+1] = robot.pos < mapsize
-                Interpreter.top = Interpreter.top + 1
-           
- 
-         * 
-         *
-         */
-        public Syntax free()
+    public Syntax expr()
         {
-
-            return new Syntax();
+            var result = compare();
+            
+            return result;
         }
+
 
         public void jumpOverVariables()
         {

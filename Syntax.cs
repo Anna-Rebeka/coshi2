@@ -373,7 +373,7 @@ namespace coshi2
         {
             l.generate();
             r.generate();
-            VirtualMachine.poke(VirtualMachine.INSTRUCTION_LOW);
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_GREAT);
         }
     }
 
@@ -419,6 +419,42 @@ namespace coshi2
             l.generate();
             r.generate();
             VirtualMachine.poke(VirtualMachine.INSTRUCTION_GREATEQUAL);
+        }
+    }
+
+    public class IfElse : Syntax
+    {
+        public Syntax test;
+        public Syntax bodytrue;
+        public Syntax bodyfalse;
+
+        public IfElse(Syntax test, Syntax body_true, Syntax body_false)
+        {
+            this.test = test;
+            this.bodytrue = body_true;
+            this.bodyfalse = body_false;
+        }
+
+        public override void generate()
+        {
+            test.generate();
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_JUMPIFFALSE);
+            int jumpfalse_ins = VirtualMachine.adr;
+            VirtualMachine.adr = VirtualMachine.adr + 1;
+            bodytrue.generate();
+            if (bodyfalse == null)
+            {
+                VirtualMachine.mem[jumpfalse_ins] = VirtualMachine.adr;
+            }
+            else
+            {
+                VirtualMachine.poke(VirtualMachine.INSTRUCTION_JUMP);
+                int jump_ins = VirtualMachine.adr;
+                VirtualMachine.adr = VirtualMachine.adr + 1;
+                VirtualMachine.mem[jumpfalse_ins] = VirtualMachine.adr;
+                bodyfalse.generate();
+                VirtualMachine.mem[jump_ins] = VirtualMachine.adr;
+            }
         }
     }
 }
