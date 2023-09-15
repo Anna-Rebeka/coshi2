@@ -84,6 +84,7 @@ namespace coshi2
                 {
                     lexAnalyzer.scan();
                     int n = int.Parse(lexAnalyzer.token); //addsub()
+                    lexAnalyzer.scan(); // Preskočíme "cislo" 
                     check(lexAnalyzer.LOOP);
                     lexAnalyzer.scan(); // Preskočíme "krát" 
                     // Parsovanie vnútorného bloku kódu pre opakovanie
@@ -93,11 +94,21 @@ namespace coshi2
                     lexAnalyzer.scan(); // Preskočíme "koniec" 
                 }
 
-                else if ("ku" == lexAnalyzer.token)
+                else if ("ku" == lexAnalyzer.token || "od" == lexAnalyzer.token)
                 {
                     lexAnalyzer.scan();
                     string name = lexAnalyzer.token;
                     result.add(new Assign(new Variable(name), addSub()));
+                }
+
+                else if ("kym" == lexAnalyzer.token)
+                {
+                    lexAnalyzer.scan();
+                    //skontroluj ci ide "je volne", potom zavolaj free(), inak ries inak
+                    Syntax test = compare();
+                    result.add(new While(test, parse(map_size)));
+                    check(lexAnalyzer.END);
+                    lexAnalyzer.scan();
                 }
 
                 else if ("vypis" == lexAnalyzer.token)
@@ -108,7 +119,7 @@ namespace coshi2
 
                 else
                 {
-                    if (lexAnalyzer.token == "koniec") { }
+                    if (lexAnalyzer.token == "koniec") { return result; }
                     else
                     {
                         check(lexAnalyzer.WORD, "do");
@@ -132,6 +143,10 @@ namespace coshi2
 
         public void check(int expected_kind, string expected_token = null)
         {
+            if (expected_token != null && lexAnalyzer.token != expected_token)
+            {
+                throw new SyntaxError(lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position), expected_kind, expected_token);
+            }
             if (expected_kind == lexAnalyzer.END && lexAnalyzer.token == "koniec" ||
                 expected_kind == lexAnalyzer.LOOP && new List<string> { "krát", "krat" }.Contains(lexAnalyzer.token))
             {
@@ -141,15 +156,23 @@ namespace coshi2
             {
                 throw new SyntaxError(lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position), expected_kind);
             }
-            if (expected_token != null && lexAnalyzer.token != expected_token)
+        }
+
+        public void check(int expected_kind, string[] expected_tokens)
+        {
+            if (!expected_tokens.Contains(lexAnalyzer.token))
             {
-                throw new SyntaxError(lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position), expected_kind, expected_token);
+                throw new SyntaxError(lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position), expected_kind, expected_tokens[0]);
+            }
+            if (lexAnalyzer.kind != expected_kind)
+            {
+                throw new SyntaxError(lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position), expected_kind);
             }
         }
 
 
-        
-           public Syntax operand()
+
+        public Syntax operand()
         {
             Syntax result;
             if (lexAnalyzer.kind == lexAnalyzer.WORD)
@@ -157,7 +180,7 @@ namespace coshi2
                 string name = lexAnalyzer.token;
                 if (!VirtualMachine.variables.ContainsKey(name))
                 {
-                    MessageBox.Show("Nepoznam premennu");
+                    throw new VariableNotFoundException(lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position), name);
                 }
                 result = new Variable(name);
             }
@@ -169,6 +192,8 @@ namespace coshi2
             lexAnalyzer.scan();
             return result;
         }
+
+
          
         /*
         public int number()
@@ -200,28 +225,81 @@ namespace coshi2
             }
             return result;
         }
-         
-        /*
-        public int addsub()
-        {
-            int result = number();
-            while (true)
-            {
-                if (lexAnalyzer.token == "pričítaj" || lexAnalyzer.token == "+")
+
+        public Syntax compare() { 
+            var result = addSub();
+
+            if ("menší" == lexAnalyzer.token || "mensi" == lexAnalyzer.token) {
+                lexAnalyzer.scan();
+                if (lexAnalyzer.token == "alebo")
                 {
                     lexAnalyzer.scan();
-                    result = result + number();
-                }
-                else if (lexAnalyzer.token == "odčítaj" || lexAnalyzer.token == "-")
-                {
+                    check(lexAnalyzer.WORD, new string[] { "rovný", "rovny" });
                     lexAnalyzer.scan();
-                    result = result - number();
+                    check(lexAnalyzer.WORD, "ako");
+                    lexAnalyzer.scan();
+                    result = new LowEqual(result, addSub());
                 }
-                else { break; }
+                else
+                {
+                    check(lexAnalyzer.WORD, "ako");
+                    lexAnalyzer.scan();
+                    result = new Lower(result, addSub());
+                }
             }
+            else if ("väčší" == lexAnalyzer.token || "vacsi" == lexAnalyzer.token)
+            {
+                lexAnalyzer.scan();
+                if (lexAnalyzer.token == "alebo")
+                {
+                    lexAnalyzer.scan();
+                    check(lexAnalyzer.WORD, new string[] { "rovný", "rovny" });
+                    lexAnalyzer.scan();
+                    check(lexAnalyzer.WORD, "ako");
+                    lexAnalyzer.scan();
+                    result = new GreatEqual(result, addSub());
+                }
+                else
+                {
+                    check(lexAnalyzer.WORD, "ako");
+                    lexAnalyzer.scan();
+                    result = new Greater(result, addSub());
+                }
+            }
+            else if ("rovný" == lexAnalyzer.token || "rovny" == lexAnalyzer.token)
+            {
+                lexAnalyzer.scan();
+                result = new Equal(result, addSub());
+            }
+
+
+
             return result;
         }
-        */
+
+
+        //pridame nove INSTRUCTION_FREERIGHT, novu triedu FreeRight
+        /*
+         * class FreeRight():
+                def generate(self):
+                    self.poke(self.INSTRUCTION_FREERIGHT)
+
+         * 
+         * 
+            elif Interpreter.mem[Interpreter.pc] == self.INSTRUCTION_FREERIGHT:
+                Interpreter.pc = Interpreter.pc + 1
+                Interpreter.mem[Interpreter.top+1] = robot.pos < mapsize
+                Interpreter.top = Interpreter.top + 1
+           
+ 
+         * 
+         *
+         */
+        public Syntax free()
+        {
+
+            return new Syntax();
+        }
 
         public void jumpOverVariables()
         {
@@ -231,36 +309,4 @@ namespace coshi2
             VirtualMachine.adr += count;
         }
    }
-
-
-/*
-
-      
-
-        public Syntax MulDiv()
-        {
-            var result = Operand();
-            while ("*" == lexAnalyzer.ToString() || "/" == lexAnalyzer.ToString())
-            {
-                if ("*" == lexAnalyzer.ToString())
-                {
-                    Scan();
-                    result = new Mul(result, AddSub());
-                }
-                else if ("/" == lexAnalyzer.ToString())
-                {
-                    Scan();
-                    result = new Div(result, AddSub());
-                }
-            }
-            return result;
-        }
-
-        
-
-    }
-       
-    }
-*/
-
 }

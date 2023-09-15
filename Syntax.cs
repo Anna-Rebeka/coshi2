@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.SymbolStore;
+using System.Runtime.InteropServices;
 using System.Security.Policy;
 using System.Xml.Linq;
 
@@ -8,8 +9,6 @@ namespace coshi2
 {
     public class Syntax
     {
-        public int counter_adr;
-
         public virtual void generate()
         {
         }
@@ -125,16 +124,12 @@ namespace coshi2
 
         public override void generate()      //... vygeneruje inštrukcie pre konštrukciu cyklu
         {
-            VirtualMachine.poke(VirtualMachine.INSTRUCTION_SET);    //... inštrukcia pre nastavenie počítadla
-            VirtualMachine.poke(counter_adr);
             count.generate();
-            counter_adr--;
-            int loop_body = VirtualMachine.adr;     //... zapamätáme si začiatok tela cyklu
-            body.generate();                        //... vygenerujú sa inštrukcie pre telo cyklu
-            counter_adr++;
-            VirtualMachine.poke(VirtualMachine.INSTRUCTION_LOOP);   //... inštrukcia pre zopakovanie tela cyklu
-            VirtualMachine.poke(counter_adr);
-            VirtualMachine.poke(loop_body);
+            int bodyLoop = VirtualMachine.adr;
+            body.generate();
+
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_LOOP);   
+            VirtualMachine.poke(bodyLoop);
         }
     }
 
@@ -234,6 +229,107 @@ namespace coshi2
         } 
     }
 
+
+    public class While : Syntax
+    {
+        Syntax test;
+        Syntax body;
+
+        public While(Syntax ntest, Syntax nbody)
+        {
+            test = ntest;
+            body = nbody;
+        }
+
+        public override void generate()
+        {
+            int test_adr = VirtualMachine.adr;
+            test.generate();
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_JUMPIFFALSE);
+            int jump_ins = VirtualMachine.adr;
+            VirtualMachine.adr += 1;
+            body.generate();
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_JUMP);
+            VirtualMachine.poke(test_adr);
+            VirtualMachine.mem[jump_ins] = VirtualMachine.adr;
+        }
+    }
+
+    public class IfFalse : Syntax
+    {
+        Syntax test;
+        Syntax bodytrue;
+        Syntax bodyfalse;
+
+        public IfFalse(Syntax ntest, Syntax nbodytrue, Syntax nbodyfalse)
+        {
+            test = ntest;
+            bodytrue = nbodytrue;
+            bodyfalse = nbodyfalse;
+        }
+        public override void generate()
+        {
+            test.generate();
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_JUMPIFFALSE);
+            int jumpfalse_ins = VirtualMachine.adr;
+            VirtualMachine.adr += 1;
+            bodytrue.generate();
+            if (bodyfalse == null)
+            {
+                VirtualMachine.mem[jumpfalse_ins] = VirtualMachine.adr; ;
+            }
+            else
+            {
+                VirtualMachine.poke(VirtualMachine.INSTRUCTION_JUMP);
+                int jump_ins = VirtualMachine.adr;
+                VirtualMachine.adr += 1;
+                VirtualMachine.mem[jumpfalse_ins] = VirtualMachine.adr;
+                bodyfalse.generate();
+                VirtualMachine.mem[jump_ins] = VirtualMachine.adr;
+            }
+        }
+    }
+
+    public class Subroutine : Syntax
+    {
+        Syntax test;
+        Syntax body;
+        public int bodyadr;
+
+        public Subroutine(Syntax ntest, Syntax nbody)
+        {
+            test = ntest;
+            body = nbody;
+        }
+
+        public override void generate()
+        {
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_JUMP);
+            VirtualMachine.adr += 1;
+            bodyadr = VirtualMachine.adr;
+            body.generate();
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_RETURN);
+            VirtualMachine.mem[bodyadr - 1] = VirtualMachine.adr;
+        }
+    }
+
+
+    public class Call : Syntax
+    {
+        string name;
+        public Call(string nname)
+        {
+            name = nname;
+        }
+
+        public override void generate()
+        {
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_CALL);
+            VirtualMachine.poke(VirtualMachine.subroutines[name].bodyadr);
+        }
+    }
+
+
     public class Print : Syntax
     {
         Syntax exp;
@@ -250,5 +346,80 @@ namespace coshi2
         }
     }
 
+
+    public class Lower : BinaryOperation
+    {
+
+        public Lower(Syntax nl, Syntax nr) : base(nl, nr)
+        {
+        }
+
+        public override void generate()
+        {
+            l.generate();
+            r.generate();
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_LOW);
+        }
+    }
+
+    public class Greater : BinaryOperation
+    {
+
+        public Greater(Syntax nl, Syntax nr) : base(nl, nr)
+        {
+        }
+
+        public override void generate()
+        {
+            l.generate();
+            r.generate();
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_LOW);
+        }
+    }
+
+    public class Equal : BinaryOperation
+    {
+
+        public Equal(Syntax nl, Syntax nr) : base(nl, nr)
+        {
+        }
+
+        public override void generate()
+        {
+            l.generate();
+            r.generate();
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_EQUAL);
+        }
+    }
+
+    public class LowEqual : BinaryOperation
+    {
+
+        public LowEqual(Syntax nl, Syntax nr) : base(nl, nr)
+        {
+        }
+
+        public override void generate()
+        {
+            l.generate();
+            r.generate();
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_LOWEQUAL);
+        }
+    }
+
+    public class GreatEqual : BinaryOperation
+    {
+
+        public GreatEqual(Syntax nl, Syntax nr) : base(nl, nr)
+        {
+        }
+
+        public override void generate()
+        {
+            l.generate();
+            r.generate();
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_GREATEQUAL);
+        }
+    }
 }
 

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace coshi2
 {
@@ -26,13 +28,44 @@ namespace coshi2
         public static int INSTRUCTION_MINUS = 12;  //+ jeden operand na vrchole zásobníka
         public static int INSTRUCTION_PUSH = 13;
 
+        public static int INSTRUCTION_JUMPIFFALSE = 14;
+        public static int INSTRUCTION_CALL = 15;
+        public static int INSTRUCTION_RETURN = 16;
+
+        public static int INSTRUCTION_LOW = 17;
+        public static int INSTRUCTION_GREAT = 18;
+        public static int INSTRUCTION_EQUAL = 19;
+        public static int INSTRUCTION_LOWEQUAL = 20;
+        public static int INSTRUCTION_GREATEQUAL = 21;
+
         public static int[] mem = new int[100];    //pamäť – pole celých čísel 
+        public static int counter_adr = mem.Length - 1;
         public static int pc;                      //adresa inštrukcie ked sa vykonava program
         public static int top;                     //index vrcholu zásobníka – celočíselná premenná 
         public static int adr;                     //adresa pre naplnanie mem
         public static bool terminated;             //stav procesora
         public static int map_size = 9;
         public static Dictionary<string, int> variables = new Dictionary<string, int>();
+        public static Dictionary<string, Subroutine> subroutines = new Dictionary<string, Subroutine>();
+
+
+        private static TextBox _textBox; // Store the reference to the TextBox control
+
+
+        // Method to set the reference to the TextBox control
+        public static void SetTextBoxReference(TextBox textBox)
+        {
+            _textBox = textBox;
+        }
+
+        public static void AppendTextToTextBox(string text)
+        {
+            if (_textBox != null)
+            {
+                // Append text to the TextBox using the AppendText method
+                _textBox.AppendText("\n" + text);
+            }
+        }
 
 
         public static void reset()
@@ -97,13 +130,40 @@ namespace coshi2
             else if (mem[pc] == INSTRUCTION_PRINT)
             {
                 pc = pc + 1;
-                MessageBox.Show(mem[top].ToString());
+                AppendTextToTextBox(mem[top].ToString());
                 top = top + 1;
             }
             else if (mem[pc] == INSTRUCTION_JUMP)
             {
                 pc = mem[pc + 1];
             }
+
+            else if (mem[pc] == INSTRUCTION_JUMPIFFALSE)
+            {
+                pc = pc + 1;
+                if (mem[top] == 0)
+                {
+                    pc = mem[pc];
+                }
+                else
+                {
+                    pc = pc + 1;
+                }
+                top = top + 1;
+            }
+            else if (mem[pc] == INSTRUCTION_CALL)
+            {
+                pc = pc + 1;
+                top = top - 1;
+                mem[top] = pc + 1;
+                pc = mem[pc];
+            }
+            else if (mem[pc] == INSTRUCTION_RETURN)
+            {
+                pc = mem[top];
+                top = top + 1;
+            }
+
             else if (mem[pc] == INSTRUCTION_UP)
             {
                 pc = pc + 1;
@@ -124,20 +184,73 @@ namespace coshi2
                 pc = pc + 1;
                 Robot.down(map_size);
             }
-            
+            else if (mem[pc] == INSTRUCTION_LOW)
+            {
+                pc = pc + 1;
+                int a = mem[top];
+                int b = mem[top + 1];
+                int answ = 0;
+                if(b < a)
+                {
+                    answ = 1;
+                }
+                mem[top + 1] = answ;
+                top = top + 1;
+            }
+            else if (mem[pc] == INSTRUCTION_GREAT)
+            {
+                pc = pc + 1;
+                int a = mem[top];
+                int b = mem[top + 1];
+                int answ = 0;
+                if (b > a)
+                {
+                    answ = 1;
+                }
+                mem[top + 1] = answ;
+                top = top + 1;
+            }
+
+            else if (mem[pc] == INSTRUCTION_LOWEQUAL)
+            {
+                pc = pc + 1;
+                int a = mem[top];
+                int b = mem[top + 1];
+                int answ = 0;
+                if (b <= a)
+                {
+                    answ = 1;
+                }
+                mem[top + 1] = answ;
+                top = top + 1;
+            }
+
+            else if (mem[pc] == INSTRUCTION_GREATEQUAL)
+            {
+                pc = pc + 1;
+                int a = mem[top];
+                int b = mem[top + 1];
+                int answ = 0;
+                if (b >= a)
+                {
+                    answ = 1;
+                }
+                mem[top + 1] = answ;
+                top = top + 1;
+            }
+
             else if (mem[pc] == INSTRUCTION_LOOP)
             {
                 pc = pc + 1;
-                int index = mem[pc];
-                pc = pc + 1;
-                mem[index] = mem[index] - 1;
-                if (mem[index] > 0)
+                mem[top]--;
+                if (mem[top] > 0)
                 {
                     pc = mem[pc];
                 }
                 else
                 {
-                    pc = pc + 1;
+                    top++;
+                    pc++;
                 }
             }
             else

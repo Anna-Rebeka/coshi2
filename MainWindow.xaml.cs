@@ -218,6 +218,7 @@ namespace coshi2
                     this.is_running = true;
                     this.index = 0;
                     VirtualMachine.reset();
+                    VirtualMachine.SetTextBoxReference(Terminal);
                     Robot.reset();
                     Compiler cmp = new Compiler(textBox.Text);
                     Block tree = cmp.parse(this.map_size);
@@ -302,6 +303,7 @@ namespace coshi2
             if (Robot.positions.Count == 1)
             {
                 this.timer.Stop();
+                Terminal.AppendText("\n" + "Program úpešne zbehol.");
                 return;
             }
             int riadok = Robot.positions[this.index][0];
@@ -340,7 +342,7 @@ namespace coshi2
             if (this.index >= Robot.positions.Count)
             {
                 this.timer.Stop();
-                Terminal.Text = "Program úpešne zbehol.";
+                Terminal.AppendText("\n" + "Program úpešne zbehol.");
             }
         }
     }

@@ -94,23 +94,6 @@ namespace coshi2
         }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         public int CalculateLineNumberOfError(int errorPosition)
         {
             string subString = input.Substring(0, errorPosition);
