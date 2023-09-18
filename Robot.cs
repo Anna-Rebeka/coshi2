@@ -23,8 +23,11 @@ namespace coshi2
 
     public static void up(int map_size)
         {
-            MessageBox.Show("IDEM HORE");
-            position -= (int)Math.Sqrt(map_size);
+            if ((position-1) / (int)Math.Sqrt(map_size) == 0)
+            {
+                throw new RobotOutOfMapException();
+            }
+                position -= (int)Math.Sqrt(map_size);
             int pos = position - 1;
             positions.Add(new int[] { pos / 3 , pos % 3 });
 
@@ -45,6 +48,10 @@ namespace coshi2
         public static void left(int map_size)
         {
             int sqrt_map_size = (int)Math.Sqrt(map_size);
+            if((position-1) % sqrt_map_size == 0)
+            {
+                throw new RobotOutOfMapException();
+            }
             position -= 1;
             int pos = position - 1;
             positions.Add(new int[] { pos / 3, pos % 3 });
@@ -53,6 +60,10 @@ namespace coshi2
         public static void right(int map_size)
         {
             int sqrt_map_size = (int)Math.Sqrt(map_size);
+            if ((position) % sqrt_map_size == 0)
+            {
+                throw new RobotOutOfMapException();
+            }
             position += 1;
             int pos = position - 1;
             positions.Add(new int[] { pos / 3, pos % 3 });

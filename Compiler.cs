@@ -37,11 +37,6 @@ namespace coshi2
             {
                 if (lexAnalyzer.token == "hore") //...vytvorí vrchol stromu pre príkaz dopredu
                 {
-                    if (robot_position / map_size == 0)
-                    {
-                        //int line = lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position);
-                        //throw new RobotOutOfMapException(line);
-                    }
                     lexAnalyzer.scan();
                     result.add(new Up());
                     robot_position -= map_size;
@@ -49,11 +44,6 @@ namespace coshi2
 
                 else if ("vlavo" == lexAnalyzer.token)
                 {
-                    if (robot_position % map_size == 0)
-                    {
-                        //int line = lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position);
-                        //throw new RobotOutOfMapException(line);
-                    }
                     lexAnalyzer.scan();
                     result.add(new Lt());
                     robot_position -= 1;
@@ -61,22 +51,12 @@ namespace coshi2
 
                 else if ("vpravo" == lexAnalyzer.token)
                 {
-                    if ((robot_position + 1) % map_size == 0)
-                    {
-                        //int line = lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position);
-                        //throw new RobotOutOfMapException(line);
-                    }
                     lexAnalyzer.scan();
                     result.add(new Rt());
                     robot_position += 1;
                 }
                 else if ("dole" == lexAnalyzer.token)
                 {
-                    if (robot_position / map_size == map_size - 1)
-                    {
-                        //int line = lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position);
-                        //throw new RobotOutOfMapException(line);
-                    }
                     lexAnalyzer.scan();
                     result.add(new Dw());
                     robot_position += map_size;
