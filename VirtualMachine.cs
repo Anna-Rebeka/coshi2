@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,9 +13,9 @@ namespace coshi2
     public static class VirtualMachine
     {
         public static int INSTRUCTION_UP = 1;
-        public static int INSTRUCTION_LT = 2;
-        public static int INSTRUCTION_RT = 3;
-        public static int INSTRUCTION_DW = 4;
+        public static int INSTRUCTION_DW = 2;
+        public static int INSTRUCTION_LT = 3;
+        public static int INSTRUCTION_RT = 4;
         public static int INSTRUCTION_SET = 5;
         public static int INSTRUCTION_GET = 6;
         public static int INSTRUCTION_LOOP = 7;
@@ -38,6 +39,11 @@ namespace coshi2
         public static int INSTRUCTION_LOWEQUAL = 20;
         public static int INSTRUCTION_GREATEQUAL = 21;
 
+        public static int INSTRUCTION_FREEUP = 22;
+        public static int INSTRUCTION_FREEDOWN = 23;
+        public static int INSTRUCTION_FREELEFT = 24;
+        public static int INSTRUCTION_FREERIGHT = 25;
+
         public static int[] mem = new int[100];    //pamäť – pole celých čísel 
         public static int counter_adr = mem.Length - 1;
         public static int pc;                      //adresa inštrukcie ked sa vykonava program
@@ -45,6 +51,7 @@ namespace coshi2
         public static int adr;                     //adresa pre naplnanie mem
         public static bool terminated;             //stav procesora
         public static int map_size = 9;
+        public static int sqrt_map_size = (int)Math.Sqrt(map_size);
         public static Dictionary<string, int> variables = new Dictionary<string, int>();
         public static Dictionary<string, Subroutine> subroutines = new Dictionary<string, Subroutine>();
 
@@ -237,6 +244,38 @@ namespace coshi2
                 }
                 mem[top + 1] = answ;
                 top = top + 1;
+            }
+
+            else if (mem[pc] == INSTRUCTION_FREEUP)
+            {
+                pc = pc + 1;
+                int lol = mem[top];
+                int answ = ((1.0 * (Robot.position - 1) - sqrt_map_size) / sqrt_map_size) >= 0.0 ? 1 : 0;
+                mem[top] = answ;
+            }
+
+            else if (mem[pc] == INSTRUCTION_FREEDOWN)
+            {
+                pc = pc + 1;
+                int lol = mem[top];
+                int answ = ((1.0 * (Robot.position - 1) + sqrt_map_size) / sqrt_map_size) < 1.0 * (sqrt_map_size) ? 1 : 0;
+                mem[top] = answ;
+            }
+
+            else if (mem[pc] == INSTRUCTION_FREELEFT)
+            {
+                pc = pc + 1;
+                int lol = mem[top];
+                int answ = ((Robot.position - 1) % sqrt_map_size) != 0 ? 1 : 0;
+                mem[top] = answ;
+            }
+
+            else if (mem[pc] == INSTRUCTION_FREERIGHT)
+            {
+                pc = pc + 1;
+                int lol = mem[top];
+                int answ = (Robot.position) % (sqrt_map_size) != 0 ? 1 : 0;
+                mem[top] = answ;
             }
 
             else if (mem[pc] == INSTRUCTION_LOOP)

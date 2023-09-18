@@ -33,7 +33,7 @@ namespace coshi2
 
     public class RobotCommand : Syntax
     {
-     
+
     }
 
     public class Up : RobotCommand
@@ -109,7 +109,7 @@ namespace coshi2
         }
     }
 
-    public class Repeat: Syntax
+    public class Repeat : Syntax
     {
         public Const count;     //premenná count...počet opakovaní – typu Const
         public Block body;      //premenná body ... telo cyklu – typu Block
@@ -120,7 +120,7 @@ namespace coshi2
             body = nbody;           //... aj telo cyklu
         }
 
- 
+
 
         public override void generate()      //... vygeneruje inštrukcie pre konštrukciu cyklu
         {
@@ -128,15 +128,16 @@ namespace coshi2
             int bodyLoop = VirtualMachine.adr;
             body.generate();
 
-            VirtualMachine.poke(VirtualMachine.INSTRUCTION_LOOP);   
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_LOOP);
             VirtualMachine.poke(bodyLoop);
         }
     }
 
-    public class UnaryOperation: Syntax
+    public class UnaryOperation : Syntax
     {
         protected Syntax e;
-        public UnaryOperation(Syntax ne) {
+        public UnaryOperation(Syntax ne)
+        {
             e = ne;
         }
     }
@@ -145,7 +146,7 @@ namespace coshi2
     {
         protected Syntax l;
         protected Syntax r;
-        
+
         public BinaryOperation(Syntax nl, Syntax nr)
         {
             l = nl;
@@ -155,8 +156,8 @@ namespace coshi2
 
     public class Minus : UnaryOperation
     {
-        
-        public Minus(Syntax ne) : base(ne) {}
+
+        public Minus(Syntax ne) : base(ne) { }
 
         public override void generate()
         {
@@ -167,10 +168,11 @@ namespace coshi2
 
     public class Add : BinaryOperation
     {
-     
-        public Add(Syntax nl, Syntax nr) : base(nl, nr){}
-        
-        public override void generate() {
+
+        public Add(Syntax nl, Syntax nr) : base(nl, nr) { }
+
+        public override void generate()
+        {
             l.generate();
             r.generate();
             VirtualMachine.poke(VirtualMachine.INSTRUCTION_ADD);
@@ -226,7 +228,7 @@ namespace coshi2
         {
             exp.generate();
             var.generateSet();
-        } 
+        }
     }
 
 
@@ -292,13 +294,13 @@ namespace coshi2
 
     public class Subroutine : Syntax
     {
-        Syntax test;
-        Syntax body;
+        public string name;
+        public Syntax body;
         public int bodyadr;
 
-        public Subroutine(Syntax ntest, Syntax nbody)
+        public Subroutine(string nname, Syntax nbody)
         {
-            test = ntest;
+            name = nname;
             body = nbody;
         }
 
@@ -419,6 +421,50 @@ namespace coshi2
             l.generate();
             r.generate();
             VirtualMachine.poke(VirtualMachine.INSTRUCTION_GREATEQUAL);
+        }
+    }
+
+    public class FreeUp : Syntax
+    {
+        public FreeUp() { }
+        public override void generate()
+        {
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_PUSH);
+            VirtualMachine.poke(1);
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_FREEUP);
+        }
+    }
+
+    public class FreeDown : Syntax
+    {
+        public FreeDown() { }
+        public override void generate()
+        {
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_PUSH);
+            VirtualMachine.poke(1);
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_FREEDOWN);
+        }
+    }
+
+    public class FreeLeft : Syntax
+    {
+        public FreeLeft() { }
+        public override void generate()
+        {
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_PUSH);
+            VirtualMachine.poke(1);
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_FREELEFT);
+        }
+    }
+
+    public class FreeRight : Syntax
+    {
+        public FreeRight() { }
+        public override void generate()
+        {
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_PUSH);
+            VirtualMachine.poke(1);
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_FREERIGHT);
         }
     }
 

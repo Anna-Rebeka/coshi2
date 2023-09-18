@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace coshi2
 {
@@ -21,7 +22,8 @@ namespace coshi2
         }
 
     public static void up(int map_size)
-        {           
+        {
+            MessageBox.Show("IDEM HORE");
             position -= (int)Math.Sqrt(map_size);
             int pos = position - 1;
             positions.Add(new int[] { pos / 3 , pos % 3 });

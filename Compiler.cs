@@ -39,8 +39,8 @@ namespace coshi2
                 {
                     if (robot_position / map_size == 0)
                     {
-                        int line = lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position);
-                        throw new RobotOutOfMapException(line);
+                        //int line = lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position);
+                        //throw new RobotOutOfMapException(line);
                     }
                     lexAnalyzer.scan();
                     result.add(new Up());
@@ -51,8 +51,8 @@ namespace coshi2
                 {
                     if (robot_position % map_size == 0)
                     {
-                        int line = lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position);
-                        throw new RobotOutOfMapException(line);
+                        //int line = lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position);
+                        //throw new RobotOutOfMapException(line);
                     }
                     lexAnalyzer.scan();
                     result.add(new Lt());
@@ -63,8 +63,8 @@ namespace coshi2
                 {
                     if ((robot_position + 1) % map_size == 0)
                     {
-                        int line = lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position);
-                        throw new RobotOutOfMapException(line);
+                        //int line = lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position);
+                        //throw new RobotOutOfMapException(line);
                     }
                     lexAnalyzer.scan();
                     result.add(new Rt());
@@ -74,8 +74,8 @@ namespace coshi2
                 {
                     if (robot_position / map_size == map_size - 1)
                     {
-                        int line = lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position);
-                        throw new RobotOutOfMapException(line);
+                        //int line = lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position);
+                        //throw new RobotOutOfMapException(line);
                     }
                     lexAnalyzer.scan();
                     result.add(new Dw());
@@ -138,24 +138,54 @@ namespace coshi2
                     result.add(new Print(addSub()));
                 }
 
+                else if ("Urob" == lexAnalyzer.token || "urob" == lexAnalyzer.token)
+                {
+                    lexAnalyzer.scan();
+                    check(lexAnalyzer.WORD);
+                    string name = lexAnalyzer.token;
+                    if (VirtualMachine.subroutines.ContainsKey(name) || VirtualMachine.variables.ContainsKey(name))
+                    {
+                        throw new Exception("Toto meno sa už používa: " + name);
+                    }
+                    lexAnalyzer.scan();
+                    Subroutine subr = new Subroutine(name, null);
+                    VirtualMachine.subroutines[name] = subr;
+                    subr.body = parse(map_size);
+                    check(lexAnalyzer.END);
+                    lexAnalyzer.scan();
+                    result.add(subr);
+                }
+
 
                 else
                 {
                     if (lexAnalyzer.token == "koniec" || lexAnalyzer.token == "inak" && iffing) { return result; }
                     else
                     {
-                        check(lexAnalyzer.WORD, "do");
-                        lexAnalyzer.scan();
-                        string name = lexAnalyzer.token;
-                        lexAnalyzer.scan();
-                        check(lexAnalyzer.WORD, "daj");
-                        lexAnalyzer.scan();
-                        result.add(new Assign(new Variable(name), addSub()));
-                        
-                        if (!VirtualMachine.variables.ContainsKey(name)) 
+                        if (lexAnalyzer.token == "do")
                         {
-                            VirtualMachine.variables[name] = 2 + VirtualMachine.variables.Count;
+                            lexAnalyzer.scan();
+                            string name = lexAnalyzer.token;
+                            lexAnalyzer.scan();
+                            check(lexAnalyzer.WORD, "daj");
+                            lexAnalyzer.scan();
+                            result.add(new Assign(new Variable(name), addSub()));
+
+                            if (!VirtualMachine.variables.ContainsKey(name))
+                            {
+                                VirtualMachine.variables[name] = 2 + VirtualMachine.variables.Count;
+                            }
                         }
+                        else {
+                            string name = lexAnalyzer.token;
+                            if (!VirtualMachine.subroutines.ContainsKey(name))
+                            {
+                                throw new Exception("Neznáma funkcia " + name);
+                            }
+                            result.add(new Call(name));
+                            lexAnalyzer.scan();
+                        }
+                        
                     }
                 }
             }
@@ -281,17 +311,51 @@ namespace coshi2
                 lexAnalyzer.scan();
                 result = new Equal(result, addSub());
             }
-
-
-
             return result;
         }
 
 
     public Syntax expr()
         {
-            var result = compare();
-            
+            var result = new Syntax();
+            if ("je" != lexAnalyzer.token)
+            {
+                result = compare();
+            }
+            else 
+            {
+                lexAnalyzer.scan();
+                if ("volne" == lexAnalyzer.token || "voľné" == lexAnalyzer.token)
+                {
+                    lexAnalyzer.scan();
+                    string smer = lexAnalyzer.token;
+
+                    switch (smer)
+                    {
+                        case "hore":
+                            result = new FreeUp();
+                            lexAnalyzer.scan();
+                            break;
+                        case "dole":
+                            result = new FreeDown();
+                            lexAnalyzer.scan();
+                            break;
+                        case "vlavo":
+                            result = new FreeLeft();
+                            lexAnalyzer.scan();
+                            break;
+                        case "vpravo":
+                            result = new FreeRight();
+                            lexAnalyzer.scan();
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+
+            }
+
             return result;
         }
 
