@@ -34,20 +34,25 @@ namespace coshi2
 
         public MainWindow()
         {
+            //priprav canvas
             Console.WriteLine();
             InitializeComponent();
             DrawGrid();
             UpdateLineNumbers();
-
             this.current_canvas = c1;
-            //this.interpreter = new Interpreter(Terminal, map_size);
 
+            //nastavenia
             Settings.MAP = this.get_map();
-            //TODO nacitaj prvy balicek
-            Settings.set_sound_package("zvierata");
-            //this.soundsHandler = new oldSoundsHandler(Settings.MAP);
-            
 
+            //nacitaj zvukove balicky
+            string[] subdirectories = Directory.GetDirectories(SoundsHandler.mainDirectory);
+            if (subdirectories != null && subdirectories.Length > 0)
+            {
+                string firstPackageName = System.IO.Path.GetFileName(subdirectories[0]);
+                Settings.set_sound_package(firstPackageName);
+            }
+
+            //spusti kreslenie
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Tick += Draw_Robot;
         }

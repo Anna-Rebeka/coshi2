@@ -30,36 +30,41 @@ namespace coshi2
             restart();
             string directory = Path.Combine(mainDirectory, name);
             SoundPackage soundPackage = new SoundPackage(name);
-            string[] packageSoundFiles = Directory.GetFiles(directory);
-            string definitionFile = Path.Combine(directory, "definition.txt");
-
-            if (File.Exists(definitionFile))
+            try
             {
-                string[] lines = File.ReadAllLines(definitionFile);
+                string[] packageSoundFiles = Directory.GetFiles(directory);
+                string definitionFile = Path.Combine(directory, "definition.txt");
 
-                foreach (string line in lines)
+                if (File.Exists(definitionFile))
                 {
-                    string[] parts = line.Split(';');
-                    if (parts.Length == 4)
+                    string[] lines = File.ReadAllLines(definitionFile);
+
+                    foreach (string line in lines)
                     {
-                        int x = int.Parse(parts[0]);
-                        int y = int.Parse(parts[1]);
-                        string soundName = parts[2];
-                        string filePath = Path.Combine(directory, parts[3]);
+                        string[] parts = line.Split(';');
+                        if (parts.Length == 4)
+                        {
+                            int x = int.Parse(parts[0]);
+                            int y = int.Parse(parts[1]);
+                            string soundName = parts[2];
+                            string filePath = Path.Combine(directory, parts[3]);
 
-                        // SoundItem pre každý zvuk v balíčku
-                        SoundItem soundItem = new SoundItem(x, y, soundName, filePath);
+                            // SoundItem pre každý zvuk v balíčku
+                            SoundItem soundItem = new SoundItem(x, y, soundName, filePath);
 
-                        // SoundItem do SoundPackage
-                        soundPackage.SoundItems[soundName] = soundItem;
+                            // SoundItem do SoundPackage
+                            soundPackage.SoundItems[soundName] = soundItem;
+                        }
                     }
                 }
             }
+            catch(Exception ex) { }
             return soundPackage;
         }
 
         public static void fill_sound_map()
         {
+            
             foreach(SoundItem sound in Settings.SOUND_PACKAGE.SoundItems.Values)
             {
                 int x = sound.X;
@@ -81,6 +86,7 @@ namespace coshi2
         {
             //with open... zahodime player
             if (y >= Settings.MAP_SQRT_SIZE || x >= Settings.MAP_SQRT_SIZE || x < 0 || y < 0) { return; }
+            if (sounds_map[x, y]  == null) { return; }
             using (player = new SoundPlayer(sounds_map[x, y].Path))
             {
                 player.Play();
