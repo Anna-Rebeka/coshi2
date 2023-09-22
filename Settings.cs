@@ -16,8 +16,8 @@ namespace coshi2
 
         public static void set_size(int size)
         {
-            MAP_SIZE = size;
-            MAP_SQRT_SIZE = (int)Math.Sqrt(size);
+            MAP_SIZE = size * size;
+            MAP_SQRT_SIZE = size;
         }
 
         public static void set_sound_package(string name)

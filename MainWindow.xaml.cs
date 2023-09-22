@@ -19,7 +19,6 @@ namespace coshi2
     {
         private string currentFilePath;
         private const string NewLineCharacter = "\r\n";
-        public Interpreter interpreter;
         public Canvas current_canvas;
         public bool map_is_focused = false;
         public bool is_running = false;
@@ -52,6 +51,8 @@ namespace coshi2
                 Settings.set_sound_package(firstPackageName);
             }
 
+            DrawLabels();
+
             //spusti kreslenie
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Tick += Draw_Robot;
@@ -71,9 +72,40 @@ namespace coshi2
                 canvas.Name = "c" + i;
                 canvas.Focusable = true;
 
+
+
                 border.Child = canvas;
 
                 uniformGrid.Children.Add(border);
+            }
+        }
+
+
+        public void DrawLabels()
+        {
+            for (int i = 0; i < Settings.MAP.GetLength(0); i++)
+            {
+                for (int j = 0; j < Settings.MAP.GetLength(1); j++)
+                {
+                    if (i >= 0 && i < Math.Sqrt(SoundsHandler.sounds_map.Length) && j >= 0 && j < Math.Sqrt(SoundsHandler.sounds_map.Length))
+                    {
+                        // Vytvorenie labelu
+                        Label label = new Label
+                        {
+                            Content = SoundsHandler.sounds_map[i, j].Name, // Názov zo sounds_map
+                            FontSize = 12,
+                            Foreground = Brushes.Black
+                        };
+
+                        // Nastavenie pozície labelu na Canvas
+                        Canvas.SetLeft(label, 0);
+                        Canvas.SetTop(label, 0);
+                        Canvas.SetZIndex(label, 2); // Nastavte z-index podľa potreby
+
+                        // Pridanie labelu do príslušného Canvas
+                        Settings.MAP[i, j].Children.Add(label);
+                    }
+                }
             }
         }
 
@@ -178,7 +210,7 @@ namespace coshi2
             canvas.Focusable = true;
             border.Child = canvas;
             this.current_canvas = canvas;
-            
+
             this.robot = new Ellipse();
             this.robot.Width = 50;
             this.robot.Height = 50;
@@ -199,6 +231,7 @@ namespace coshi2
             uniformGrid.Children.Add(border);
             DrawGrid();
             Settings.MAP = this.get_map();
+            DrawLabels();
 
         }
 
@@ -318,7 +351,9 @@ namespace coshi2
                 this.timer.Stop();
                 return;
             }
-            this.current_canvas.Children.Clear();
+            //this.current_canvas.Children.Clear();
+            this.current_canvas.Children.Remove(robot);
+
             this.current_canvas = Settings.MAP[riadok, stlpec];
             this.robot = new Ellipse();
             this.robot.Width = 50;
@@ -336,6 +371,8 @@ namespace coshi2
             this.robot.Fill = Brushes.Black;
             Canvas.SetLeft(this.robot, 10);
             Canvas.SetTop(this.robot, 10);
+            Canvas.SetZIndex(this.robot, 1); // Nastavíme z-index elipsy na 1
+
             this.current_canvas.Children.Add(this.robot);
             SoundsHandler.play_sound(riadok, stlpec);
 

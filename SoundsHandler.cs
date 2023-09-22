@@ -58,7 +58,8 @@ namespace coshi2
                     }
                 }
             }
-            catch(Exception ex) { }
+            catch { }
+
             return soundPackage;
         }
 
@@ -86,7 +87,7 @@ namespace coshi2
         {
             //with open... zahodime player
             if (y >= Settings.MAP_SQRT_SIZE || x >= Settings.MAP_SQRT_SIZE || x < 0 || y < 0) { return; }
-            if (sounds_map[x, y]  == null) { return; }
+            if (x >= Math.Sqrt(sounds_map.Length)|| y >= Math.Sqrt(sounds_map.Length) || ( sounds_map[x, y]  == null)) { return; }
             using (player = new SoundPlayer(sounds_map[x, y].Path))
             {
                 player.Play();
