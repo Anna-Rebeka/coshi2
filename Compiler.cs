@@ -14,7 +14,7 @@ namespace coshi2
     public class Compiler
     {
         private LexicalAnalyzer lexAnalyzer;
-        private int robot_position = 0;
+        private int robot_position;
         public bool iffing = false;
 
         public Compiler(string code)
@@ -30,7 +30,7 @@ namespace coshi2
         /// Procedure fills memory of virtual machine with instructions.
         /// Consider using Parse() to create Syntax tree
         /// </summary>
-        public Block parse(int map_size)
+        public Block parse()
         {
             Block result = new Block(); //... vytvorí objekt pre zoznam príkazov
             while (lexAnalyzer.kind == lexAnalyzer.WORD)
@@ -39,7 +39,7 @@ namespace coshi2
                 {
                     lexAnalyzer.scan();
                     result.add(new Up());
-                    robot_position -= map_size;
+                    robot_position -= Settings.MAP_SQRT_SIZE;
                 }
 
                 else if ("vlavo" == lexAnalyzer.token)
@@ -59,7 +59,7 @@ namespace coshi2
                 {
                     lexAnalyzer.scan();
                     result.add(new Dw());
-                    robot_position += map_size;
+                    robot_position += Settings.MAP_SQRT_SIZE;
                 }
                 else if ("opakuj" == lexAnalyzer.token)
                 {
@@ -69,7 +69,7 @@ namespace coshi2
                     check(lexAnalyzer.LOOP);
                     lexAnalyzer.scan(); // Preskočíme "krát" 
                     // Parsovanie vnútorného bloku kódu pre opakovanie
-                    Block innerBlock = parse(map_size);
+                    Block innerBlock = parse();
                     result.add(new Repeat(new Const(n), innerBlock)); // Pridáme vrchol stromu pre opakovanie
                     check(lexAnalyzer.END);
                     lexAnalyzer.scan(); // Preskočíme "koniec" 
@@ -87,7 +87,7 @@ namespace coshi2
                     lexAnalyzer.scan();
                     //skontroluj ci ide "je volne", potom zavolaj free(), inak ries inak
                     Syntax test = expr();
-                    result.add(new While(test, parse(map_size)));
+                    result.add(new While(test, parse()));
                     check(lexAnalyzer.END);
                     lexAnalyzer.scan();
                 }
@@ -99,12 +99,12 @@ namespace coshi2
                     Syntax test = expr();
                     check(lexAnalyzer.WORD, "tak");
                     lexAnalyzer.scan();
-                    IfElse ifelse = new IfElse(test, parse(map_size), null);
+                    IfElse ifelse = new IfElse(test, parse(), null);
                     
                     if (lexAnalyzer.token == "inak")
                     {
                         lexAnalyzer.scan();
-                        ifelse.bodyfalse = parse(map_size);
+                        ifelse.bodyfalse = parse();
                     }
                     check(lexAnalyzer.END);
                     lexAnalyzer.scan();
@@ -130,7 +130,7 @@ namespace coshi2
                     lexAnalyzer.scan();
                     Subroutine subr = new Subroutine(name, null);
                     VirtualMachine.subroutines[name] = subr;
-                    subr.body = parse(map_size);
+                    subr.body = parse();
                     check(lexAnalyzer.END);
                     lexAnalyzer.scan();
                     result.add(subr);

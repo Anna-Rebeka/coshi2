@@ -21,14 +21,10 @@ namespace coshi2
         private const string NewLineCharacter = "\r\n";
         public Interpreter interpreter;
         public Canvas current_canvas;
-        //public Handler handler;
-        //public SoundsHandler soundsHandler;
-        public int map_size = 3;
         public bool map_is_focused = false;
         public bool is_running = false;
-        SoundsHandler soundsHandler;
+        public string soundPackage;
 
-        public Canvas[,] map;
         public List<int[]> positions;
 
 
@@ -44,20 +40,23 @@ namespace coshi2
             UpdateLineNumbers();
 
             this.current_canvas = c1;
-            this.interpreter = new Interpreter(Terminal, map_size);
+            //this.interpreter = new Interpreter(Terminal, map_size);
 
-            this.map = this.get_map();
-            this.soundsHandler = new SoundsHandler(this.map);
+            Settings.MAP = this.get_map();
+            //TODO nacitaj prvy balicek
+            Settings.set_sound_package("zvierata");
+            //this.soundsHandler = new oldSoundsHandler(Settings.MAP);
+            
 
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Tick += Draw_Robot;
         }
 
         public void DrawGrid() {
-            uniformGrid.Rows = map_size;
-            uniformGrid.Columns = map_size;
+            uniformGrid.Rows = Settings.MAP_SQRT_SIZE;
+            uniformGrid.Columns = Settings.MAP_SQRT_SIZE;
 
-            for (int i = 2; i <= this.map_size * this.map_size; i++)
+            for (int i = 2; i <= Settings.MAP_SQRT_SIZE * Settings.MAP_SQRT_SIZE; i++)
             {
                 Border border = new Border();
                 border.BorderBrush = Brushes.Black;
@@ -126,13 +125,13 @@ namespace coshi2
 
         public Canvas[,] get_map()
         {
-            Canvas[,] canvases = new Canvas[this.map_size, this.map_size];
+            Canvas[,] canvases = new Canvas[Settings.MAP_SQRT_SIZE, Settings.MAP_SQRT_SIZE];
 
             int index = 0;
 
-            for (int i = 0; i < this.map_size; i++)
+            for (int i = 0; i < Settings.MAP_SQRT_SIZE; i++)
             {
-                for (int j = 0; j < this.map_size; j++)
+                for (int j = 0; j < Settings.MAP_SQRT_SIZE; j++)
                 {
                     Border border = (Border)uniformGrid.Children[index];
                     canvases[i, j] = (Canvas)border.Child;
@@ -163,8 +162,7 @@ namespace coshi2
         }
 
         private void changeSize(int size) {
-            this.map_size = size;
-            this.interpreter.setMap_size(this.map_size);
+            Settings.set_size(size);
             uniformGrid.Children.Clear();
 
             Border border = new Border();
@@ -195,7 +193,7 @@ namespace coshi2
 
             uniformGrid.Children.Add(border);
             DrawGrid();
-            this.map = this.get_map();
+            Settings.MAP = this.get_map();
 
         }
 
@@ -221,7 +219,7 @@ namespace coshi2
                     VirtualMachine.SetTextBoxReference(Terminal);
                     Robot.reset();
                     Compiler cmp = new Compiler(textBox.Text);
-                    Block tree = cmp.parse(this.map_size);
+                    Block tree = cmp.parse();
                     //jump divoky
                     cmp.jumpOverVariables();
                     tree.generate();
@@ -259,8 +257,8 @@ namespace coshi2
             if (this.map_is_focused)
             {
                 int name = int.Parse(this.current_canvas.Name.Replace("c", "")) - 1;
-                int i = name / this.map_size;
-                int j = name % this.map_size;
+                int i = name / Settings.MAP_SQRT_SIZE;
+                int j = name % Settings.MAP_SQRT_SIZE;
                 this.current_canvas.Children.Clear();
 
 
@@ -282,11 +280,11 @@ namespace coshi2
                     {
                         j += 1;
                     }
-                    this.current_canvas = this.map[i, j];
+                    this.current_canvas = Settings.MAP[i, j];
 
                 }
                 catch (IndexOutOfRangeException){}
-                this.soundsHandler.play_sound(i,j );
+                SoundsHandler.play_sound(i,j );
                 this.robot = new Ellipse();
                 this.robot.Width = 50;
                 this.robot.Height = 50;
@@ -309,23 +307,23 @@ namespace coshi2
             int riadok = Robot.positions[this.index][0];
             int stlpec = Robot.positions[this.index][1];
 
-            if (riadok < 0 || riadok >= this.map_size || stlpec < 0 || stlpec >= this.map_size) {
+            if (riadok < 0 || riadok >= Settings.MAP_SQRT_SIZE   || stlpec < 0 || stlpec >= Settings.MAP_SQRT_SIZE) {
                 Terminal.Focus();
               
                 this.timer.Stop();
                 return;
             }
             this.current_canvas.Children.Clear();
-            this.current_canvas = this.map[riadok, stlpec];
+            this.current_canvas = Settings.MAP[riadok, stlpec];
             this.robot = new Ellipse();
             this.robot.Width = 50;
             this.robot.Height = 50;
-            if (map_size == 5)
+            if (Settings.MAP_SQRT_SIZE == 5)
             {
                 this.robot.Width = 35;
                 this.robot.Height = 35;
             }
-            else if (map_size == 7)
+            else if (Settings.MAP_SQRT_SIZE == 7)
             {
                 this.robot.Width = 20;
                 this.robot.Height = 20;
@@ -334,7 +332,7 @@ namespace coshi2
             Canvas.SetLeft(this.robot, 10);
             Canvas.SetTop(this.robot, 10);
             this.current_canvas.Children.Add(this.robot);
-            soundsHandler.play_sound(riadok, stlpec);
+            SoundsHandler.play_sound(riadok, stlpec);
 
             
 

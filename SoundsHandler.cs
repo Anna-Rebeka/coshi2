@@ -8,43 +8,84 @@ using System.Media;
 using System.IO;
 using System.Windows;
 using System.Threading;
+using System.Security.Policy;
 
 namespace coshi2
 {
-    public class SoundsHandler
+    public static class SoundsHandler
     {
-        public Canvas[,] map;
-        public String[,] audioArray;
-        SoundPlayer player;
+        public static SoundItem[,] sounds_map = new SoundItem[Settings.MAP_SQRT_SIZE, Settings.MAP_SQRT_SIZE]; //z tohto pustame zvuky
+        public static SoundPlayer player;
+        public static string mainDirectory = "../../../sounds";
 
-        public SoundsHandler(Canvas[,] map)
+
+        public static void restart()
         {
-            this.map = map;
-            this.audioArray = new String[this.map.GetLength(0), this.map.GetLength(0)];
-            this.load_sounds();
+            sounds_map = new SoundItem[Settings.MAP_SQRT_SIZE, Settings.MAP_SQRT_SIZE]; 
         }
 
-        public void load_sounds() {
-            this.audioArray[0, 0] = "../../../sounds/zvierata/kacka.wav";
-            this.audioArray[0, 1] = "../../../sounds/zvierata/kon.wav";
-            this.audioArray[0, 2] = "../../../sounds/zvierata/koza.wav";
-            this.audioArray[1, 0] = "../../../sounds/zvierata/krava.wav";
-            this.audioArray[1, 1] = "../../../sounds/zvierata/macka.wav";
-            this.audioArray[1, 2] = "../../../sounds/zvierata/mys.wav";
-            this.audioArray[2, 0] = "../../../sounds/zvierata/pes.wav";
-            this.audioArray[2, 1] = "../../../sounds/zvierata/prasa.wav";
-            this.audioArray[2, 2] = "../../../sounds/zvierata/sliepka.wav";
+
+        public static SoundPackage load_sound_package(string name)
+        {
+            restart();
+            string directory = Path.Combine(mainDirectory, name);
+            SoundPackage soundPackage = new SoundPackage(name);
+            string[] packageSoundFiles = Directory.GetFiles(directory);
+            string definitionFile = Path.Combine(directory, "definition.txt");
+
+            if (File.Exists(definitionFile))
+            {
+                string[] lines = File.ReadAllLines(definitionFile);
+
+                foreach (string line in lines)
+                {
+                    string[] parts = line.Split(';');
+                    if (parts.Length == 4)
+                    {
+                        int x = int.Parse(parts[0]);
+                        int y = int.Parse(parts[1]);
+                        string soundName = parts[2];
+                        string filePath = Path.Combine(directory, parts[3]);
+
+                        // SoundItem pre každý zvuk v balíčku
+                        SoundItem soundItem = new SoundItem(x, y, soundName, filePath);
+
+                        // SoundItem do SoundPackage
+                        soundPackage.SoundItems[soundName] = soundItem;
+                    }
+                }
+            }
+            return soundPackage;
         }
 
-        public void play_sound(int riadok, int stlpec) {
-            //MessageBox.Show("Hram " + riadok.ToString() + " : " + stlpec.ToString());
+        public static void fill_sound_map()
+        {
+            foreach(SoundItem sound in Settings.SOUND_PACKAGE.SoundItems.Values)
+            {
+                int x = sound.X;
+                int y = sound.Y;
+
+                // názov zvuku
+                string soundName = sound.Name;
+
+                // na príslušné miesto v sounds_map
+                if (x >= 0 && x < sounds_map.GetLength(0) && y >= 0 && y < sounds_map.GetLength(1))
+                {
+                    sounds_map[x, y] = sound;
+                }
+            }
+           
+        }
+
+        public static void play_sound(int x, int y)
+        {
             //with open... zahodime player
-            if (stlpec >= this.audioArray.GetLength(0) || riadok >= this.audioArray.GetLength(0) || riadok < 0 || stlpec < 0) { return;  }
-            using (this.player = new SoundPlayer(this.audioArray[riadok, stlpec])) {
-                this.player.Play();
+            if (y >= Settings.MAP_SQRT_SIZE || x >= Settings.MAP_SQRT_SIZE || x < 0 || y < 0) { return; }
+            using (player = new SoundPlayer(sounds_map[x, y].Path))
+            {
+                player.Play();
             };
-          
-        }
 
+        }
     }
 }

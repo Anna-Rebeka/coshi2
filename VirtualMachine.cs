@@ -50,8 +50,6 @@ namespace coshi2
         public static int top;                     //index vrcholu zásobníka – celočíselná premenná 
         public static int adr;                     //adresa pre naplnanie mem
         public static bool terminated;             //stav procesora
-        public static int map_size = 9;
-        public static int sqrt_map_size = (int)Math.Sqrt(map_size);
         public static Dictionary<string, int> variables = new Dictionary<string, int>();
         public static Dictionary<string, Subroutine> subroutines = new Dictionary<string, Subroutine>();
 
@@ -82,6 +80,8 @@ namespace coshi2
             adr = 0;
             terminated = false;
             mem = new int[100];
+            variables = new Dictionary<string, int>();
+            subroutines = new Dictionary<string, Subroutine>();
         }
 
         public static void execute_all()
@@ -174,22 +174,22 @@ namespace coshi2
             else if (mem[pc] == INSTRUCTION_UP)
             {
                 pc = pc + 1;
-                Robot.up(map_size);
+                Robot.up();
             }
             else if (mem[pc] == INSTRUCTION_LT)
             {
                 pc = pc + 1;
-                Robot.left(map_size);
+                Robot.left();
             }
             else if (mem[pc] == INSTRUCTION_RT)
             {
                 pc = pc + 1;
-                Robot.right(map_size);
+                Robot.right();
             }
             else if (mem[pc] == INSTRUCTION_DW)
             {
                 pc = pc + 1;
-                Robot.down(map_size);
+                Robot.down();
             }
             else if (mem[pc] == INSTRUCTION_LOW)
             {
@@ -250,7 +250,7 @@ namespace coshi2
             {
                 pc = pc + 1;
                 int lol = mem[top];
-                int answ = ((1.0 * (Robot.position - 1) - sqrt_map_size) / sqrt_map_size) >= 0.0 ? 1 : 0;
+                int answ = ((1.0 * (Robot.position - 1) - Settings.MAP_SQRT_SIZE) / Settings.MAP_SQRT_SIZE) >= 0.0 ? 1 : 0;
                 mem[top] = answ;
             }
 
@@ -258,7 +258,7 @@ namespace coshi2
             {
                 pc = pc + 1;
                 int lol = mem[top];
-                int answ = ((1.0 * (Robot.position - 1) + sqrt_map_size) / sqrt_map_size) < 1.0 * (sqrt_map_size) ? 1 : 0;
+                int answ = ((1.0 * (Robot.position - 1) + Settings.MAP_SQRT_SIZE) / Settings.MAP_SQRT_SIZE) < 1.0 * (Settings.MAP_SQRT_SIZE) ? 1 : 0;
                 mem[top] = answ;
             }
 
@@ -266,7 +266,7 @@ namespace coshi2
             {
                 pc = pc + 1;
                 int lol = mem[top];
-                int answ = ((Robot.position - 1) % sqrt_map_size) != 0 ? 1 : 0;
+                int answ = ((Robot.position - 1) % Settings.MAP_SQRT_SIZE) != 0 ? 1 : 0;
                 mem[top] = answ;
             }
 
@@ -274,7 +274,7 @@ namespace coshi2
             {
                 pc = pc + 1;
                 int lol = mem[top];
-                int answ = (Robot.position) % (sqrt_map_size) != 0 ? 1 : 0;
+                int answ = (Robot.position) % (Settings.MAP_SQRT_SIZE) != 0 ? 1 : 0;
                 mem[top] = answ;
             }
 

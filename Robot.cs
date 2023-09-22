@@ -21,52 +21,49 @@ namespace coshi2
             };
         }
 
-    public static void up(int map_size)
+    public static void up()
         {
-            if ((position-1) / (int)Math.Sqrt(map_size) == 0)
+            if ((position-1) / Settings.MAP_SQRT_SIZE == 0)
             {
                 throw new RobotOutOfMapException();
             }
-                position -= (int)Math.Sqrt(map_size);
+                position -= Settings.MAP_SQRT_SIZE;
             int pos = position - 1;
-            positions.Add(new int[] { pos / 3 , pos % 3 });
+            positions.Add(new int[] { pos / Settings.MAP_SQRT_SIZE, pos % Settings.MAP_SQRT_SIZE });
 
         }
 
-        public static void down(int map_size)
+        public static void down()
         {
-            int sqrt_map_size = (int)Math.Sqrt(map_size);
-            if (position + sqrt_map_size > map_size)
+            if (position + Settings.MAP_SQRT_SIZE > Settings.MAP_SIZE)
             {
                 throw new RobotOutOfMapException();
             }
-            position += sqrt_map_size;
+            position += Settings.MAP_SQRT_SIZE;
             int pos = position - 1;
-            positions.Add(new int[] { pos / 3, pos % 3 });
+            positions.Add(new int[] { pos / Settings.MAP_SQRT_SIZE, pos % Settings.MAP_SQRT_SIZE });
         }
 
-        public static void left(int map_size)
+        public static void left()
         {
-            int sqrt_map_size = (int)Math.Sqrt(map_size);
-            if((position-1) % sqrt_map_size == 0)
+            if((position-1) % Settings.MAP_SQRT_SIZE == 0)
             {
                 throw new RobotOutOfMapException();
             }
             position -= 1;
             int pos = position - 1;
-            positions.Add(new int[] { pos / 3, pos % 3 });
+            positions.Add(new int[] { pos / Settings.MAP_SQRT_SIZE, pos % Settings.MAP_SQRT_SIZE });
         }
 
-        public static void right(int map_size)
+        public static void right()
         {
-            int sqrt_map_size = (int)Math.Sqrt(map_size);
-            if ((position) % sqrt_map_size == 0)
+            if ((position) % Settings.MAP_SQRT_SIZE == 0)
             {
                 throw new RobotOutOfMapException();
             }
             position += 1;
             int pos = position - 1;
-            positions.Add(new int[] { pos / 3, pos % 3 });
+            positions.Add(new int[] { pos / Settings.MAP_SQRT_SIZE, pos % Settings.MAP_SQRT_SIZE });
         }
 
     }
