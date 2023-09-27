@@ -10,17 +10,17 @@ namespace coshi2
     public class SoundPackage
     {
         public string name;
-        public Dictionary<string, SoundItem> SoundItems { get; set; }
+        public Dictionary<(int, int), SoundItem> SoundItems { get; set; }
 
         public SoundPackage(string name)
         {
-            SoundItems = new Dictionary<string, SoundItem>();
+            SoundItems = new Dictionary<(int, int), SoundItem>();
             this.name = name;
         }
 
-        public string GetSoundFilePath(string soundName)
+        public string GetSoundFilePath(int x, int y)
         {
-            return SoundItems[soundName].Path;
+            return SoundItems[(x, y)].Path;
         }
 
 

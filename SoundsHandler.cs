@@ -53,7 +53,7 @@ namespace coshi2
                             SoundItem soundItem = new SoundItem(x, y, soundName, filePath);
 
                             // SoundItem do SoundPackage
-                            soundPackage.SoundItems[soundName] = soundItem;
+                            soundPackage.SoundItems[(x, y)] = soundItem;
                         }
                     }
                 }
@@ -65,7 +65,7 @@ namespace coshi2
 
         public static void fill_sound_map()
         {
-            
+            sounds_map = new SoundItem[Settings.MAP_SQRT_SIZE, Settings.MAP_SQRT_SIZE]; 
             foreach(SoundItem sound in Settings.SOUND_PACKAGE.SoundItems.Values)
             {
                 int x = sound.X;

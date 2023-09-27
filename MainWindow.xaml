@@ -16,7 +16,7 @@
             <RowDefinition Height="Auto"/>
             <!-- Add a new row for the terminal -->
         </Grid.RowDefinitions>
-        <Menu Grid.Row="0">
+        <Menu Name="menu" Grid.Row="0">
             <MenuItem Name="subor_volba" Header="_Súbor">
                 <MenuItem Header="_Nový" Click="New_Click"/>
                 <MenuItem Header="_Otvoriť" Click="Open_Click"/>
@@ -40,6 +40,8 @@
                     <MenuItem Header="_3x3" Click="size3_Click"/>
                     <MenuItem Header="_5x5" Click="size5_Click"/>
                     <MenuItem Header="_7x7" Click="size7_Click"/>
+                </MenuItem>
+                <MenuItem Name="soundPackagesMenu" Header="_Zvukové balíčky">
                 </MenuItem>
                 <MenuItem Header="_Pomoc"/>
             </MenuItem>
@@ -76,7 +78,7 @@
                         </UniformGrid.Resources>
                         <Border BorderBrush="Black" BorderThickness="0.5">
                             <Canvas x:Name="c1" Focusable="True">
-                                <Ellipse x:Name="robot" Width="50" Height="50" Fill="Black" Canvas.Left="15" Canvas.Top="29" Focusable="True"/>
+                                <Ellipse x:Name="robot" Width="50" Height="50" Fill="Black" Canvas.Left="40" Canvas.Top="40" Focusable="True"/>
                             </Canvas>
                         </Border>
 

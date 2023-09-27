@@ -24,6 +24,7 @@ namespace coshi2
         {
             SOUND_PACKAGE = SoundsHandler.load_sound_package(name);
             SoundsHandler.fill_sound_map();
+           
         }
     }
 }

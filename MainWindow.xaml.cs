@@ -50,12 +50,50 @@ namespace coshi2
                 string firstPackageName = System.IO.Path.GetFileName(subdirectories[0]);
                 Settings.set_sound_package(firstPackageName);
             }
-
+            WritePackagesMenu();
             DrawLabels();
 
             //spusti kreslenie
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Tick += Draw_Robot;
+        }
+
+        public void WritePackagesMenu()
+        {
+            string soundsDirectory = "../../../sounds"; // Nahraďte skutočnou cestou
+
+            if (Directory.Exists(soundsDirectory))
+            {
+                string[] packageDirectories = Directory.GetDirectories(soundsDirectory);
+
+                foreach (string packageDirectory in packageDirectories)
+                {  
+                    string packageName = new DirectoryInfo(packageDirectory).Name;
+                    MenuItem packageMenuItem = new MenuItem { Header = packageName };
+                    packageMenuItem.Click += SoundPackageMenuItem_Click;
+                    soundPackagesMenu.Items.Add(packageMenuItem);
+                    if (soundPackagesMenu.Items.Count == 1)
+                    {
+                        packageMenuItem.IsChecked = true;
+                    }
+                }
+                
+            }
+        }
+
+        private void SoundPackageMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem menuItem)
+            {
+                foreach(MenuItem item in soundPackagesMenu.Items)
+                {
+                    item.IsChecked = false;
+                }
+                string selectedSoundPackage = menuItem.Header as string;
+                Settings.set_sound_package(selectedSoundPackage);
+                menuItem.IsChecked = true;
+                DrawLabels();
+            }
         }
 
         public void DrawGrid() {
@@ -87,24 +125,44 @@ namespace coshi2
             {
                 for (int j = 0; j < Settings.MAP.GetLength(1); j++)
                 {
+                    //odstranime stary label
+                    Label foundLabel = null;
+
+                    foreach (var child in Settings.MAP[i, j].Children)
+                    {
+                        if (child is Label oldlabel)
+                        {
+                            foundLabel = oldlabel;
+                            break;
+                        }
+                    }
+                    if (foundLabel is not null)
+                    {
+                        Settings.MAP[i, j].Children.Remove(foundLabel);
+                    }
+
+                    //mame novy label
                     if (i >= 0 && i < Math.Sqrt(SoundsHandler.sounds_map.Length) && j >= 0 && j < Math.Sqrt(SoundsHandler.sounds_map.Length))
                     {
-                        // Vytvorenie labelu
-                        Label label = new Label
-                        {
-                            Content = SoundsHandler.sounds_map[i, j].Name, // Názov zo sounds_map
-                            FontSize = 12,
-                            Foreground = Brushes.Black
-                        };
+                        if (SoundsHandler.sounds_map[i, j] is SoundItem) {
+                            // Vytvorenie labelu
+                            Label label = new Label
+                            {
+                                Content = SoundsHandler.sounds_map[i, j].Name, // Názov zo sounds_map
+                                FontSize = 12,
+                                Foreground = Brushes.Black,
+                            };
 
-                        // Nastavenie pozície labelu na Canvas
-                        Canvas.SetLeft(label, 0);
-                        Canvas.SetTop(label, 0);
-                        Canvas.SetZIndex(label, 2); // Nastavte z-index podľa potreby
 
-                        // Pridanie labelu do príslušného Canvas
-                        Settings.MAP[i, j].Children.Add(label);
-                    }
+                            // Nastavenie pozície labelu na Canvas
+                            Canvas.SetLeft(label, 0);
+                            Canvas.SetTop(label, 0);
+                            Canvas.SetZIndex(label, 2); // Nastavte z-index podľa potreby
+
+                            // Pridanie labelu do príslušného Canvas
+                            Settings.MAP[i, j].Children.Add(label);
+                        }
+                    }  
                 }
             }
         }
@@ -224,13 +282,14 @@ namespace coshi2
                 this.robot.Height = 20;
             }
             this.robot.Fill = Brushes.Black;
-            Canvas.SetLeft(this.robot, 10);
-            Canvas.SetTop(this.robot, 10);
+            Canvas.SetLeft(this.robot, this.robot.Width - 10);
+            Canvas.SetTop(this.robot, this.robot.Width - 10);
             this.current_canvas.Children.Add(this.robot);
 
             uniformGrid.Children.Add(border);
             DrawGrid();
             Settings.MAP = this.get_map();
+            SoundsHandler.fill_sound_map();
             DrawLabels();
 
         }
@@ -327,8 +386,8 @@ namespace coshi2
                 this.robot.Width = 50;
                 this.robot.Height = 50;
                 this.robot.Fill = Brushes.Black;
-                Canvas.SetLeft(this.robot, 10);
-                Canvas.SetTop(this.robot, 10);
+                Canvas.SetLeft(this.robot, this.robot.Width - 10);
+                Canvas.SetTop(this.robot, this.robot.Width - 10);
                 this.current_canvas.Children.Add(this.robot);
             }
 
@@ -369,8 +428,8 @@ namespace coshi2
                 this.robot.Height = 20;
             }
             this.robot.Fill = Brushes.Black;
-            Canvas.SetLeft(this.robot, 10);
-            Canvas.SetTop(this.robot, 10);
+            Canvas.SetLeft(this.robot, this.robot.Width - 10);
+            Canvas.SetTop(this.robot, this.robot.Width - 10);
             Canvas.SetZIndex(this.robot, 1); // Nastavíme z-index elipsy na 1
 
             this.current_canvas.Children.Add(this.robot);
