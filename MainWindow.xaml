@@ -52,14 +52,19 @@
                 <ColumnDefinition Width="50*"/>
             </Grid.ColumnDefinitions>
             <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <Grid>
+                <Grid Name="parent_textBox">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="121*"/>
+                        <RowDefinition Height="62*"/>
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="49*" />
-                        <ColumnDefinition Width="335*"/>
+                        <ColumnDefinition Width="0*" />
+                        <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="lineNumberTextBox" VerticalScrollBarVisibility="Disabled" IsReadOnly="True" Padding="5" TextAlignment="Right" />
-                    <TextBox x:Name="textBox" Grid.Column="1" AcceptsReturn="True" TextChanged="textBox_TextChanged" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="lineNumberTextBox" VerticalScrollBarVisibility="Disabled" IsReadOnly="True" Padding="5" TextAlignment="Right" TextChanged="lineNumberTextBox_TextChanged" Grid.RowSpan="2" />
+                    <TextBox x:Name="textBox" Grid.Column="1" AcceptsReturn="True" TextChanged="textBox_TextChanged" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
+                    <ListBox x:Name="predictionBox" Grid.Column="2" d:ItemsSource="{d:SampleData ItemCount=5}" Width="90" HorizontalAlignment="Right" SelectionChanged="ListBox_SelectionChanged" Grid.RowSpan="2"/>
                 </Grid>
             </ScrollViewer>
             <Grid x:Name="graf_plocha" Grid.Column="1">
@@ -78,10 +83,9 @@
                         </UniformGrid.Resources>
                         <Border BorderBrush="Black" BorderThickness="0.5">
                             <Canvas x:Name="c1" Focusable="True">
-                                <Ellipse x:Name="robot" Width="50" Height="50" Fill="Black" Canvas.Left="40" Canvas.Top="40" Focusable="True"/>
+                                <Ellipse x:Name="robot" Width="50" Height="50" Fill="Black" Focusable="True" VerticalAlignment="Top" HorizontalAlignment="Left" Canvas.Left="41" Canvas.Top="35"/>
                             </Canvas>
                         </Border>
-
                     </UniformGrid>
                 </Border>
             </Grid>

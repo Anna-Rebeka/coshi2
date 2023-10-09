@@ -26,6 +26,8 @@ namespace coshi2
 
         public List<int[]> positions;
 
+        private int lastCursorPosition = 0;
+
 
         private DispatcherTimer timer = new DispatcherTimer();
         public int index = 0;
@@ -177,7 +179,50 @@ namespace coshi2
 
         private void textBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            UpdateLineNumbers();
+                Predict_Commands();
+                UpdateLineNumbers();
+            
+        }
+
+        private void Predict_Commands() //TODO fix
+        {
+            // Získajte aktuálnu pozíciu kurzoru
+            int currentCursorPosition = textBox.CaretIndex - 1;
+            int startIndex = currentCursorPosition; //soon to be start
+
+            // Ak pozícia kurzoru sa zmenila, získať slovo, na ktorom bola vykonaná zmena
+            if (currentCursorPosition != lastCursorPosition)
+            {
+                string zmeneneSlovo = "";
+
+                //NAJDI KTORE SLOVO
+                while (startIndex > 0 && textBox.Text[startIndex - 1] != ' ')
+                {
+                    startIndex -= 1;
+                }
+
+                if (startIndex < currentCursorPosition)
+                {
+                    zmeneneSlovo = textBox.Text.Substring(startIndex, currentCursorPosition - startIndex + 1);
+                }
+                
+                if (zmeneneSlovo != null && zmeneneSlovo.Length >= 2)
+                {                    
+                    predictionBox.Items.Clear();
+                    string[] commands = Commands.find_command(zmeneneSlovo.ToLower());
+                    foreach (string command in commands)
+                    {
+                        predictionBox.Items.Add(command);
+                    }
+                }
+                else
+                {
+                    predictionBox.Items.Clear();
+                }
+
+                // Aktualizovať pozíciu kurzoru
+                lastCursorPosition = currentCursorPosition;
+            }
         }
 
         private void New_Click(object sender, RoutedEventArgs e)
@@ -443,6 +488,16 @@ namespace coshi2
                 this.timer.Stop();
                 Terminal.AppendText("\n" + "Program úpešne zbehol.");
             }
+        }
+
+        private void lineNumberTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 
