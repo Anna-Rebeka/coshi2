@@ -35,33 +35,33 @@ namespace coshi2
             Block result = new Block(); //... vytvorí objekt pre zoznam príkazov
             while (lexAnalyzer.kind == lexAnalyzer.WORD)
             {
-                if (lexAnalyzer.token == "hore") //...vytvorí vrchol stromu pre príkaz dopredu
+                if (lexAnalyzer.token == "hore".ToLower()) //...vytvorí vrchol stromu pre príkaz dopredu
                 {
                     lexAnalyzer.scan();
                     result.add(new Up());
                     robot_position -= Settings.MAP_SQRT_SIZE;
                 }
 
-                else if ("vlavo" == lexAnalyzer.token)
+                else if ("vlavo" == lexAnalyzer.token.ToLower())
                 {
                     lexAnalyzer.scan();
                     result.add(new Lt());
                     robot_position -= 1;
                 }
 
-                else if ("vpravo" == lexAnalyzer.token)
+                else if ("vpravo" == lexAnalyzer.token.ToLower())
                 {
                     lexAnalyzer.scan();
                     result.add(new Rt());
                     robot_position += 1;
                 }
-                else if ("dole" == lexAnalyzer.token)
+                else if ("dole" == lexAnalyzer.token.ToLower())
                 {
                     lexAnalyzer.scan();
                     result.add(new Dw());
                     robot_position += Settings.MAP_SQRT_SIZE;
                 }
-                else if ("opakuj" == lexAnalyzer.token)
+                else if ("opakuj" == lexAnalyzer.token.ToLower())
                 {
                     lexAnalyzer.scan();
                     int n = int.Parse(lexAnalyzer.token); //addsub()
@@ -75,24 +75,23 @@ namespace coshi2
                     lexAnalyzer.scan(); // Preskočíme "koniec" 
                 }
 
-                else if ("ku" == lexAnalyzer.token || "od" == lexAnalyzer.token)
+                else if ("ku" == lexAnalyzer.token.ToLower() || "od" == lexAnalyzer.token.ToLower())
                 {
                     lexAnalyzer.scan();
                     string name = lexAnalyzer.token;
                     result.add(new Assign(new Variable(name), addSub()));
                 }
 
-                else if ("kym" == lexAnalyzer.token)
+                else if ("kym" == lexAnalyzer.token.ToLower() || "kým" == lexAnalyzer.token.ToLower())
                 {
                     lexAnalyzer.scan();
-                    //skontroluj ci ide "je volne", potom zavolaj free(), inak ries inak
                     Syntax test = expr();
                     result.add(new While(test, parse()));
                     check(lexAnalyzer.END);
                     lexAnalyzer.scan();
                 }
 
-                else if ("ak" == lexAnalyzer.token)
+                else if ("ak" == lexAnalyzer.token.ToLower())
                 {
                     iffing = true;
                     lexAnalyzer.scan();
@@ -101,7 +100,7 @@ namespace coshi2
                     lexAnalyzer.scan();
                     IfElse ifelse = new IfElse(test, parse(), null);
                     
-                    if (lexAnalyzer.token == "inak")
+                    if (lexAnalyzer.token.ToLower() == "inak")
                     {
                         lexAnalyzer.scan();
                         ifelse.bodyfalse = parse();
@@ -112,13 +111,13 @@ namespace coshi2
                     iffing = false;
                 }
 
-                else if ("vypis" == lexAnalyzer.token)
+                else if ("zobraz" == lexAnalyzer.token.ToLower())
                 {
                     lexAnalyzer.scan();
                     result.add(new Print(addSub()));
                 }
 
-                else if ("Urob" == lexAnalyzer.token || "urob" == lexAnalyzer.token)
+                else if ("urob" == lexAnalyzer.token.ToLower())
                 {
                     lexAnalyzer.scan();
                     check(lexAnalyzer.WORD);
@@ -139,10 +138,10 @@ namespace coshi2
 
                 else
                 {
-                    if (lexAnalyzer.token == "koniec" || lexAnalyzer.token == "inak" && iffing) { return result; }
+                    if (lexAnalyzer.token.ToLower() == "koniec" || lexAnalyzer.token.ToLower() == "inak" && iffing) { return result; }
                     else
                     {
-                        if (lexAnalyzer.token == "do")
+                        if (lexAnalyzer.token.ToLower() == "do")
                         {
                             lexAnalyzer.scan();
                             string name = lexAnalyzer.token;
@@ -175,12 +174,12 @@ namespace coshi2
 
         public void check(int expected_kind, string expected_token = null)
         {
-            if (expected_token != null && lexAnalyzer.token != expected_token)
+            if (expected_token != null && lexAnalyzer.token.ToLower() != expected_token)
             {
                 throw new SyntaxError(lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position), expected_kind, expected_token);
             }
             if (expected_kind == lexAnalyzer.END && lexAnalyzer.token == "koniec" ||
-                expected_kind == lexAnalyzer.LOOP && new List<string> { "krát", "krat" }.Contains(lexAnalyzer.token))
+                expected_kind == lexAnalyzer.LOOP && new List<string> { "krát", "krat" }.Contains(lexAnalyzer.token.ToLower()))
             {
                 return;
             }
@@ -295,45 +294,60 @@ namespace coshi2
         }
 
 
-    public Syntax expr()
+        public Syntax expr()
         {
-            var result = new Syntax();
-            if ("je" != lexAnalyzer.token)
-            {
-                result = compare();
+            bool neg = false;
+            if ("nie" == lexAnalyzer.token.ToLower()) {
+                neg = true;
+                lexAnalyzer.scan();
             }
-            else 
+            lexAnalyzer.scan();
+            var result = new Syntax();
+
+            if ("volne" == lexAnalyzer.token || "voľné" == lexAnalyzer.token)
             {
                 lexAnalyzer.scan();
-                if ("volne" == lexAnalyzer.token || "voľné" == lexAnalyzer.token)
+                string smer = lexAnalyzer.token;
+
+                switch (smer)
                 {
-                    lexAnalyzer.scan();
-                    string smer = lexAnalyzer.token;
+                    case "hore":
+                        result = new FreeUp();
+                        lexAnalyzer.scan();
+                        break;
+                    case "dole":
+                        result = new FreeDown();
+                        lexAnalyzer.scan();
+                        break;
+                    case "vlavo":
+                    case "vľavo":
+                        result = new FreeLeft();
+                        lexAnalyzer.scan();
+                        break;
+                    case "vpravo":
+                        result = new FreeRight();
+                        lexAnalyzer.scan();
+                        break;
 
-                    switch (smer)
-                    {
-                        case "hore":
-                            result = new FreeUp();
-                            lexAnalyzer.scan();
-                            break;
-                        case "dole":
-                            result = new FreeDown();
-                            lexAnalyzer.scan();
-                            break;
-                        case "vlavo":
-                            result = new FreeLeft();
-                            lexAnalyzer.scan();
-                            break;
-                        case "vpravo":
-                            result = new FreeRight();
-                            lexAnalyzer.scan();
-                            break;
-
-                        default:
-                            break;
-                    }
+                    default:
+                        break;
                 }
+            }
+            else if ("zvuk" == lexAnalyzer.token.ToLower()) {
+                lexAnalyzer.scan();
 
+                string name = lexAnalyzer.token.ToLower();
+                if (!SoundsHandler.sound_codes.ContainsKey(name)) {
+                    result = new IsSound(-1);
+                }
+                else {
+                    result = new IsSound(SoundsHandler.sound_codes[name]); 
+                }
+                lexAnalyzer.scan();
+            }
+            else
+            {
+                result = compare();
             }
 
             return result;

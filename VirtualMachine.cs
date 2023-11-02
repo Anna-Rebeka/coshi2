@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+
+using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
@@ -43,6 +45,8 @@ namespace coshi2
         public static int INSTRUCTION_FREEDOWN = 23;
         public static int INSTRUCTION_FREELEFT = 24;
         public static int INSTRUCTION_FREERIGHT = 25;
+
+        public static int INSTRUCTION_ISSOUND = 26;
 
         public static int[] mem = new int[100];    //pamäť – pole celých čísel 
         public static int counter_adr = mem.Length - 1;
@@ -197,7 +201,7 @@ namespace coshi2
                 int a = mem[top];
                 int b = mem[top + 1];
                 int answ = 0;
-                if(b < a)
+                if (b < a)
                 {
                     answ = 1;
                 }
@@ -275,6 +279,28 @@ namespace coshi2
                 pc = pc + 1;
                 int lol = mem[top];
                 int answ = (Robot.position) % (Settings.MAP_SQRT_SIZE) != 0 ? 1 : 0;
+                mem[top] = answ;
+            }
+
+            else if (mem[pc] == INSTRUCTION_ISSOUND) {
+                pc = pc + 1;
+                int sound = mem[top];
+                int answ = 0;
+
+                int riadok = (Robot.position - 1) / Settings.MAP_SQRT_SIZE; 
+                int stlpec = (Robot.position - 1) % Settings.MAP_SQRT_SIZE;
+
+                string actual_sound = SoundsHandler.sounds_map[riadok, stlpec].Name;
+
+                if (SoundsHandler.sound_codes.ContainsKey(actual_sound))
+                {
+                    int actual_code = SoundsHandler.sound_codes[actual_sound];
+
+                    if (actual_code == sound)
+                    {
+                        answ = 1;
+                    }
+                }
                 mem[top] = answ;
             }
 

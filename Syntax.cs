@@ -192,6 +192,8 @@ namespace coshi2
         }
     }
 
+
+
     public class Variable : Syntax
     {
         string name;
@@ -421,6 +423,21 @@ namespace coshi2
             l.generate();
             r.generate();
             VirtualMachine.poke(VirtualMachine.INSTRUCTION_GREATEQUAL);
+        }
+    }
+
+
+    public class IsSound : Syntax
+    {
+        public int sound;
+        public IsSound(int sound_number) {
+            sound = sound_number;
+        }
+        public override void generate()
+        {
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_PUSH);
+            VirtualMachine.poke(sound);
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_ISSOUND);
         }
     }
 

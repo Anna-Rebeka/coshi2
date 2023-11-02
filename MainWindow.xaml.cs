@@ -504,12 +504,14 @@ namespace coshi2
             {
                 try
                 {
-                    string selected = predictionBox.SelectedItem.ToString();
+                    if (predictionBox.SelectedItem != null)
+                    {
+                        string selected = predictionBox.SelectedItem.ToString();
+                        string part1 = textBox.Text[0..startIndex];
+                        string part2 = textBox.Text.Substring(textBox.CaretIndex);
+                        textBox.Text = part1 + selected + part2;
+                    }
 
-
-                    string part1 = textBox.Text[0..startIndex];
-                    string part2 = textBox.Text.Substring(textBox.CaretIndex);
-                    textBox.Text = part1 + selected + part2;
                 }
                 catch
                 {
