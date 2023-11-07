@@ -12,6 +12,11 @@ namespace coshi2
         public SyntaxError(int line, string code) 
             : base("Riadok " + line + " neznámy príkaz alebo premenná " + code) { }
 
+
+        public SyntaxError(int line, string name, string name2)
+            : base("Riadok " + line + " toto meno sa už používa " + name) { }
+
+
         public SyntaxError(int line, int expected_kind) 
             : base("Riadok " + line + " očakával som " + castKind(expected_kind)) { }
 

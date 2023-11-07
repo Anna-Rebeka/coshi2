@@ -124,7 +124,7 @@ namespace coshi2
                     string name = lexAnalyzer.token;
                     if (VirtualMachine.subroutines.ContainsKey(name) || VirtualMachine.variables.ContainsKey(name))
                     {
-                        throw new Exception("Toto meno sa už používa: " + name);
+                        throw new SyntaxError(lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position), name, name);
                     }
                     lexAnalyzer.scan();
                     Subroutine subr = new Subroutine(name, null);
@@ -159,7 +159,7 @@ namespace coshi2
                             string name = lexAnalyzer.token;
                             if (!VirtualMachine.subroutines.ContainsKey(name))
                             {
-                                throw new Exception("Neznáma funkcia " + name);
+                                throw new SyntaxError(lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position), name);
                             }
                             result.add(new Call(name));
                             lexAnalyzer.scan();
