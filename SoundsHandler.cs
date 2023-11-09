@@ -17,6 +17,7 @@ namespace coshi2
         public static SoundItem[,] sounds_map = new SoundItem[Settings.MAP_SQRT_SIZE, Settings.MAP_SQRT_SIZE]; //z tohto pustame zvuky
         public static SoundPlayer player;
         public static string mainDirectory = "../../../sounds";
+        public static Dictionary<String, int> sound_codes = new Dictionary<string, int>();
 
 
         public static void restart()
@@ -54,6 +55,10 @@ namespace coshi2
 
                             // SoundItem do SoundPackage
                             soundPackage.SoundItems[(x, y)] = soundItem;
+
+                            if (!sound_codes.ContainsKey(soundName)) {
+                                sound_codes.Add(soundName, sound_codes.Count);
+                            }
                         }
                     }
                 }

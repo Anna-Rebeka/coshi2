@@ -64,7 +64,7 @@
                     </Grid.ColumnDefinitions>
                     <TextBox x:Name="lineNumberTextBox" VerticalScrollBarVisibility="Disabled" IsReadOnly="True" Padding="5" TextAlignment="Right" TextChanged="lineNumberTextBox_TextChanged" Grid.RowSpan="2" />
                     <TextBox x:Name="textBox" Grid.Column="1" AcceptsReturn="True" TextChanged="textBox_TextChanged" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
-                    <ListBox x:Name="predictionBox" Grid.Column="2" d:ItemsSource="{d:SampleData ItemCount=5}" Width="90" HorizontalAlignment="Right" SelectionChanged="ListBox_SelectionChanged" Grid.RowSpan="2"/>
+                    <ListView x:Name="predictionBox" Grid.Column="2" d:ItemsSource="{d:SampleData ItemCount=5}" Width="90" HorizontalAlignment="Right" PreviewKeyDown="ListBox_Selection" Grid.RowSpan="2"/>
                 </Grid>
             </ScrollViewer>
             <Grid x:Name="graf_plocha" Grid.Column="1">

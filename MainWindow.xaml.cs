@@ -27,6 +27,7 @@ namespace coshi2
         public List<int[]> positions;
 
         private int lastCursorPosition = 0;
+        private int startIndex = 0;
 
 
         private DispatcherTimer timer = new DispatcherTimer();
@@ -188,7 +189,7 @@ namespace coshi2
         {
             // Získajte aktuálnu pozíciu kurzoru
             int currentCursorPosition = textBox.CaretIndex - 1;
-            int startIndex = currentCursorPosition; //soon to be start
+            startIndex = currentCursorPosition; //soon to be start
 
             // Ak pozícia kurzoru sa zmenila, získať slovo, na ktorom bola vykonaná zmena
             if (currentCursorPosition != lastCursorPosition)
@@ -196,7 +197,7 @@ namespace coshi2
                 string zmeneneSlovo = "";
 
                 //NAJDI KTORE SLOVO
-                while (startIndex > 0 && textBox.Text[startIndex - 1] != ' ')
+                while (startIndex > 0 && !char.IsWhiteSpace(textBox.Text[startIndex - 1]))
                 {
                     startIndex -= 1;
                 }
@@ -495,9 +496,29 @@ namespace coshi2
 
         }
 
-        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
 
+
+        private void ListBox_Selection(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter || e.Key == Key.Space)
+            {
+                try
+                {
+                    if (predictionBox.SelectedItem != null)
+                    {
+                        string selected = predictionBox.SelectedItem.ToString();
+                        string part1 = textBox.Text[0..startIndex];
+                        string part2 = textBox.Text.Substring(textBox.CaretIndex);
+                        textBox.Text = part1 + selected + part2;
+                    }
+
+                }
+                catch
+                {
+
+                }
+            }
+            
         }
     }
 
