@@ -245,7 +245,7 @@ namespace coshi2
             return result;
         }
 
-        public Syntax compare() { 
+        public Syntax compare(bool neg) { 
             var result = addSub();
 
             if ("menší" == lexAnalyzer.token || "mensi" == lexAnalyzer.token) {
@@ -257,13 +257,27 @@ namespace coshi2
                     lexAnalyzer.scan();
                     check(lexAnalyzer.WORD, "ako");
                     lexAnalyzer.scan();
-                    result = new LowEqual(result, addSub());
+                    if (neg)
+                    {
+                        result = new Greater(result, addSub());
+                    }
+                    else
+                    {
+                        result = new LowEqual(result, addSub());
+                    }
                 }
                 else
                 {
                     check(lexAnalyzer.WORD, "ako");
                     lexAnalyzer.scan();
-                    result = new Lower(result, addSub());
+                    if (neg)
+                    {
+                        result = new GreatEqual(result, addSub());
+                    }
+                    else
+                    {
+                        result = new Lower(result, addSub());
+                    }
                 }
             }
             else if ("väčší" == lexAnalyzer.token || "vacsi" == lexAnalyzer.token)
@@ -276,19 +290,40 @@ namespace coshi2
                     lexAnalyzer.scan();
                     check(lexAnalyzer.WORD, "ako");
                     lexAnalyzer.scan();
-                    result = new GreatEqual(result, addSub());
+                    if (neg)
+                    {
+                        result = new Lower(result, addSub());
+                    }
+                    else
+                    {
+                        result = new GreatEqual(result, addSub());
+                    }
                 }
                 else
                 {
                     check(lexAnalyzer.WORD, "ako");
                     lexAnalyzer.scan();
-                    result = new Greater(result, addSub());
+                    if (neg)
+                    {
+                        result = new LowEqual(result, addSub());
+                    }
+                    else
+                    {
+                        result = new Greater(result, addSub());
+                    }
                 }
             }
             else if ("rovný" == lexAnalyzer.token || "rovny" == lexAnalyzer.token)
             {
                 lexAnalyzer.scan();
-                result = new Equal(result, addSub());
+                if (neg)
+                {
+                    result = new NotEqual(result, addSub());
+                }
+                else
+                {
+                    result = new Equal(result, addSub());
+                }
             }
             return result;
         }
@@ -296,12 +331,6 @@ namespace coshi2
 
         public Syntax expr()
         {
-            bool neg = false;
-            if ("nie" == lexAnalyzer.token.ToLower()) {
-                neg = true;
-                lexAnalyzer.scan();
-            }
-            lexAnalyzer.scan();
             var result = new Syntax();
 
             if ("volne" == lexAnalyzer.token || "voľné" == lexAnalyzer.token)
@@ -335,19 +364,46 @@ namespace coshi2
             }
             else if ("zvuk" == lexAnalyzer.token.ToLower()) {
                 lexAnalyzer.scan();
-
+                bool neg = false;
+                if (lexAnalyzer.token.ToLower() == "nie") {
+                    neg = true;
+                    lexAnalyzer.scan();
+                }
+                lexAnalyzer.scan();
                 string name = lexAnalyzer.token.ToLower();
                 if (!SoundsHandler.sound_codes.ContainsKey(name)) {
-                    result = new IsSound(-1);
+                    if (neg)
+                    {
+                        result = new IsNotSound(-1);
+                    }
+                    else
+                    {
+                        result = new IsSound(-1);
+                    }
+                    
                 }
                 else {
-                    result = new IsSound(SoundsHandler.sound_codes[name]); 
+                    if (neg)
+                    {
+                        result = new IsNotSound(SoundsHandler.sound_codes[name]);
+                    }
+                    else
+                    {
+                        result = new IsSound(SoundsHandler.sound_codes[name]);
+                    }
                 }
                 lexAnalyzer.scan();
             }
             else
             {
-                result = compare();
+                bool neg = false;
+                if (lexAnalyzer.token.ToLower() == "nie")
+                {
+                    neg = true;
+                    lexAnalyzer.scan();
+                }
+                lexAnalyzer.scan();
+                result = compare(neg);
             }
 
             return result;

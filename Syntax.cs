@@ -396,6 +396,22 @@ namespace coshi2
         }
     }
 
+
+    public class NotEqual : BinaryOperation
+    {
+
+        public NotEqual(Syntax nl, Syntax nr) : base(nl, nr)
+        {
+        }
+
+        public override void generate()
+        {
+            l.generate();
+            r.generate();
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_NOTEQUAL);
+        }
+    }
+
     public class LowEqual : BinaryOperation
     {
 
@@ -438,6 +454,22 @@ namespace coshi2
             VirtualMachine.poke(VirtualMachine.INSTRUCTION_PUSH);
             VirtualMachine.poke(sound);
             VirtualMachine.poke(VirtualMachine.INSTRUCTION_ISSOUND);
+        }
+    }
+
+
+    public class IsNotSound : Syntax
+    {
+        public int sound;
+        public IsNotSound(int sound_number)
+        {
+            sound = sound_number;
+        }
+        public override void generate()
+        {
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_PUSH);
+            VirtualMachine.poke(sound);
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_ISNOTSOUND);
         }
     }
 
