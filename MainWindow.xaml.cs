@@ -53,6 +53,7 @@ namespace coshi2
                 string firstPackageName = System.IO.Path.GetFileName(subdirectories[0]);
                 Settings.set_sound_package(firstPackageName);
             }
+            changeSize(Settings.PACKAGE_SIZE);
             WritePackagesMenu();
             DrawLabels();
 
@@ -94,6 +95,7 @@ namespace coshi2
                 }
                 string selectedSoundPackage = menuItem.Header as string;
                 Settings.set_sound_package(selectedSoundPackage);
+                changeSize(Settings.PACKAGE_SIZE);
                 menuItem.IsChecked = true;
                 DrawLabels();
             }

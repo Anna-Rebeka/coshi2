@@ -12,6 +12,7 @@ namespace coshi2
         public static Canvas[,] MAP;
         public static int MAP_SIZE = 9;
         public static int MAP_SQRT_SIZE = 3;
+        public static int PACKAGE_SIZE = 3;
         public static SoundPackage SOUND_PACKAGE = new SoundPackage("zvierata");
 
         public static void set_size(int size)
@@ -23,8 +24,9 @@ namespace coshi2
         public static void set_sound_package(string name)
         {
             SOUND_PACKAGE = SoundsHandler.load_sound_package(name);
-            SoundsHandler.fill_sound_map();
-           
+            PACKAGE_SIZE = (int) Math.Sqrt(SOUND_PACKAGE.SoundItems.Count());
+            set_size(PACKAGE_SIZE);
+            SoundsHandler.fill_sound_map();   
         }
     }
 }

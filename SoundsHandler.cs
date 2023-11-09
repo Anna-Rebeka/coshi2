@@ -64,7 +64,6 @@ namespace coshi2
                 }
             }
             catch { }
-
             return soundPackage;
         }
 

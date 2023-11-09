@@ -9,7 +9,7 @@ namespace coshi2
 {
     public static class Commands
     {
-        public static string[] commands =
+        public static List<string> commands = new List<string>
         {
             "vľavo", "vlavo", 
             "vpravo", 
@@ -19,7 +19,11 @@ namespace coshi2
             "opakuj",
             "krát",
             "zobraz",
-            "koniec"
+            "koniec",
+            "menší",
+            "vacsi", "väčší",
+            "rovný",
+            "zvuk"
         };
 
         public static string[] find_command(string prefix)
