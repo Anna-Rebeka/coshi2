@@ -9,7 +9,8 @@
         KeyDown="Window_KeyDown"
         Name="Root"
         >
-    <Grid>
+
+    <Grid Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -93,5 +94,7 @@
         <Grid Grid.Row="2">
             <TextBox Name="Terminal" Background="LightGray" Height="50" IsReadOnly="True"/>
         </Grid>
-    </Grid>
+        <Grid Name="FocusMe" Visibility="Hidden" Focusable="True">
+            </Grid>
+        </Grid>
 </Window>

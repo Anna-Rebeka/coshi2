@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using Microsoft.VisualBasic;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,6 +24,7 @@ namespace coshi2
         public bool map_is_focused = false;
         public bool is_running = false;
         public string soundPackage;
+        private int CarotIndex;
 
         public List<int[]> positions;
 
@@ -365,15 +367,10 @@ namespace coshi2
                     Robot.reset();
                     Compiler cmp = new Compiler(textBox.Text);
                     Block tree = cmp.parse();
-                    //jump divoky
                     cmp.jumpOverVariables();
                     tree.generate();
                     VirtualMachine.execute_all();
-                    //Robot.position = 1;
-                    //MessageBox.Show(Robot.position.ToString());
-                    //naplnime compilatorom POSITIONS a potom to budeme kreslit ako PREDTYM GG EZ
-                    //this.interpreter.load(textBox.Text);
-                    //this.positions = this.interpreter.get_positions();
+       
 
                     this.index += 1;
                     this.timer.Start();
@@ -388,57 +385,84 @@ namespace coshi2
             {
                 if (this.map_is_focused)
                 {
-                    this.textBox.Focus();
-
+                    textBox.IsReadOnly = false;
                     this.map_is_focused = false;
+                    //FocusMe.Visibility = Visibility.Hidden;
+                    //this.textBox.CaretIndex = this.CarotIndex;
+                    //textBox.Focus();
                 }
                 else
                 {
-                    robot.Focus();
+                    //F6 preloz do Key_Preview na Textbox a potom focus na FocusMe kde bude Key_Preview na sipky a pohyb
+                    textBox.IsReadOnly = true;
                     this.map_is_focused = true;
+                    //FocusMe.Visibility = Visibility.Visible;
+                    //this.CarotIndex = textBox.CaretIndex;
+                    //FocusMe.Focus();
                 }
 
             }
+
+
             if (this.map_is_focused)
             {
                 int name = int.Parse(this.current_canvas.Name.Replace("c", "")) - 1;
                 int i = name / Settings.MAP_SQRT_SIZE;
                 int j = name % Settings.MAP_SQRT_SIZE;
-                this.current_canvas.Children.Clear();
 
+                int i0 = i;
+                int j0 = j;
 
-                try
+                if (e.Key == Key.A && j != 0)
                 {
-                    if (e.Key == Key.Left)
-                    {
-                        j -= 1;
-                    }
-                    else if (e.Key == Key.Up)
-                    {
-                        i -= 1;
-                    }
-                    else if (e.Key == Key.Down)
-                    {
-                        i += 1;
-                    }
-                    else if (e.Key == Key.Right)
-                    {
-                        j += 1;
-                    }
-                    this.current_canvas = Settings.MAP[i, j];
-
+                    j -= 1;
                 }
-                catch (IndexOutOfRangeException){}
-                SoundsHandler.play_sound(i,j );
-                this.robot = new Ellipse();
-                this.robot.Width = 50;
-                this.robot.Height = 50;
-                this.robot.Fill = Brushes.Black;
-                Canvas.SetLeft(this.robot, this.robot.Width - 10);
-                Canvas.SetTop(this.robot, this.robot.Width - 10);
-                this.current_canvas.Children.Add(this.robot);
-            }
+                else if (e.Key == Key.W && i != 0)
+                {
+                    i -= 1;
+                }
+                else if (e.Key == Key.S && i + 1 < Settings.MAP_SQRT_SIZE)
+                {
+                    i += 1;
+                }
+                else if (e.Key == Key.D && j + 1 < Settings.MAP_SQRT_SIZE)
+                {
+                    j += 1;
+                }
 
+                if (i != i0 || j != j0)
+                {
+                    Draw_User(i, j);
+                }
+                
+            }
+        }
+
+
+        public void Draw_User(int riadok, int stlpec) {
+            this.current_canvas.Children.Remove(robot);
+
+            this.current_canvas = Settings.MAP[riadok, stlpec];
+            this.robot = new Ellipse();
+            this.robot.Width = 50;
+            this.robot.Height = 50;
+            if (Settings.MAP_SQRT_SIZE == 5)
+            {
+                this.robot.Width = 35;
+                this.robot.Height = 35;
+            }
+            else if (Settings.MAP_SQRT_SIZE == 7)
+            {
+                this.robot.Width = 20;
+                this.robot.Height = 20;
+            }
+            this.robot.Fill = Brushes.Black;
+            Canvas.SetLeft(this.robot, this.robot.Width - 10);
+            Canvas.SetTop(this.robot, this.robot.Width - 10);
+            Canvas.SetZIndex(this.robot, 1); // Nastavíme z-index elipsy na 1
+
+            this.current_canvas.Children.Add(this.robot);
+            SoundsHandler.play_sound(riadok, stlpec);
         }
 
         public void Draw_Robot(object sender, EventArgs e)
@@ -522,6 +546,7 @@ namespace coshi2
             }
             
         }
+
     }
 
 
