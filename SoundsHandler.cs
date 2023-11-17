@@ -89,6 +89,9 @@ namespace coshi2
 
         public static void play_sound(int x, int y)
         {
+            if (Settings.SILENCE) {
+                return;
+            }
             //with open... zahodime player
             if (y >= Settings.MAP_SQRT_SIZE || x >= Settings.MAP_SQRT_SIZE || x < 0 || y < 0) { return; }
             if (x >= Math.Sqrt(sounds_map.Length)|| y >= Math.Sqrt(sounds_map.Length) || ( sounds_map[x, y]  == null)) { return; }

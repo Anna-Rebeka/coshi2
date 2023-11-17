@@ -467,7 +467,7 @@ namespace coshi2
 
         public void Draw_Robot(object sender, EventArgs e)
         {
-            if (Robot.positions.Count == 1)
+            if (Robot.positions.Count == 1 || this.index >= Robot.positions.Count)
             {
                 this.timer.Stop();
                 Terminal.AppendText("\n" + "Program úpešne zbehol.");
@@ -476,44 +476,58 @@ namespace coshi2
             int riadok = Robot.positions[this.index][0];
             int stlpec = Robot.positions[this.index][1];
 
-            if (riadok < 0 || riadok >= Settings.MAP_SQRT_SIZE   || stlpec < 0 || stlpec >= Settings.MAP_SQRT_SIZE) {
-                Terminal.Focus();
-              
-                this.timer.Stop();
-                return;
-            }
-            //this.current_canvas.Children.Clear();
-            this.current_canvas.Children.Remove(robot);
-
-            this.current_canvas = Settings.MAP[riadok, stlpec];
-            this.robot = new Ellipse();
-            this.robot.Width = 50;
-            this.robot.Height = 50;
-            if (Settings.MAP_SQRT_SIZE == 5)
+            if (riadok == 100 && stlpec == 100)
             {
-                this.robot.Width = 35;
-                this.robot.Height = 35;
+                Settings.SILENCE = false;
+                this.index += 1;
             }
-            else if (Settings.MAP_SQRT_SIZE == 7)
+            else if (riadok == -100 && stlpec == -100)
             {
-                this.robot.Width = 20;
-                this.robot.Height = 20;
+                Settings.SILENCE = true;
+                this.index += 1;
             }
-            this.robot.Fill = Brushes.Black;
-            Canvas.SetLeft(this.robot, this.robot.Width - 10);
-            Canvas.SetTop(this.robot, this.robot.Width - 10);
-            Canvas.SetZIndex(this.robot, 1); // Nastavíme z-index elipsy na 1
-
-            this.current_canvas.Children.Add(this.robot);
-            SoundsHandler.play_sound(riadok, stlpec);
-
-            
-
-            this.index += 1;
-            if (this.index >= Robot.positions.Count)
+            else
             {
-                this.timer.Stop();
-                Terminal.AppendText("\n" + "Program úpešne zbehol.");
+                if (riadok < 0 || riadok >= Settings.MAP_SQRT_SIZE || stlpec < 0 || stlpec >= Settings.MAP_SQRT_SIZE)
+                {
+                    Terminal.Focus();
+
+                    this.timer.Stop();
+                    return;
+                }
+                //this.current_canvas.Children.Clear();
+                this.current_canvas.Children.Remove(robot);
+
+                this.current_canvas = Settings.MAP[riadok, stlpec];
+                this.robot = new Ellipse();
+                this.robot.Width = 50;
+                this.robot.Height = 50;
+                if (Settings.MAP_SQRT_SIZE == 5)
+                {
+                    this.robot.Width = 35;
+                    this.robot.Height = 35;
+                }
+                else if (Settings.MAP_SQRT_SIZE == 7)
+                {
+                    this.robot.Width = 20;
+                    this.robot.Height = 20;
+                }
+                this.robot.Fill = Brushes.Black;
+                Canvas.SetLeft(this.robot, this.robot.Width - 10);
+                Canvas.SetTop(this.robot, this.robot.Width - 10);
+                Canvas.SetZIndex(this.robot, 1); // Nastavíme z-index elipsy na 1
+
+                this.current_canvas.Children.Add(this.robot);
+                SoundsHandler.play_sound(riadok, stlpec);
+
+
+
+                this.index += 1;
+                if (this.index >= Robot.positions.Count)
+                {
+                    this.timer.Stop();
+                    Terminal.AppendText("\n" + "Program úpešne zbehol.");
+                }
             }
         }
 

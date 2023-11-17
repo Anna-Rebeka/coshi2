@@ -117,6 +117,18 @@ namespace coshi2
                     result.add(new Print(addSub()));
                 }
 
+                else if ("ticho" == lexAnalyzer.token.ToLower())
+                {
+                    lexAnalyzer.scan();
+                    result.add(new Silence());
+                }
+
+                else if ("nahlas" == lexAnalyzer.token.ToLower())
+                {
+                    lexAnalyzer.scan();
+                    result.add(new Loud());
+                }
+
                 else if ("urob" == lexAnalyzer.token.ToLower())
                 {
                     lexAnalyzer.scan();
@@ -332,6 +344,13 @@ namespace coshi2
         public Syntax expr()
         {
             var result = new Syntax();
+            bool neg = false;
+            if (lexAnalyzer.token.ToLower() == "nie")
+            {
+                neg = true;
+                lexAnalyzer.scan();
+            }
+            lexAnalyzer.scan();
 
             if ("volne" == lexAnalyzer.token || "voľné" == lexAnalyzer.token)
             {
@@ -362,13 +381,7 @@ namespace coshi2
                         break;
                 }
             }
-            else if ("zvuk" == lexAnalyzer.token.ToLower()) {
-                lexAnalyzer.scan();
-                bool neg = false;
-                if (lexAnalyzer.token.ToLower() == "nie") {
-                    neg = true;
-                    lexAnalyzer.scan();
-                }
+            else if ("zvuk" == lexAnalyzer.token.ToLower()) {                
                 lexAnalyzer.scan();
                 string name = lexAnalyzer.token.ToLower();
                 if (!SoundsHandler.sound_codes.ContainsKey(name)) {
@@ -396,7 +409,7 @@ namespace coshi2
             }
             else
             {
-                bool neg = false;
+                neg = false;
                 if (lexAnalyzer.token.ToLower() == "nie")
                 {
                     neg = true;

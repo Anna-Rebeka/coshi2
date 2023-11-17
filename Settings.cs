@@ -14,6 +14,7 @@ namespace coshi2
         public static int MAP_SQRT_SIZE = 3;
         public static int PACKAGE_SIZE = 3;
         public static SoundPackage SOUND_PACKAGE = new SoundPackage("zvierata");
+        public static bool SILENCE = false;
 
         public static void set_size(int size)
         {
