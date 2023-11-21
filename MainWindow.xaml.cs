@@ -4,8 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -24,7 +26,7 @@ namespace coshi2
         public bool map_is_focused = false;
         public bool is_running = false;
         public string soundPackage;
-        private int CarotIndex;
+        private int caretInd;
 
         public List<int[]> positions;
 
@@ -59,10 +61,14 @@ namespace coshi2
             WritePackagesMenu();
             DrawLabels();
 
+            textBox.Focus();
             //spusti kreslenie
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Tick += Draw_Robot;
         }
+
+
+
 
         public void WritePackagesMenu()
         {
@@ -128,6 +134,8 @@ namespace coshi2
 
         public void DrawLabels()
         {
+            Commands.labelnames.Clear();
+
             for (int i = 0; i < Settings.MAP.GetLength(0); i++)
             {
                 for (int j = 0; j < Settings.MAP.GetLength(1); j++)
@@ -160,6 +168,9 @@ namespace coshi2
                                 Foreground = Brushes.Black,
                             };
 
+                            if (!Commands.labelnames.Contains(SoundsHandler.sounds_map[i, j].Name)) {
+                                Commands.labelnames.Add(SoundsHandler.sounds_map[i, j].Name);
+                            }
 
                             // Nastavenie pozície labelu na Canvas
                             Canvas.SetLeft(label, 0);
@@ -185,8 +196,7 @@ namespace coshi2
         private void textBox_TextChanged(object sender, TextChangedEventArgs e)
         {
                 Predict_Commands();
-                UpdateLineNumbers();
-            
+                UpdateLineNumbers();            
         }
 
         private void Predict_Commands() //TODO fix
@@ -214,7 +224,7 @@ namespace coshi2
                 if (zmeneneSlovo != null && zmeneneSlovo.Length >= 2)
                 {                    
                     predictionBox.Items.Clear();
-                    string[] commands = Commands.find_command(zmeneneSlovo.ToLower());
+                    List<string> commands = Commands.find_command(zmeneneSlovo.ToLower());
                     foreach (string command in commands)
                     {
                         predictionBox.Items.Add(command);
@@ -242,15 +252,50 @@ namespace coshi2
             if (openFileDialog.ShowDialog() == true)
             {
                 currentFilePath = openFileDialog.FileName;
-                textBox.Text = File.ReadAllText(currentFilePath);
+
+                using (var reader = new StreamReader(currentFilePath))
+                {
+                    string firstline = "";
+                    if (!reader.EndOfStream)
+                    {
+                        // Ulož prvý riadok do premennej settings
+                        string settings = reader.ReadLine().Trim();
+                        if (!settings.Contains("{") || !settings.Contains("}")) {
+                            MessageBox.Show("Upozornenie: Nepodarilo sa zistiť zvukový balíček.");
+                            firstline = settings;
+                        }
+                        else
+                        {
+                            Settings.set_sound_package(settings.Substring(1, settings.Length - 2));
+                            changeSize(Settings.PACKAGE_SIZE);
+                            DrawLabels();
+                        }
+                    }
+
+                    // Zvyšok súboru sa uloží do textového poľa
+                    textBox.Text = firstline + reader.ReadToEnd();
+                }
             }
         }
 
+
         private void Save_Click(object sender, RoutedEventArgs e)
+        {
+            SaveToFile();
+        }
+
+        private void SaveAs_Click(object sender, RoutedEventArgs e)
+        {
+            SaveToFileAs();
+        }
+
+        private void SaveToFile()
         {
             if (string.IsNullOrEmpty(currentFilePath))
             {
                 var saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "Textové súbory (*.txt)|*.txt|Všetky súbory (*.*)|*.*";
+
                 if (saveFileDialog.ShowDialog() == true)
                 {
                     currentFilePath = saveFileDialog.FileName;
@@ -260,7 +305,34 @@ namespace coshi2
                     return;
                 }
             }
-            File.WriteAllText(currentFilePath, textBox.Text);
+
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(currentFilePath))
+                {
+                    writer.Write("{" + Settings.SOUND_PACKAGE.name + "} \n");
+                    writer.Write(textBox.Text);
+
+                }
+
+                MessageBox.Show("Súbor sa uložil.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Chyba pri ukladaní do súboru: {ex.Message}");
+            }
+        }
+
+        private void SaveToFileAs()
+        {
+            var saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Textové súbory (*.txt)|*.txt|Všetky súbory (*.*)|*.*";
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                currentFilePath = saveFileDialog.FileName;
+                SaveToFile();
+            }
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
@@ -351,10 +423,18 @@ namespace coshi2
 
         }
 
+        private void TextBox_KeyDown(object sender, KeyEventArgs e) {
+            if (e.Key == Key.Tab) {
+                caretInd = textBox.CaretIndex;
+                predictionBox.Focus();
+
+            }
+        }
+
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
-        {          
-            
+        {
+
             if (e.Key == Key.F5 && !this.is_running)
             {
                 try
@@ -370,7 +450,7 @@ namespace coshi2
                     cmp.jumpOverVariables();
                     tree.generate();
                     VirtualMachine.execute_all();
-       
+
 
                     this.index += 1;
                     this.timer.Start();
@@ -402,6 +482,18 @@ namespace coshi2
                 }
 
             }
+
+            if (e.Key == Key.F2) {
+                subor_volba.Focus();
+            }
+            if (e.Key == Key.F1) {
+                Terminal.Focus();
+            }
+            if (e.Key == Key.F4)
+            {
+                textBox.Focus();
+            }
+
 
 
             if (this.map_is_focused)
@@ -436,6 +528,7 @@ namespace coshi2
                 }
                 
             }
+            
         }
 
 
@@ -550,6 +643,7 @@ namespace coshi2
                         string part1 = textBox.Text[0..startIndex];
                         string part2 = textBox.Text.Substring(textBox.CaretIndex);
                         textBox.Text = part1 + selected + part2;
+                        caretInd += selected.Length - 2;
                     }
 
                 }
@@ -557,11 +651,24 @@ namespace coshi2
                 {
 
                 }
+                textBox.Focus();
+                textBox.CaretIndex = caretInd;
+            }
+            if (e.Key == Key.Escape) {
+                textBox.Focus();
+                textBox.CaretIndex = caretInd;
             }
             
         }
+        private void predictionBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //textBox.Focus();
+        }
 
+        private void predictionBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+    
+        }
     }
-
-
 }
+
