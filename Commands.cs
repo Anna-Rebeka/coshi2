@@ -26,9 +26,16 @@ namespace coshi2
             "zvuk"
         };
 
-        public static string[] find_command(string prefix)
+        public static List<string> labelnames = new List<string>();
+
+        public static List<string> find_command(string prefix)
         {
-            return commands.Where(comm => comm.StartsWith(prefix)).ToArray();
+            List<string> foundcomm = new List<string>(commands.Where(comm => comm.StartsWith(prefix)).ToArray());
+            List<string> foundnames = new List<string>(labelnames.Where(comm => comm.StartsWith(prefix)).ToArray());
+
+            HashSet<string> found = new HashSet<string>(foundcomm.Concat(foundnames));
+            
+            return found.ToList();
         }
     }
 }

@@ -9,7 +9,8 @@
         KeyDown="Window_KeyDown"
         Name="Root"
         >
-    <Grid>
+
+    <Grid Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -21,6 +22,7 @@
                 <MenuItem Header="_Nový" Click="New_Click"/>
                 <MenuItem Header="_Otvoriť" Click="Open_Click"/>
                 <MenuItem Header="_Uložiť" Click="Save_Click"/>
+                <MenuItem Header="_Uložiť ako" Click="SaveAs_Click"/>
                 <Separator/>
                 <MenuItem Header="_Koniec" Click="Exit_Click"/>
             </MenuItem>
@@ -63,8 +65,8 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <TextBox x:Name="lineNumberTextBox" VerticalScrollBarVisibility="Disabled" IsReadOnly="True" Padding="5" TextAlignment="Right" TextChanged="lineNumberTextBox_TextChanged" Grid.RowSpan="2" />
-                    <TextBox x:Name="textBox" Grid.Column="1" AcceptsReturn="True" TextChanged="textBox_TextChanged" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
-                    <ListView x:Name="predictionBox" Grid.Column="2" d:ItemsSource="{d:SampleData ItemCount=5}" Width="90" HorizontalAlignment="Right" PreviewKeyDown="ListBox_Selection" Grid.RowSpan="2"/>
+                    <TextBox x:Name="textBox" Grid.Column="1" AcceptsReturn="True" TextChanged="textBox_TextChanged" Grid.ColumnSpan="2" Grid.RowSpan="2" PreviewKeyDown="TextBox_KeyDown"/>
+                    <ListView x:Name="predictionBox" Grid.Column="2" d:ItemsSource="{d:SampleData ItemCount=5}" Width="90" HorizontalAlignment="Right" PreviewKeyDown="ListBox_Selection" Grid.RowSpan="2" GotFocus="predictionBox_GotFocus" SelectionChanged="predictionBox_SelectionChanged"/>
                 </Grid>
             </ScrollViewer>
             <Grid x:Name="graf_plocha" Grid.Column="1">
@@ -93,5 +95,7 @@
         <Grid Grid.Row="2">
             <TextBox Name="Terminal" Background="LightGray" Height="50" IsReadOnly="True"/>
         </Grid>
-    </Grid>
+        <Grid Name="FocusMe" Visibility="Hidden" Focusable="True">
+            </Grid>
+        </Grid>
 </Window>

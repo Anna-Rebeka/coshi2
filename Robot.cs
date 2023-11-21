@@ -66,5 +66,16 @@ namespace coshi2
             positions.Add(new int[] { pos / Settings.MAP_SQRT_SIZE, pos % Settings.MAP_SQRT_SIZE });
         }
 
+
+        public static void silence()
+        {
+            positions.Add(new int[] { -100, -100 });
+        }
+
+
+        public static void loud()
+        {
+            positions.Add(new int[] { 100, 100 });
+        }
     }
 }

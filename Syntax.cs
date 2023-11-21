@@ -552,5 +552,29 @@ namespace coshi2
             }
         }
     }
+
+    public class Silence : RobotCommand
+    {
+        public Silence() : base()
+        {
+        }
+
+        public override void generate()
+        {        //.. generuje inštrukcie pre príkaz dopredu
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_SILENCE); //.. inštrukcia FD dĺžka
+        }
+    }
+
+    public class Loud : RobotCommand
+    {
+        public Loud() : base()
+        {
+        }
+
+        public override void generate()
+        {        //.. generuje inštrukcie pre príkaz dopredu
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_LOUD); //.. inštrukcia FD dĺžka
+        }
+    }
 }
 

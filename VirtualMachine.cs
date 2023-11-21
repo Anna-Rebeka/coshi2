@@ -50,6 +50,10 @@ namespace coshi2
         public static int INSTRUCTION_ISNOTSOUND = 27;
         public static int INSTRUCTION_NOTEQUAL = 28;
 
+        public static int INSTRUCTION_SILENCE = 29;
+        public static int INSTRUCTION_LOUD = 30;
+        public static int INSTRUCTION_PAUSE = 31;
+
 
         public static int[] mem = new int[100];    //pamäť – pole celých čísel 
         public static int counter_adr = mem.Length - 1;
@@ -316,6 +320,23 @@ namespace coshi2
                 int lol = mem[top];
                 int answ = (Robot.position) % (Settings.MAP_SQRT_SIZE) != 0 ? 1 : 0;
                 mem[top] = answ;
+            }
+
+            else if (mem[pc] == INSTRUCTION_SILENCE)
+            {
+                pc = pc + 1;
+                Robot.silence();
+            }
+
+            else if (mem[pc] == INSTRUCTION_LOUD)
+            {
+                pc = pc + 1;
+                Robot.loud();
+            }
+
+            else if (mem[pc] == INSTRUCTION_PAUSE)
+            {
+                
             }
 
             else if (mem[pc] == INSTRUCTION_ISSOUND) {
