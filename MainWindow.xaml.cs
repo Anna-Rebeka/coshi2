@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Runtime;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,7 +21,7 @@ namespace coshi2
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string currentFilePath;
+        //private string currentFilePath;
         private const string NewLineCharacter = "\r\n";
         public Canvas current_canvas;
         public bool map_is_focused = false;
@@ -46,7 +47,6 @@ namespace coshi2
             DrawGrid();
             UpdateLineNumbers();
             this.current_canvas = c1;
-
             //nastavenia
             Settings.MAP = this.get_map();
 
@@ -242,40 +242,27 @@ namespace coshi2
 
         private void New_Click(object sender, RoutedEventArgs e)
         {
-            currentFilePath = null;
+            newFile();
+        }
+
+        private void newFile() {
+            Settings.CURRENTFILEPATH = null;
             textBox.Text = string.Empty;
+            Title = "Coshi2";
         }
 
         private void Open_Click(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new OpenFileDialog();
-            if (openFileDialog.ShowDialog() == true)
-            {
-                currentFilePath = openFileDialog.FileName;
+            openFile();
+        }
 
-                using (var reader = new StreamReader(currentFilePath))
-                {
-                    string firstline = "";
-                    if (!reader.EndOfStream)
-                    {
-                        // Ulož prvý riadok do premennej settings
-                        string settings = reader.ReadLine().Trim();
-                        if (!settings.Contains("{") || !settings.Contains("}")) {
-                            MessageBox.Show("Upozornenie: Nepodarilo sa zistiť zvukový balíček.");
-                            firstline = settings;
-                        }
-                        else
-                        {
-                            Settings.set_sound_package(settings.Substring(1, settings.Length - 2));
-                            changeSize(Settings.PACKAGE_SIZE);
-                            DrawLabels();
-                        }
-                    }
-
-                    // Zvyšok súboru sa uloží do textového poľa
-                    textBox.Text = firstline + reader.ReadToEnd();
-                }
-            }
+        private void openFile()
+        {
+            string code = FilesHandler.open();
+            Title = "Coshi2 - " + Settings.CURRENTFILEPATH;
+            changeSize(Settings.MAP_SQRT_SIZE);
+            DrawLabels();
+            textBox.Text = code;
         }
 
 
@@ -286,53 +273,20 @@ namespace coshi2
 
         private void SaveAs_Click(object sender, RoutedEventArgs e)
         {
-            SaveToFileAs();
-        }
-
-        private void SaveToFile()
-        {
-            if (string.IsNullOrEmpty(currentFilePath))
-            {
-                var saveFileDialog = new SaveFileDialog();
-                saveFileDialog.Filter = "Textové súbory (*.txt)|*.txt|Všetky súbory (*.*)|*.*";
-
-                if (saveFileDialog.ShowDialog() == true)
-                {
-                    currentFilePath = saveFileDialog.FileName;
-                }
-                else
-                {
-                    return;
-                }
-            }
-
-            try
-            {
-                using (StreamWriter writer = new StreamWriter(currentFilePath))
-                {
-                    writer.Write("{" + Settings.SOUND_PACKAGE.name + "} \n");
-                    writer.Write(textBox.Text);
-
-                }
-
-                MessageBox.Show("Súbor sa uložil.");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Chyba pri ukladaní do súboru: {ex.Message}");
-            }
-        }
-
-        private void SaveToFileAs()
-        {
             var saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "Textové súbory (*.txt)|*.txt|Všetky súbory (*.*)|*.*";
 
             if (saveFileDialog.ShowDialog() == true)
             {
-                currentFilePath = saveFileDialog.FileName;
+                Settings.CURRENTFILEPATH = saveFileDialog.FileName;
                 SaveToFile();
             }
+        }
+
+        private void SaveToFile()
+        {
+            FilesHandler.save(textBox.Text);
+            Title = "Coshi2 - " + Settings.CURRENTFILEPATH;
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
@@ -378,7 +332,7 @@ namespace coshi2
             changeSize(7);
         }
 
-        private void changeSize(int size) {
+        public void changeSize(int size) {
             Settings.set_size(size);
             uniformGrid.Children.Clear();
 
@@ -494,6 +448,32 @@ namespace coshi2
                 textBox.Focus();
             }
 
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.S)
+            {
+                // Zavolajte vašu funkciu save
+                SaveToFile();
+
+                // Zastavte ďalšie spracovanie klávesnice
+                e.Handled = true;
+            }
+
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.O)
+            {
+                // Zavolajte vašu funkciu save
+                openFile();
+
+                // Zastavte ďalšie spracovanie klávesnice
+                e.Handled = true;
+            }
+
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.N)
+            {
+                // Zavolajte vašu funkciu save
+                newFile();
+
+                // Zastavte ďalšie spracovanie klávesnice
+                e.Handled = true;
+            }
 
 
             if (this.map_is_focused)
