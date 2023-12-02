@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 
 namespace coshi2
@@ -18,6 +20,9 @@ namespace coshi2
         public static SoundPackage SOUND_PACKAGE = new SoundPackage("zvierata");
         public static bool SILENCE = false;
         public static string CURRENTFILEPATH = null;
+        public static Theme THEME = Theme.Light;
+        public static Brush FG = Brushes.Black;
+        public static Brush BG = Brushes.White;
 
         public static void set_size(int size)
         {
@@ -37,5 +42,14 @@ namespace coshi2
             set_size(PACKAGE_SIZE);
             SoundsHandler.fill_sound_map();   
         }
+
+    }
+
+    public enum Theme
+    {
+        Light = 0,
+        Dark,
+        Gay,
+        Rainbow
     }
 }

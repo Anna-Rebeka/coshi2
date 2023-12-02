@@ -15,6 +15,7 @@ namespace coshi2
             "vpravo", 
             "hore", 
             "dole", 
+            "urob",
             "kým", "kym", 
             "opakuj",
             "krát",
@@ -23,7 +24,9 @@ namespace coshi2
             "menší",
             "vacsi", "väčší",
             "rovný",
-            "zvuk"
+            "zvuk",
+            "ticho",
+            "nahlas"
         };
 
         public static List<string> labelnames = new List<string>();
@@ -36,6 +39,20 @@ namespace coshi2
             HashSet<string> found = new HashSet<string>(foundcomm.Concat(foundnames));
             
             return found.ToList();
+        }
+
+        public static string[] get_block_starts()
+        {
+            return new string[]
+            {
+                "kým",
+                "kym",
+                "do ",
+                "ak",
+                "opakuj",
+                "zobraz",
+                "urob"
+            };
         }
     }
 }

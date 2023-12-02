@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
+
 namespace coshi2
 {
     /// <summary>
@@ -28,6 +29,10 @@ namespace coshi2
         public bool is_running = false;
         public string soundPackage;
         private int caretInd;
+        public Ellipse robot;
+        double sirkaC;
+        double vyskaC;
+
 
         public List<int[]> positions;
 
@@ -46,9 +51,9 @@ namespace coshi2
             InitializeComponent();
             DrawGrid();
             UpdateLineNumbers();
-            this.current_canvas = c1;
             //nastavenia
             Settings.MAP = this.get_map();
+
 
             //nacitaj zvukove balicky
             string[] subdirectories = Directory.GetDirectories(SoundsHandler.mainDirectory);
@@ -60,6 +65,8 @@ namespace coshi2
             changeSize(Settings.PACKAGE_SIZE);
             WritePackagesMenu();
             DrawLabels();
+            Draw_User(0, 0);
+
 
             textBox.Focus();
             //spusti kreslenie
@@ -113,17 +120,35 @@ namespace coshi2
             uniformGrid.Rows = Settings.MAP_SQRT_SIZE;
             uniformGrid.Columns = Settings.MAP_SQRT_SIZE;
 
-            for (int i = 2; i <= Settings.MAP_SQRT_SIZE * Settings.MAP_SQRT_SIZE; i++)
+            for (int i = 1; i <= Settings.MAP_SQRT_SIZE * Settings.MAP_SQRT_SIZE; i++)
             {
+
+        
                 Border border = new Border();
-                border.BorderBrush = Brushes.Black;
+                border.BorderBrush = Settings.FG;
                 border.BorderThickness = new Thickness(0.5);
 
                 Canvas canvas = new Canvas();
+                canvas.Background = Settings.BG;
                 canvas.Name = "c" + i;
                 canvas.Focusable = true;
 
+                /*
+                canvas.SizeChanged += (sender, e) =>
+                {
+                    sirkaC = canvas.ActualWidth;
+                    vyskaC = canvas.ActualHeight;
+                    Canvas.SetTop(canvas, sirkaC / 2);
+                    Canvas.SetLeft(canvas, vyskaC / 2);
 
+                }; */
+
+                //canvas.Height = 50;
+
+                if (i == 1)
+                {
+                    this.current_canvas = canvas;
+                }
 
                 border.Child = canvas;
 
@@ -165,7 +190,7 @@ namespace coshi2
                             {
                                 Content = SoundsHandler.sounds_map[i, j].Name, // Názov zo sounds_map
                                 FontSize = 12,
-                                Foreground = Brushes.Black,
+                                Foreground = Settings.FG
                             };
 
                             if (!Commands.labelnames.Contains(SoundsHandler.sounds_map[i, j].Name)) {
@@ -335,39 +360,11 @@ namespace coshi2
         public void changeSize(int size) {
             Settings.set_size(size);
             uniformGrid.Children.Clear();
-
-            Border border = new Border();
-            border.BorderBrush = Brushes.Black;
-            border.BorderThickness = new Thickness(1);
-            Canvas canvas = new Canvas();
-            canvas.Name = "c1";
-            canvas.Focusable = true;
-            border.Child = canvas;
-            this.current_canvas = canvas;
-
-            this.robot = new Ellipse();
-            this.robot.Width = 50;
-            this.robot.Height = 50;
-            if (size == 5) {
-                this.robot.Width = 35;
-                this.robot.Height = 35;
-            }
-            else if (size == 7)
-            {
-                this.robot.Width = 20;
-                this.robot.Height = 20;
-            }
-            this.robot.Fill = Brushes.Black;
-            Canvas.SetLeft(this.robot, this.robot.Width - 10);
-            Canvas.SetTop(this.robot, this.robot.Width - 10);
-            this.current_canvas.Children.Add(this.robot);
-
-            uniformGrid.Children.Add(border);
             DrawGrid();
             Settings.MAP = this.get_map();
             SoundsHandler.fill_sound_map();
             DrawLabels();
-
+            Draw_User(0, 0);
         }
 
 
@@ -388,6 +385,25 @@ namespace coshi2
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Key == Key.F1)
+            {
+                Terminal.Focus();
+            }
+
+            if (e.Key == Key.F2)
+            {
+                subor_volba.Focus();
+            }
+
+            if (e.Key == Key.F3)
+            {
+                FindNextKeyword();
+            }
+
+            if (e.Key == Key.F4)
+            {
+                textBox.Focus();
+            }
 
             if (e.Key == Key.F5 && !this.is_running)
             {
@@ -437,21 +453,24 @@ namespace coshi2
 
             }
 
-            if (e.Key == Key.F2) {
-                subor_volba.Focus();
-            }
-            if (e.Key == Key.F1) {
-                Terminal.Focus();
-            }
-            if (e.Key == Key.F4)
+            if (e.Key == Key.F7)
             {
-                textBox.Focus();
+                SwitchColorTheme(sender, null);
             }
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.S)
             {
-                // Zavolajte vašu funkciu save
+                // Zavolajte vašu funkciu 
                 SaveToFile();
+
+                // Zastavte ďalšie spracovanie klávesnice
+                e.Handled = true;
+            }
+
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.LeftShift) && e.Key == Key.S)
+            {
+                // Zavolajte vašu funkciu 
+                SaveAs_Click(sender, null);
 
                 // Zastavte ďalšie spracovanie klávesnice
                 e.Handled = true;
@@ -459,7 +478,7 @@ namespace coshi2
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.O)
             {
-                // Zavolajte vašu funkciu save
+                // Zavolajte vašu funkciu 
                 openFile();
 
                 // Zastavte ďalšie spracovanie klávesnice
@@ -468,11 +487,40 @@ namespace coshi2
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.N)
             {
-                // Zavolajte vašu funkciu save
+                // Zavolajte vašu funkciu 
                 newFile();
 
                 // Zastavte ďalšie spracovanie klávesnice
                 e.Handled = true;
+            }
+
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.OemPlus)
+            {
+                Increase_Font(sender, null);
+
+                // Zastavte ďalšie spracovanie klávesnice
+                e.Handled = true;
+                    
+            }
+
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.OemMinus)
+            {
+                // Zavolajte vašu funkciu 
+                Decrease_Font(sender, null);
+
+                // Zastavte ďalšie spracovanie klávesnice
+                e.Handled = true;
+
+            }
+
+            if (Keyboard.IsKeyDown(Key.LeftAlt) && e.Key == Key.F4)
+            {
+                // Zavolajte vašu funkciu 
+                Exit_Click(sender, null);
+
+                // Zastavte ďalšie spracovanie klávesnice
+                e.Handled = true;
+
             }
 
 
@@ -505,10 +553,38 @@ namespace coshi2
                 if (i != i0 || j != j0)
                 {
                     Draw_User(i, j);
+                    SoundsHandler.play_sound(i, j);
                 }
-                
+
             }
             
+        }
+
+        private void FindNextKeyword()
+        {
+            var headerPattern = string.Join("|", Commands.get_block_starts());
+            var regex = new System.Text.RegularExpressions.Regex(headerPattern);
+            var matches = regex.Matches(textBox.Text);
+            int caret = textBox.CaretIndex;
+
+            // prejdi vsetky nalezi kluc. slov a najdi najblizsi dalsi
+            foreach (System.Text.RegularExpressions.Match match in matches)
+            {
+                if (match.Index > caret)
+                {
+                    textBox.CaretIndex = match.Index;
+                    return;
+                }
+            }
+
+            // ak ani jeden nie je za aktualny caretom, nastav prvy vyskyt - cyklicke haldanie
+            if (matches.Count > 0)
+            {
+                textBox.CaretIndex = matches[0].Index;
+                return;
+            }
+
+            //inak zostan kde si
         }
 
 
@@ -529,15 +605,17 @@ namespace coshi2
                 this.robot.Width = 20;
                 this.robot.Height = 20;
             }
-            this.robot.Fill = Brushes.Black;
+            this.robot.Fill = Settings.FG;
+            //Canvas.SetLeft(this.robot, sirkaC / 2);
+            //Canvas.SetTop(this.robot, vyskaC / 2); 
+
             Canvas.SetLeft(this.robot, this.robot.Width - 10);
-            Canvas.SetTop(this.robot, this.robot.Width - 10);
+            Canvas.SetTop(this.robot, this.robot.Width  - 10); 
             Canvas.SetZIndex(this.robot, 1); // Nastavíme z-index elipsy na 1
 
             this.current_canvas.Children.Add(this.robot);
-            SoundsHandler.play_sound(riadok, stlpec);
         }
-
+        
         public void Draw_Robot(object sender, EventArgs e)
         {
             if (Robot.positions.Count == 1 || this.index >= Robot.positions.Count)
@@ -564,7 +642,6 @@ namespace coshi2
                 if (riadok < 0 || riadok >= Settings.MAP_SQRT_SIZE || stlpec < 0 || stlpec >= Settings.MAP_SQRT_SIZE)
                 {
                     Terminal.Focus();
-
                     this.timer.Stop();
                     return;
                 }
@@ -585,7 +662,7 @@ namespace coshi2
                     this.robot.Width = 20;
                     this.robot.Height = 20;
                 }
-                this.robot.Fill = Brushes.Black;
+                this.robot.Fill = Settings.FG;
                 Canvas.SetLeft(this.robot, this.robot.Width - 10);
                 Canvas.SetTop(this.robot, this.robot.Width - 10);
                 Canvas.SetZIndex(this.robot, 1); // Nastavíme z-index elipsy na 1
@@ -648,6 +725,85 @@ namespace coshi2
         private void predictionBox_GotFocus(object sender, RoutedEventArgs e)
         {
     
+        }
+
+        private void SwitchColorTheme(object sender, RoutedEventArgs e)
+        {
+            // ak je dark daj light inak daj dark
+            Settings.THEME = (Theme.Dark == Settings.THEME) ? Theme.Light : Theme.Dark;
+            Settings.FG = (Theme.Dark == Settings.THEME) ? Brushes.White : Brushes.Black;
+            Settings.BG = (Theme.Dark == Settings.THEME) ? Brushes.Black : Brushes.White;
+
+            if(Settings.THEME == Theme.Dark)
+            {
+                ThemeState.Header = "_Svetlý režim";
+            }
+            else
+            {
+                ThemeState.Header = "_Tmavý režim";
+            }
+
+            textBox.Background = Settings.BG;
+            textBox.Foreground = Settings.FG;
+
+            Terminal.Background = Settings.BG;
+            Terminal.Foreground = Settings.FG;
+            
+            lineNumberTextBox.Background = Settings.BG;
+            lineNumberTextBox.Foreground = Settings.FG;
+
+            predictionBox.Background = Settings.BG;
+            predictionBox.Foreground = Settings.FG;
+
+            uniformGrid.Children.Clear();
+            DrawGrid();
+            Settings.MAP = this.get_map();
+            //SoundsHandler.fill_sound_map();
+            DrawLabels();
+
+            int x = (Robot.position - 1) / Settings.MAP_SQRT_SIZE;
+            int y = (Robot.position - 1) % Settings.MAP_SQRT_SIZE;
+            Draw_User(x, y);
+        }
+
+        private void Increase_Font(object sender, RoutedEventArgs e)
+        {
+            textBox.FontSize += 2.0;
+        }
+
+        private void Decrease_Font(object sender, RoutedEventArgs e)
+        {
+            textBox.FontSize -= 2.0;
+        }
+
+        private void Show_Help(object sender, RoutedEventArgs e)
+        {
+            Window pomocneOkno = new Window();
+            pomocneOkno.Title = "Pomoc - Klávesové skratky";
+            pomocneOkno.Width = 500;
+            pomocneOkno.Height = 400;
+            pomocneOkno.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+
+            // Text s klávesovými skratkami
+            TextBlock textBlock = new TextBlock();
+            textBlock.Text = "Klávesové skratky:\n\n" +
+                "CTRL + N - Nový\n" +
+                "CTRL + S - Uložiť\n" +
+                "CTRL + O - Otvoriť\n" +
+                "Alt + F4 - Koniec\n\n\n" +
+                "Fn Funkcie:\n\n"+
+                "F1 - Terminál\n" +
+                "F2 - Menu\n" +
+                "F3 - Skok po blokoch kódu\n" +
+                "F4 - Editor\n" +
+                "F5 - Spusti program\n" +
+                "F6 - Pohyb robotom\n" +
+                "F7 - Zmena témy\n";
+            textBlock.TextAlignment = TextAlignment.Center;
+
+            pomocneOkno.Content = textBlock;
+
+            pomocneOkno.ShowDialog();
         }
     }
 }

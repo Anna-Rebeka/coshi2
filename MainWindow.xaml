@@ -19,17 +19,12 @@
         </Grid.RowDefinitions>
         <Menu Name="menu" Grid.Row="0">
             <MenuItem Name="subor_volba" Header="_Súbor">
-                <MenuItem Header="_Nový" Click="New_Click"/>
-                <MenuItem Header="_Otvoriť" Click="Open_Click"/>
-                <MenuItem Header="_Uložiť" Click="Save_Click"/>
-                <MenuItem Header="_Uložiť ako" Click="SaveAs_Click"/>
+                <MenuItem Header="_Nový" InputGestureText="Ctrl+N" Click="New_Click"/>
+                <MenuItem Header="_Otvoriť" InputGestureText="Ctrl+O" Click="Open_Click"/>
+                <MenuItem Header="_Uložiť" InputGestureText="Ctrl+S" Click="Save_Click"/>
+                <MenuItem Header="_Uložiť ako" InputGestureText="Ctrl+Shift+N" Click="SaveAs_Click"/>
                 <Separator/>
-                <MenuItem Header="_Koniec" Click="Exit_Click"/>
-            </MenuItem>
-            <MenuItem Header="_Upraviť">
-                <MenuItem Header="_Kopírovať"/>
-                <MenuItem Header="_Vystrihnúť"/>
-                <MenuItem Header="_Vložiť"/>
+                <MenuItem Header="_Koniec" InputGestureText="Alt+F4" Click="Exit_Click"/>
             </MenuItem>
             <MenuItem Header="_Formát">
                 <MenuItem Header="_Odsadiť"/>
@@ -38,14 +33,18 @@
                 <MenuItem Header="_Zarovnať na stred"/>
             </MenuItem>
             <MenuItem Header="_Nastavenia">
+                <MenuItem Name="soundPackagesMenu" Header="_Zvukové balíčky"/>
                 <MenuItem Header="_Veľkosť plochy">
                     <MenuItem Header="_3x3" Click="size3_Click"/>
                     <MenuItem Header="_5x5" Click="size5_Click"/>
                     <MenuItem Header="_7x7" Click="size7_Click"/>
                 </MenuItem>
-                <MenuItem Name="soundPackagesMenu" Header="_Zvukové balíčky">
+                <MenuItem Header="Veľkosť textu">
+                    <MenuItem Header="_Väčší" Click="Increase_Font" InputGestureText="Ctrl+"/>
+                    <MenuItem Header="_Menší" Click="Decrease_Font" InputGestureText="Ctrl-"/>
                 </MenuItem>
-                <MenuItem Header="_Pomoc"/>
+                <MenuItem Name="ThemeState" Header="_Tmavý režim" Click="SwitchColorTheme"/>
+                <MenuItem Header="_Pomoc"  Click="Show_Help" InputGestureText="Ctrl+H" />
             </MenuItem>
         </Menu>
         <Grid Grid.Row="1">
@@ -83,11 +82,7 @@
                                 <Setter Property="StrokeThickness" Value="1"/>
                             </Style>
                         </UniformGrid.Resources>
-                        <Border BorderBrush="Black" BorderThickness="0.5">
-                            <Canvas x:Name="c1" Focusable="True">
-                                <Ellipse x:Name="robot" Width="50" Height="50" Fill="Black" Focusable="True" VerticalAlignment="Top" HorizontalAlignment="Left" Canvas.Left="41" Canvas.Top="35"/>
-                            </Canvas>
-                        </Border>
+                        
                     </UniformGrid>
                 </Border>
             </Grid>
