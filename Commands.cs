@@ -26,7 +26,8 @@ namespace coshi2
             "rovný",
             "zvuk",
             "ticho",
-            "nahlas"
+            "nahlas",
+            "voľné"
         };
 
         public static List<string> labelnames = new List<string>();

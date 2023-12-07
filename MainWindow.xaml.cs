@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Runtime;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -49,6 +50,9 @@ namespace coshi2
             //priprav canvas
             Console.WriteLine();
             InitializeComponent();
+            //WindowStyle = WindowStyle.None; // Skryjte okraj okna
+            WindowState = WindowState.Maximized; // Maximalizujte
+
             DrawGrid();
             UpdateLineNumbers();
             //nastavenia
@@ -66,7 +70,6 @@ namespace coshi2
             WritePackagesMenu();
             DrawLabels();
             Draw_User(0, 0);
-
 
             textBox.Focus();
             //spusti kreslenie
@@ -376,9 +379,15 @@ namespace coshi2
 
         private void TextBox_KeyDown(object sender, KeyEventArgs e) {
             if (e.Key == Key.Tab) {
-                caretInd = textBox.CaretIndex;
-                predictionBox.Focus();
-
+                if (predictionBox.Items.Count > 0)
+                {
+                    caretInd = textBox.CaretIndex;
+                    predictionBox.Focus();
+                }
+                else
+                {
+                    e.Handled = true;
+                }
             }
         }
 
@@ -423,6 +432,7 @@ namespace coshi2
 
 
                     this.index += 1;
+
                     this.timer.Start();
                 }
                 catch (Exception ex)
@@ -593,24 +603,33 @@ namespace coshi2
 
             this.current_canvas = Settings.MAP[riadok, stlpec];
             this.robot = new Ellipse();
-            this.robot.Width = 50;
-            this.robot.Height = 50;
+            this.robot.Width = 80;
+            this.robot.Height = 80;
+
+            if (Settings.MAP_SQRT_SIZE == 3)
+            {
+                Canvas.SetLeft(this.robot, this.robot.Width - 30);
+                Canvas.SetTop(this.robot, this.robot.Width - 30);
+            }
+                
+
             if (Settings.MAP_SQRT_SIZE == 5)
             {
-                this.robot.Width = 35;
-                this.robot.Height = 35;
+                Canvas.SetLeft(this.robot, this.robot.Width - 40);
+                Canvas.SetTop(this.robot, this.robot.Width - 40);
+                this.robot.Width = 50;
+                this.robot.Height = 50;
             }
             else if (Settings.MAP_SQRT_SIZE == 7)
             {
-                this.robot.Width = 20;
-                this.robot.Height = 20;
+                Canvas.SetLeft(this.robot, this.robot.Width - 50);
+                Canvas.SetTop(this.robot, this.robot.Width - 50);
+                this.robot.Width = 50;
+                this.robot.Height = 50;
             }
             this.robot.Fill = Settings.FG;
             //Canvas.SetLeft(this.robot, sirkaC / 2);
             //Canvas.SetTop(this.robot, vyskaC / 2); 
-
-            Canvas.SetLeft(this.robot, this.robot.Width - 10);
-            Canvas.SetTop(this.robot, this.robot.Width  - 10); 
             Canvas.SetZIndex(this.robot, 1); // Nastavíme z-index elipsy na 1
 
             this.current_canvas.Children.Add(this.robot);
@@ -650,21 +669,33 @@ namespace coshi2
 
                 this.current_canvas = Settings.MAP[riadok, stlpec];
                 this.robot = new Ellipse();
-                this.robot.Width = 50;
-                this.robot.Height = 50;
+
+                this.robot.Width = 80;
+                this.robot.Height = 80;
+
+                if (Settings.MAP_SQRT_SIZE == 3)
+                {
+                    Canvas.SetLeft(this.robot, this.robot.Width - 30);
+                    Canvas.SetTop(this.robot, this.robot.Width - 30);
+                }
+
+
                 if (Settings.MAP_SQRT_SIZE == 5)
                 {
-                    this.robot.Width = 35;
-                    this.robot.Height = 35;
+                    Canvas.SetLeft(this.robot, this.robot.Width - 40);
+                    Canvas.SetTop(this.robot, this.robot.Width - 40);
+                    this.robot.Width = 50;
+                    this.robot.Height = 50;
                 }
                 else if (Settings.MAP_SQRT_SIZE == 7)
                 {
-                    this.robot.Width = 20;
-                    this.robot.Height = 20;
+                    Canvas.SetLeft(this.robot, this.robot.Width - 50);
+                    Canvas.SetTop(this.robot, this.robot.Width - 50);
+                    this.robot.Width = 50;
+                    this.robot.Height = 50;
                 }
                 this.robot.Fill = Settings.FG;
-                Canvas.SetLeft(this.robot, this.robot.Width - 10);
-                Canvas.SetTop(this.robot, this.robot.Width - 10);
+
                 Canvas.SetZIndex(this.robot, 1); // Nastavíme z-index elipsy na 1
 
                 this.current_canvas.Children.Add(this.robot);
@@ -768,11 +799,21 @@ namespace coshi2
 
         private void Increase_Font(object sender, RoutedEventArgs e)
         {
+            if (textBox.FontSize >= 32)
+            {
+                return;
+            }
+            lineNumberTextBox.FontSize += 2.0;
             textBox.FontSize += 2.0;
         }
 
         private void Decrease_Font(object sender, RoutedEventArgs e)
         {
+            if (textBox.FontSize <= 10)
+            {
+                return;
+            }
+            lineNumberTextBox.FontSize -= 2.0;
             textBox.FontSize -= 2.0;
         }
 
