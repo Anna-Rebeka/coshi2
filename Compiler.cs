@@ -409,13 +409,6 @@ namespace coshi2
             }
             else
             {
-                neg = false;
-                if (lexAnalyzer.token.ToLower() == "nie")
-                {
-                    neg = true;
-                    lexAnalyzer.scan();
-                }
-                lexAnalyzer.scan();
                 result = compare(neg);
             }
 

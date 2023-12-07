@@ -45,6 +45,8 @@ namespace coshi2
         public static string open()
         {
             var openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+
             if (openFileDialog.ShowDialog() == true)
             {
                 Settings.CURRENTFILEPATH = openFileDialog.FileName;

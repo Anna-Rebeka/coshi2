@@ -24,10 +24,12 @@ namespace coshi2
             "menší",
             "vacsi", "väčší",
             "rovný",
+            "pričítaj",
+            "odčítaj",
             "zvuk",
             "ticho",
             "nahlas",
-            "voľné"
+            "voľné"  
         };
 
         public static List<string> labelnames = new List<string>();
