@@ -10,6 +10,16 @@
         Name="Root"
         >
 
+    <Window.CommandBindings>
+        <CommandBinding Command="Close" Executed="CloseMyApp"/>
+    </Window.CommandBindings>
+
+
+    <Window.InputBindings>
+        <KeyBinding Key="F4" Modifiers="Alt" Command="Close"/>
+
+    </Window.InputBindings>
+
     <Grid Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -26,12 +36,14 @@
                 <Separator/>
                 <MenuItem Header="_Koniec" InputGestureText="Alt+F4" Click="Exit_Click"/>
             </MenuItem>
+            <!--
             <MenuItem Header="_Formát">
                 <MenuItem Header="_Odsadiť"/>
                 <MenuItem Header="_Zarovnať doľava"/>
                 <MenuItem Header="_Zarovnať doprava"/>
                 <MenuItem Header="_Zarovnať na stred"/>
             </MenuItem>
+            -->
             <MenuItem Header="_Nastavenia">
                 <MenuItem Name="soundPackagesMenu" Header="_Zvukové balíčky"/>
                 <MenuItem Header="_Veľkosť plochy">

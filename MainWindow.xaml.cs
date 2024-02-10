@@ -12,6 +12,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
@@ -27,6 +28,7 @@ namespace coshi2
         private const string NewLineCharacter = "\r\n";
         public Canvas current_canvas;
         public bool map_is_focused = false;
+        public bool terminal_is_focused = false;
         public bool is_running = false;
         public string soundPackage;
         private int caretInd;
@@ -89,7 +91,7 @@ namespace coshi2
                 string[] packageDirectories = Directory.GetDirectories(soundsDirectory);
 
                 foreach (string packageDirectory in packageDirectories)
-                {  
+                {
                     string packageName = new DirectoryInfo(packageDirectory).Name;
                     MenuItem packageMenuItem = new MenuItem { Header = packageName };
                     packageMenuItem.Click += SoundPackageMenuItem_Click;
@@ -99,7 +101,7 @@ namespace coshi2
                         packageMenuItem.IsChecked = true;
                     }
                 }
-                
+
             }
         }
 
@@ -107,7 +109,7 @@ namespace coshi2
         {
             if (sender is MenuItem menuItem)
             {
-                foreach(MenuItem item in soundPackagesMenu.Items)
+                foreach (MenuItem item in soundPackagesMenu.Items)
                 {
                     item.IsChecked = false;
                 }
@@ -126,7 +128,7 @@ namespace coshi2
             for (int i = 1; i <= Settings.MAP_SQRT_SIZE * Settings.MAP_SQRT_SIZE; i++)
             {
 
-        
+
                 Border border = new Border();
                 border.BorderBrush = Settings.FG;
                 border.BorderThickness = new Thickness(0.5);
@@ -208,7 +210,7 @@ namespace coshi2
                             // Pridanie labelu do príslušného Canvas
                             Settings.MAP[i, j].Children.Add(label);
                         }
-                    }  
+                    }
                 }
             }
         }
@@ -223,8 +225,8 @@ namespace coshi2
 
         private void textBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-                Predict_Commands();
-                UpdateLineNumbers();            
+            Predict_Commands();
+            UpdateLineNumbers();
         }
 
         private void Predict_Commands() //TODO fix
@@ -248,9 +250,9 @@ namespace coshi2
                 {
                     zmeneneSlovo = textBox.Text.Substring(startIndex, currentCursorPosition - startIndex + 1);
                 }
-                
+
                 if (zmeneneSlovo != null && zmeneneSlovo.Length >= 2)
-                {                    
+                {
                     predictionBox.Items.Clear();
                     List<string> commands = Commands.find_command(zmeneneSlovo.ToLower());
                     foreach (string command in commands)
@@ -377,6 +379,27 @@ namespace coshi2
 
         }
 
+
+        private void CloseMyApp(object sender, RoutedEventArgs e) {
+            MessageBoxResult result = MessageBox.Show("Neuložené zmeny budú stratené. Chcete ich uložiť a zatvoriť aplikáciu?", "Upozornenie", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+            if (result == MessageBoxResult.Yes)
+            {
+                SaveToFile(); // Uložiť zmeny
+                Application.Current.Shutdown(); // Zatvoriť aplikáciu
+                e.Handled = true; // Zastaviť ďalšie spracovanie klávesnice
+            }
+            else if (result == MessageBoxResult.No)
+            {
+                Application.Current.Shutdown(); // Zatvoriť aplikáciu
+                e.Handled = true; // Zastaviť ďalšie spracovanie klávesnice
+            }
+            else
+            {
+                e.Handled = true; // Zastaviť ďalšie spracovanie klávesnice
+            }
+        }
+
+
         private void TextBox_KeyDown(object sender, KeyEventArgs e) {
             if (e.Key == Key.Tab) {
                 if (predictionBox.Items.Count > 0)
@@ -392,11 +415,22 @@ namespace coshi2
         }
 
 
+      
+
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.F1)
             {
-                Terminal.Focus();
+                if (terminal_is_focused)
+                {
+                    textBox.Focus();
+                    terminal_is_focused = false;
+                }
+                else
+                {
+                    Terminal.Focus();
+                    terminal_is_focused = true;
+                }
             }
 
             if (e.Key == Key.F2)
@@ -409,10 +443,6 @@ namespace coshi2
                 FindNextKeyword();
             }
 
-            if (e.Key == Key.F4)
-            {
-                textBox.Focus();
-            }
 
             if (e.Key == Key.F5 && !this.is_running)
             {
@@ -525,12 +555,8 @@ namespace coshi2
 
             if (Keyboard.IsKeyDown(Key.LeftAlt) && e.Key == Key.F4)
             {
-                // Zavolajte vašu funkciu 
-                Exit_Click(sender, null);
-
-                // Zastavte ďalšie spracovanie klávesnice
-                e.Handled = true;
-
+                //
+                 
             }
 
 
@@ -640,7 +666,7 @@ namespace coshi2
             if (Robot.positions.Count == 1 || this.index >= Robot.positions.Count)
             {
                 this.timer.Stop();
-                Terminal.AppendText("\n" + "Program úpešne zbehol.");
+                Terminal.Text = "Program úspešne zbehol.";
                 return;
             }
             int riadok = Robot.positions[this.index][0];
@@ -707,7 +733,7 @@ namespace coshi2
                 if (this.index >= Robot.positions.Count)
                 {
                     this.timer.Stop();
-                    Terminal.AppendText("\n" + "Program úpešne zbehol.");
+                    Terminal.Text = "Program úspešne zbehol.";
                 }
             }
         }
@@ -833,7 +859,7 @@ namespace coshi2
                 "CTRL + O - Otvoriť\n" +
                 "Alt + F4 - Koniec\n\n\n" +
                 "Fn Funkcie:\n\n"+
-                "F1 - Terminál\n" +
+                "F1 - Prepínač medzi terminálom a kódom\n" +
                 "F2 - Menu\n" +
                 "F3 - Skok po blokoch kódu\n" +
                 "F4 - Editor\n" +
