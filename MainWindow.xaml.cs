@@ -70,9 +70,10 @@ namespace coshi2
             }
             changeSize(Settings.PACKAGE_SIZE);
             WritePackagesMenu();
-            DrawLabels();
-            Draw_User(0, 0);
 
+            //this.current_canvas = Settings.MAP[0,0];
+
+            //Draw_User(0, 0);
             textBox.Focus();
             //spusti kreslenie
             timer.Interval = TimeSpan.FromSeconds(1);
@@ -138,21 +139,12 @@ namespace coshi2
                 canvas.Name = "c" + i;
                 canvas.Focusable = true;
 
-                /*
-                canvas.SizeChanged += (sender, e) =>
-                {
-                    sirkaC = canvas.ActualWidth;
-                    vyskaC = canvas.ActualHeight;
-                    Canvas.SetTop(canvas, sirkaC / 2);
-                    Canvas.SetLeft(canvas, vyskaC / 2);
-
-                }; */
-
-                //canvas.Height = 50;
+             
 
                 if (i == 1)
                 {
                     this.current_canvas = canvas;
+
                 }
 
                 border.Child = canvas;
@@ -291,6 +283,8 @@ namespace coshi2
             string code = FilesHandler.open();
             Title = "Coshi2 - " + Settings.CURRENTFILEPATH;
             changeSize(Settings.MAP_SQRT_SIZE);
+
+
             DrawLabels();
             textBox.Text = code;
         }
@@ -613,7 +607,7 @@ namespace coshi2
                 }
             }
 
-            // ak ani jeden nie je za aktualny caretom, nastav prvy vyskyt - cyklicke haldanie
+            // ak ani jeden nie je za aktualny caretom, nastav prvy vyskyt - cyklicke hladanie
             if (matches.Count > 0)
             {
                 textBox.CaretIndex = matches[0].Index;
@@ -624,7 +618,14 @@ namespace coshi2
         }
 
 
-        public void Draw_User(int riadok, int stlpec) {
+       
+    
+
+
+
+       
+        public void Draw_User(int riadok, int stlpec)
+        {
             this.current_canvas.Children.Remove(robot);
 
             this.current_canvas = Settings.MAP[riadok, stlpec];
@@ -637,7 +638,7 @@ namespace coshi2
                 Canvas.SetLeft(this.robot, this.robot.Width - 30);
                 Canvas.SetTop(this.robot, this.robot.Width - 30);
             }
-                
+
 
             if (Settings.MAP_SQRT_SIZE == 5)
             {
@@ -654,14 +655,12 @@ namespace coshi2
                 this.robot.Height = 50;
             }
             this.robot.Fill = Settings.FG;
-            //Canvas.SetLeft(this.robot, sirkaC / 2);
-            //Canvas.SetTop(this.robot, vyskaC / 2); 
-            Canvas.SetZIndex(this.robot, 1); // Nastavíme z-index elipsy na 1
+
+            Canvas.SetZIndex(this.robot, 1);
 
             this.current_canvas.Children.Add(this.robot);
         }
-
-
+        
 
         public void Draw_Robot(object sender, EventArgs e)
         {
@@ -708,7 +707,7 @@ namespace coshi2
         private void DrawRobotOnCanvas(int row, int column)
         {
             double canvasSize = CalculateCanvasSize();
-            double robotSize = canvasSize / 2; // Veľkosť robota je závislá na veľkosti plátna a počtu políčok v MAP_SQRT_SIZE
+            double robotSize = canvasSize / 2; 
 
             this.current_canvas.Children.Remove(robot);
 
@@ -731,16 +730,14 @@ namespace coshi2
 
         private double CalculateCanvasSize()
         {
-            // Vrátiť veľkosť canvasu, môžete to získať z this.current_canvas.Width alebo .Height
             if (this.current_canvas == null)
             {
-                return 0; // Ak current_canvas nie je inicializovaný, vrátiť nulu alebo vhodnú predvolenú hodnotu
+                return 0;
             }
 
-            double canvasWidth = this.current_canvas.ActualWidth; // Získanie šírky canvasu
-            double canvasHeight = this.current_canvas.ActualHeight; // Získanie výšky canvasu
+            double canvasWidth = this.current_canvas.ActualWidth; 
+            double canvasHeight = this.current_canvas.ActualHeight; 
 
-            // Vrátiť menšiu z hodnôt, čo predstavuje väčšiu zložku veľkosti
             return Math.Min(canvasWidth, canvasHeight);
         }
 
