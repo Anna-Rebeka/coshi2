@@ -660,7 +660,9 @@ namespace coshi2
 
             this.current_canvas.Children.Add(this.robot);
         }
-        
+
+
+
         public void Draw_Robot(object sender, EventArgs e)
         {
             if (Robot.positions.Count == 1 || this.index >= Robot.positions.Count)
@@ -669,74 +671,80 @@ namespace coshi2
                 Terminal.Text = "Program úspešne zbehol.";
                 return;
             }
-            int riadok = Robot.positions[this.index][0];
-            int stlpec = Robot.positions[this.index][1];
 
-            if (riadok == 100 && stlpec == 100)
+            int[] position = Robot.positions[this.index];
+            int row = position[0];
+            int column = position[1];
+
+            if (row == 100 && column == 100)
             {
                 Settings.SILENCE = false;
-                this.index += 1;
             }
-            else if (riadok == -100 && stlpec == -100)
+            else if (row == -100 && column == -100)
             {
                 Settings.SILENCE = true;
-                this.index += 1;
             }
             else
             {
-                if (riadok < 0 || riadok >= Settings.MAP_SQRT_SIZE || stlpec < 0 || stlpec >= Settings.MAP_SQRT_SIZE)
+                if (row < 0 || row >= Settings.MAP_SQRT_SIZE || column < 0 || column >= Settings.MAP_SQRT_SIZE)
                 {
                     Terminal.Focus();
                     this.timer.Stop();
                     return;
                 }
-                //this.current_canvas.Children.Clear();
-                this.current_canvas.Children.Remove(robot);
 
-                this.current_canvas = Settings.MAP[riadok, stlpec];
-                this.robot = new Ellipse();
+                DrawRobotOnCanvas(row, column);
+                SoundsHandler.play_sound(row, column);
+            }
 
-                this.robot.Width = 80;
-                this.robot.Height = 80;
-
-                if (Settings.MAP_SQRT_SIZE == 3)
-                {
-                    Canvas.SetLeft(this.robot, this.robot.Width - 30);
-                    Canvas.SetTop(this.robot, this.robot.Width - 30);
-                }
-
-
-                if (Settings.MAP_SQRT_SIZE == 5)
-                {
-                    Canvas.SetLeft(this.robot, this.robot.Width - 40);
-                    Canvas.SetTop(this.robot, this.robot.Width - 40);
-                    this.robot.Width = 50;
-                    this.robot.Height = 50;
-                }
-                else if (Settings.MAP_SQRT_SIZE == 7)
-                {
-                    Canvas.SetLeft(this.robot, this.robot.Width - 50);
-                    Canvas.SetTop(this.robot, this.robot.Width - 50);
-                    this.robot.Width = 50;
-                    this.robot.Height = 50;
-                }
-                this.robot.Fill = Settings.FG;
-
-                Canvas.SetZIndex(this.robot, 1); // Nastavíme z-index elipsy na 1
-
-                this.current_canvas.Children.Add(this.robot);
-                SoundsHandler.play_sound(riadok, stlpec);
-
-
-
-                this.index += 1;
-                if (this.index >= Robot.positions.Count)
-                {
-                    this.timer.Stop();
-                    Terminal.Text = "Program úspešne zbehol.";
-                }
+            this.index += 1;
+            if (this.index >= Robot.positions.Count)
+            {
+                this.timer.Stop();
+                Terminal.Text = "Program úspešne zbehol.";
             }
         }
+
+        private void DrawRobotOnCanvas(int row, int column)
+        {
+            double canvasSize = CalculateCanvasSize();
+            double robotSize = canvasSize / 2; // Veľkosť robota je závislá na veľkosti plátna a počtu políčok v MAP_SQRT_SIZE
+
+            this.current_canvas.Children.Remove(robot);
+
+            this.current_canvas = Settings.MAP[row, column];
+            this.robot = new Ellipse();
+
+            this.robot.Width = robotSize;
+            this.robot.Height = robotSize;
+
+            double leftOffset = (canvasSize - robotSize) / 2;
+            Canvas.SetLeft(this.robot, leftOffset);
+            Canvas.SetTop(this.robot, leftOffset + 7);
+
+            this.robot.Fill = Settings.FG;
+
+            Canvas.SetZIndex(this.robot, 1);
+
+            this.current_canvas.Children.Add(this.robot);
+        }
+
+        private double CalculateCanvasSize()
+        {
+            // Vrátiť veľkosť canvasu, môžete to získať z this.current_canvas.Width alebo .Height
+            if (this.current_canvas == null)
+            {
+                return 0; // Ak current_canvas nie je inicializovaný, vrátiť nulu alebo vhodnú predvolenú hodnotu
+            }
+
+            double canvasWidth = this.current_canvas.ActualWidth; // Získanie šírky canvasu
+            double canvasHeight = this.current_canvas.ActualHeight; // Získanie výšky canvasu
+
+            // Vrátiť menšiu z hodnôt, čo predstavuje väčšiu zložku veľkosti
+            return Math.Min(canvasWidth, canvasHeight);
+        }
+
+
 
         private void lineNumberTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
