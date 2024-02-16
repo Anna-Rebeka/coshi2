@@ -173,7 +173,7 @@ namespace coshi2
                             break;
                         }
                     }
-                    if (foundLabel is not null)
+                    if (foundLabel != null)
                     {
                         Settings.MAP[i, j].Children.Remove(foundLabel);
                     }
@@ -442,7 +442,7 @@ namespace coshi2
             {
                 try
                 {
-                    Terminal.Text = "Program beží...";
+                    Terminal.Text = "";
                     this.is_running = true;
                     this.index = 0;
                     VirtualMachine.reset();
@@ -582,7 +582,7 @@ namespace coshi2
 
                 if (i != i0 || j != j0)
                 {
-                    Draw_User(i, j);
+                    DrawRobotOnCanvas(i, j);
                     SoundsHandler.play_sound(i, j);
                 }
 
@@ -667,7 +667,7 @@ namespace coshi2
             if (Robot.positions.Count == 1 || this.index >= Robot.positions.Count)
             {
                 this.timer.Stop();
-                Terminal.Text = "Program úspešne zbehol.";
+                Terminal.Text += " Program úspešne zbehol.";
                 return;
             }
 
@@ -700,7 +700,7 @@ namespace coshi2
             if (this.index >= Robot.positions.Count)
             {
                 this.timer.Stop();
-                Terminal.Text = "Program úspešne zbehol.";
+                Terminal.Text += " Program úspešne zbehol.";
             }
         }
 
@@ -867,10 +867,9 @@ namespace coshi2
                 "F1 - Prepínač medzi terminálom a kódom\n" +
                 "F2 - Menu\n" +
                 "F3 - Skok po blokoch kódu\n" +
-                "F4 - Editor\n" +
                 "F5 - Spusti program\n" +
-                "F6 - Pohyb robotom\n" +
-                "F7 - Zmena témy\n";
+                "F6 - Prepínač medzi kontrolou robota a kódom\n" +
+                "F7 - Prepínač medzi tmavým a svetlým režimom\n";
             textBlock.TextAlignment = TextAlignment.Center;
 
             pomocneOkno.Content = textBlock;
