@@ -78,8 +78,7 @@ namespace coshi2
         {
             if (_textBox != null)
             {
-                // Append text to the TextBox using the AppendText method
-                _textBox.AppendText("\n" + text);
+                _textBox.AppendText(" " + text);
             }
         }
 
