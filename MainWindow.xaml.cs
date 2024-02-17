@@ -875,6 +875,7 @@ namespace coshi2
                 "F2 - Menu\n" +
                 "F3 - Skok po blokoch kódu\n" +
                 "F5 - Spusti program\n" +
+                "Shift+F5 - Zastav program\n" +
                 "F6 - Prepínač medzi kontrolou robota a kódom\n" +
                 "F7 - Prepínač medzi tmavým a svetlým režimom\n";
             textBlock.TextAlignment = TextAlignment.Center;
