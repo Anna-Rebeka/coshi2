@@ -1,0 +1,43 @@
+{Cesta,7} 
+urob doprava
+   kym je zvuk vpravo
+      vpravo 
+   koniec 
+koniec 
+
+doprava
+
+opakuj 4 krát 
+   dole
+koniec
+
+kym je zvuk vľavo
+   vlavo 
+koniec 
+
+do x daj 3
+
+kym je x vacsi ako 0
+   hore
+   od x odčítaj 1
+   zobraz x
+koniec 
+
+
+ak je zvuk vľavo tak
+   vlavo 
+koniec 
+
+urob nadol 
+   kym je zvuk dole 
+      dole 
+   koniec
+koniec 
+
+ticho
+
+nadol
+
+nahlas
+ 
+doprava
