@@ -199,10 +199,14 @@ namespace coshi2
 
         private void UpdateLineNumbers()
         {
-            string[] lines = textBox.Text.Split(new string[] { NewLineCharacter }, System.StringSplitOptions.None);
+            string[] lines = textBox.Text.Split(new string[] { "\n" }, StringSplitOptions.None);
             int lineCount = lines.Length;
-
-            lineNumberTextBox.Text = string.Join(NewLineCharacter, Enumerable.Range(1, lineCount).Select(i => i.ToString().PadLeft(3) + "  "));
+            string lineNumbersText = ""; 
+            for (int i = 1; i <= lineCount; i++) 
+            {
+                lineNumbersText += i.ToString().PadLeft(3) + "  \n";
+            }
+            lineNumberTextBox.Text = lineNumbersText;
         }
 
         private void textBox_TextChanged(object sender, TextChangedEventArgs e)
