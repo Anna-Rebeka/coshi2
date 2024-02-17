@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="Coshi2" Height="450" Width="800"
         KeyDown="Window_KeyDown"
+        PreviewKeyDown="Window_PreviewKeyDown"
         Name="Root"
         >
 
@@ -17,7 +18,6 @@
 
     <Window.InputBindings>
         <KeyBinding Key="F4" Modifiers="Alt" Command="Close"/>
-
     </Window.InputBindings>
 
     <Grid Name="RootGrid">
@@ -36,14 +36,13 @@
                 <Separator/>
                 <MenuItem Header="_Koniec" InputGestureText="Alt+F4" Click="Exit_Click"/>
             </MenuItem>
-            <!--
-            <MenuItem Header="_Formát">
-                <MenuItem Header="_Odsadiť"/>
-                <MenuItem Header="_Zarovnať doľava"/>
-                <MenuItem Header="_Zarovnať doprava"/>
-                <MenuItem Header="_Zarovnať na stred"/>
+            
+            <MenuItem Header="_Program">
+                <MenuItem Header="_Spustiť" InputGestureText="F5" Click="Play_Click"/>
+                <MenuItem Header="_Zastaviť" InputGestureText="Shift+F5" Click="Stop_Click"/>
+                <MenuItem Name="robotMoving" Header="_Prepnúť na robota" InputGestureText="F6" Click="Robot_Click"/>
             </MenuItem>
-            -->
+      
             <MenuItem Header="_Nastavenia">
                 <MenuItem Name="soundPackagesMenu" Header="_Zvukové balíčky"/>
                 <MenuItem Header="_Veľkosť plochy">
@@ -85,7 +84,8 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1">
+
+                <Border Grid.Row="1" BorderBrush="DarkGray" BorderThickness="2" >
                     <UniformGrid x:Name="uniformGrid" Rows="3" Columns="3" Background="White">
                         <UniformGrid.Resources>
                             <Style TargetType="{x:Type Rectangle}">
@@ -94,7 +94,6 @@
                                 <Setter Property="StrokeThickness" Value="1"/>
                             </Style>
                         </UniformGrid.Resources>
-                        
                     </UniformGrid>
                 </Border>
             </Grid>
@@ -102,7 +101,5 @@
         <Grid Grid.Row="2">
             <TextBox AutomationProperties.Name="Terminál"  Name="Terminal" Background="LightGray" Height="50" IsReadOnly="True"/>
         </Grid>
-        <Grid Name="FocusMe" Visibility="Hidden" Focusable="True">
-            </Grid>
-        </Grid>
+    </Grid>
 </Window>

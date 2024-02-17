@@ -1,13 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-//using System.Diagnostics.Metrics;
 using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Documents;
 
 namespace coshi2
 {
@@ -26,10 +19,7 @@ namespace coshi2
 
 
 
-        /// <summary>
         /// Procedure fills memory of virtual machine with instructions.
-        /// Consider using Parse() to create Syntax tree
-        /// </summary>
         public Block parse()
         {
             Block result = new Block(); //... vytvorí objekt pre zoznam príkazov
