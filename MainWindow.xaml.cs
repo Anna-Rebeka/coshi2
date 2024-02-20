@@ -66,7 +66,7 @@ namespace coshi2
 
             textBox.Focus();
             //spusti kreslenie
-            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Interval = TimeSpan.FromSeconds(Settings.SPEED);
             timer.Tick += Draw_Robot;
         }
 
@@ -254,7 +254,23 @@ namespace coshi2
 
         private void New_Click(object sender, RoutedEventArgs e)
         {
-            newFile();
+            MessageBoxResult result = MessageBox.Show("Neuložené zmeny budú stratené. Chcete ich uložiť a vytvoriť nový súbor?", "Upozornenie", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+            if (result == MessageBoxResult.Yes)
+            {
+                SaveToFile(); // Uložiť zmeny
+                newFile();  // Novy subor
+                e.Handled = true; // Zastaviť ďalšie spracovanie klávesnice
+            }
+            else if (result == MessageBoxResult.No)
+            {
+                newFile();
+                e.Handled = true;
+            }
+            else
+            {
+                e.Handled = true;
+            }
+            
         }
 
         private void newFile() {
@@ -303,12 +319,6 @@ namespace coshi2
             Title = "Coshi2 - " + Settings.CURRENTFILEPATH;
         }
 
-        private void Exit_Click(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
-        }
-
-
         private void Play_Click(object sender, RoutedEventArgs e)
         {
             Play();
@@ -322,7 +332,8 @@ namespace coshi2
 
         private void Robot_Click(object sender, RoutedEventArgs e)
         {
-
+            Stop();
+            Robot_toggle();
         }
 
         private void Robot_toggle()
@@ -392,7 +403,7 @@ namespace coshi2
 
 
 
-        private void CloseMyApp(object sender, RoutedEventArgs e) {
+        private void CloseApp(object sender, RoutedEventArgs e) {
             MessageBoxResult result = MessageBox.Show("Neuložené zmeny budú stratené. Chcete ich uložiť a zatvoriť aplikáciu?", "Upozornenie", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
             if (result == MessageBoxResult.Yes)
             {
@@ -443,6 +454,7 @@ namespace coshi2
                 VirtualMachine.reset();
                 VirtualMachine.SetTextBoxReference(Terminal);
                 Robot.reset();
+                Settings.reset_program_settings();
                 Compiler cmp = new Compiler(textBox.Text);
                 Block tree = cmp.parse();
                 cmp.jumpOverVariables();
@@ -543,10 +555,23 @@ namespace coshi2
 
             if (e.Key == Key.F6)
             {
+                Stop();
                 Robot_toggle();
             }
 
             if (e.Key == Key.F7)
+            {
+                Decrease_Speed(sender, null);
+                e.Handled = true;
+            }
+
+            if (e.Key == Key.F8)
+            {
+                Increase_Speed(sender, null);
+                e.Handled = true;
+            }
+
+            if (e.Key == Key.F9)
             {
                 SwitchColorTheme(sender, null);
             }
@@ -571,7 +596,8 @@ namespace coshi2
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.N)
             {
-                newFile();
+
+                New_Click(null, e);
                 e.Handled = true;
             }
 
@@ -857,6 +883,26 @@ namespace coshi2
             }
             lineNumberTextBox.FontSize -= 2.0;
             textBox.FontSize -= 2.0;
+        }
+
+        private void Increase_Speed(object sender, RoutedEventArgs e)
+        {
+            if (Settings.SPEED <= 0.6)
+            {
+                return;
+            }
+            Settings.SPEED -= 0.2;
+            timer.Interval = TimeSpan.FromSeconds(Settings.SPEED);
+        }
+
+        private void Decrease_Speed(object sender, RoutedEventArgs e)
+        {
+            if (Settings.SPEED >= 1.4)
+            {
+                return;
+            }
+            Settings.SPEED += 0.2;
+            timer.Interval = TimeSpan.FromSeconds(Settings.SPEED);
         }
 
         private void Show_Help(object sender, RoutedEventArgs e)

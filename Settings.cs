@@ -19,10 +19,19 @@ namespace coshi2
         public static int PACKAGE_SIZE = 3;
         public static SoundPackage SOUND_PACKAGE = new SoundPackage("zvierata");
         public static bool SILENCE = false;
+        public static double SPEED = 1;
         public static string CURRENTFILEPATH = null;
         public static Theme THEME = Theme.Light;
         public static Brush FG = Brushes.Black;
         public static Brush BG = Brushes.White;
+
+
+        public static void reset_program_settings()
+        {
+            SILENCE = false;
+            SPEED = 1;
+        }
+
 
         public static void set_size(int size)
         {
