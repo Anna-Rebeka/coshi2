@@ -534,6 +534,11 @@ namespace coshi2
 
             if (e.Key == Key.F2)
             {
+                if (map_is_focused)
+                {
+                    textBox.IsReadOnly = false;
+                    map_is_focused = false;
+                }
                 subor_volba.Focus();
             }
 
