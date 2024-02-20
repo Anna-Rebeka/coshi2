@@ -32,7 +32,7 @@
                 <MenuItem Header="_Nový" InputGestureText="Ctrl+N" Click="New_Click"/>
                 <MenuItem Header="_Otvoriť" InputGestureText="Ctrl+O" Click="Open_Click"/>
                 <MenuItem Header="_Uložiť" InputGestureText="Ctrl+S" Click="Save_Click"/>
-                <MenuItem Header="_Uložiť ako" InputGestureText="Ctrl+Shift+N" Click="SaveAs_Click"/>
+                <MenuItem Header="_Uložiť ako" InputGestureText="Ctrl+Shift+S" Click="SaveAs_Click"/>
                 <Separator/>
                 <MenuItem Header="_Koniec" InputGestureText="Alt+F4" Click="CloseApp"/>
             </MenuItem>
@@ -40,9 +40,9 @@
             <MenuItem Header="_Program">
                 <MenuItem Header="_Spustiť" InputGestureText="F5" Click="Play_Click"/>
                 <MenuItem Header="_Zastaviť" InputGestureText="Shift+F5" Click="Stop_Click"/>
+				<MenuItem Name="robotMoving" Header="_Prepnúť na robota" InputGestureText="F6" Click="Robot_Click"/>
 				<MenuItem Header="_Pomalšie" Click="Decrease_Speed" InputGestureText="F7"/>
 				<MenuItem Header="_Rýchlejšie" Click="Increase_Speed" InputGestureText="F8"/>
-                <MenuItem Name="robotMoving" Header="_Prepnúť na robota" InputGestureText="F6" Click="Robot_Click"/>
             </MenuItem>
       
             <MenuItem Header="_Nastavenia">
@@ -56,7 +56,7 @@
                     <MenuItem Header="_Väčší" Click="Increase_Font" InputGestureText="Ctrl+"/>
                     <MenuItem Header="_Menší" Click="Decrease_Font" InputGestureText="Ctrl-"/>
                 </MenuItem>
-                <MenuItem Name="ThemeState" Header="_Tmavý režim" Click="SwitchColorTheme"/>
+                <MenuItem Name="ThemeState" Header="_Tmavý režim" Click="SwitchColorTheme" InputGestureText="F9"/>
                 <MenuItem Header="_Pomoc"  Click="Show_Help" InputGestureText="Ctrl+H" />
             </MenuItem>
         </Menu>

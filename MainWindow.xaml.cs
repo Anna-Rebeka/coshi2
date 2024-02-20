@@ -576,17 +576,18 @@ namespace coshi2
                 SwitchColorTheme(sender, null);
             }
 
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.LeftShift) && e.Key == Key.S)
+            {
+                SaveAs_Click(sender, null);
+                e.Handled = true;
+            }
+
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.S)
             {
                 SaveToFile();
                 e.Handled = true;
             }
 
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.LeftShift) && e.Key == Key.S)
-            {
-                SaveAs_Click(sender, null);
-                e.Handled = true;
-            }
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.O)
             {
@@ -598,6 +599,12 @@ namespace coshi2
             {
 
                 New_Click(null, e);
+                e.Handled = true;
+            }
+
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.H)
+            {
+                Show_Help(null, e);
                 e.Handled = true;
             }
 
@@ -927,7 +934,9 @@ namespace coshi2
                 "F5 - Spusti program\n" +
                 "Shift+F5 - Zastav program\n" +
                 "F6 - Prepínač medzi kontrolou robota a kódom\n" +
-                "F7 - Prepínač medzi tmavým a svetlým režimom\n";
+                "F7 - Rýchlejšie prehrávanie\n"+
+                "F8 - Pomalšie prehrávanie\n"+
+                "F9 - Prepínač medzi tmavým a svetlým režimom\n";
             textBlock.TextAlignment = TextAlignment.Center;
 
             pomocneOkno.Content = textBlock;
