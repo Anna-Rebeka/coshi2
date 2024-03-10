@@ -21,8 +21,8 @@ namespace coshi2
     {
         private const string NewLineCharacter = "\r\n";
         public Canvas current_canvas;
-        public bool map_is_focused = false;
-        public bool terminal_is_focused = false;
+        public Dictionary<int, UIElement> main_elements = new Dictionary<int, UIElement>();
+        public int focus = 0;
         public bool is_running = false;
         public string soundPackage;
         private int caretInd;
@@ -68,6 +68,10 @@ namespace coshi2
             //spusti kreslenie
             timer.Interval = TimeSpan.FromSeconds(Settings.SPEED);
             timer.Tick += Draw_Robot;
+
+            main_elements.Add(0, textBox);
+            main_elements.Add(1, textBox);
+            main_elements.Add(2, Terminal);
         }
 
 
@@ -252,6 +256,11 @@ namespace coshi2
             }
         }
 
+        private void map_click(object sender, RoutedEventArgs e)
+        {
+            move_focus(1);
+        }
+
         private void New_Click(object sender, RoutedEventArgs e)
         {
             MessageBoxResult result = MessageBox.Show("Neuložené zmeny budú stratené. Chcete ich uložiť a vytvoriť nový súbor?", "Upozornenie", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
@@ -333,21 +342,41 @@ namespace coshi2
         private void Robot_Click(object sender, RoutedEventArgs e)
         {
             Stop();
-            Robot_toggle();
+            focus_toggle();
         }
 
-        private void Robot_toggle()
+        private void move_focus(int f)
         {
-            if (this.map_is_focused)
+            switch (f)
             {
-                textBox.IsReadOnly = false;
-                this.map_is_focused = false;
+                case 0:
+                    textBox.IsReadOnly = false;
+                    textBox.Focus();
+                    break;
+                case 1:
+                    textBox.IsReadOnly = true;
 
+                    break;
+                case 2:
+                    Terminal.Focus();
+                    break;
             }
-            else
+            focus = f;
+        }
+
+        private void focus_toggle()
+        {
+            switch (focus)
             {
-                textBox.IsReadOnly = true;
-                this.map_is_focused = true;
+                case 0:
+                    move_focus(1);
+                    break;
+                case 1:
+                    move_focus(2);
+                    break;
+                case 2:
+                    move_focus(0);
+                    break;
             }
         }
 
@@ -509,7 +538,12 @@ namespace coshi2
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (map_is_focused)
+            if (e.Key == Key.Down && focus == 0)
+            {
+                e.Handled = true;
+            }
+               
+            if (focus == 1) 
             {
                 Move_Robot(e);
             }
@@ -517,35 +551,23 @@ namespace coshi2
 
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
-        {
+        { 
             if (e.Key == Key.F1)
             {
-                if (terminal_is_focused)
-                {
-                    textBox.Focus();
-                    terminal_is_focused = false;
-                }
-                else
-                {
-                    Terminal.Focus();
-                    terminal_is_focused = true;
-                }
+                Show_Help(null, e);
+                e.Handled = true;
             }
 
             if (e.Key == Key.F2)
             {
-                if (map_is_focused)
+                if (focus == 1)
                 {
                     textBox.IsReadOnly = false;
-                    map_is_focused = false;
+                    focus = 0;
                 }
                 subor_volba.Focus();
             }
 
-            if (e.Key == Key.F3)
-            {
-                FindNextKeyword();
-            }
 
             if (Keyboard.IsKeyDown(Key.LeftShift) && e.Key == Key.F5)
             {
@@ -561,7 +583,7 @@ namespace coshi2
             if (e.Key == Key.F6)
             {
                 Stop();
-                Robot_toggle();
+                focus_toggle();
             }
 
             if (e.Key == Key.F7)
@@ -609,8 +631,7 @@ namespace coshi2
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.H)
             {
-                Show_Help(null, e);
-                e.Handled = true;
+                FindNextKeyword();
             }
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.OemPlus)
@@ -752,6 +773,8 @@ namespace coshi2
 
         private void DrawRobotOnCanvas(int row, int column)
         {
+            Robot.position = (row) * Settings.MAP_SQRT_SIZE + (column + 1);
+
             double canvasSize = CalculateCanvasSize();
             double robotSize = canvasSize / 2; 
 
@@ -919,6 +942,9 @@ namespace coshi2
 
         private void Show_Help(object sender, RoutedEventArgs e)
         {
+            var window = new Help();
+            window.Show();
+            /*
             Window pomocneOkno = new Window();
             pomocneOkno.Title = "Pomoc - Klávesové skratky";
             pomocneOkno.Width = 500;
@@ -947,6 +973,22 @@ namespace coshi2
             pomocneOkno.Content = textBlock;
 
             pomocneOkno.ShowDialog();
+            */
+        }
+
+        private void Terminal_PreviewMouseLeftButtonDown(object sender, RoutedEventArgs e)
+        {
+            move_focus(2);
+        }
+
+        private void UniformGrid_MouseLeftButtonDown(object sender, RoutedEventArgs e)
+        {
+            move_focus(1);
+        }
+
+        private void TextBox_PreviewMouseLeftButtonDown(object sender, RoutedEventArgs e)
+        {
+            move_focus(0);
         }
     }
 }
