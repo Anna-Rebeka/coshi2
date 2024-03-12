@@ -23,17 +23,41 @@ namespace coshi2
         {
             InitializeComponent();
             AddText();
+            helptextbox.Focus();
         }
 
         private void AddText()
         {
-            helptextbox.Text = "Hello sweetie";
-            helptextbox.Focus();
+            helptextbox.Text = "Klávesové skratky:\n\n" +
+            "CTRL + N - Nový\n" +
+            "CTRL + S - Uložiť\n" +
+            "CTRL + O - Otvoriť\n" +
+            "Alt + F4 - Koniec\n\n\n" +
+            "Fn Funkcie:\n\n" +
+            "F1 - Zobraz pomoc\n" +
+            "F2 - Menu\n" +
+            "F3 - Skok po blokoch kódu\n" +
+            "F5 - Spusti program\n" +
+            "Shift+F5 - Zastav program\n" +
+            "F6 - Prepínač medzi kódom, robotom a terminálom\n" +
+            "F7 - Rýchlejšie prehrávanie\n" +
+            "F8 - Pomalšie prehrávanie\n" +
+            "F9 - Prepínač medzi tmavým a svetlým režimom\n";
+            helptextbox.TextAlignment = TextAlignment.Center;
+            
         }
 
         private void Help_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            this.Close();
+            if (e.Key == Key.Escape)
+            {
+                this.Close();
+            }
+            else
+            {
+                e.Handled = true;
+            }
+            
         }
         
 

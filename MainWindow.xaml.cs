@@ -350,12 +350,15 @@ namespace coshi2
             switch (f)
             {
                 case 0:
+                    textBox.Focusable = true;
                     textBox.IsReadOnly = false;
                     textBox.Focus();
                     break;
                 case 1:
                     textBox.IsReadOnly = true;
-
+                    textBox.Focusable = false;
+                    pomocnyCanvas.Focus();
+                    Keyboard.Focus(pomocnyCanvas);
                     break;
                 case 2:
                     Terminal.Focus();
@@ -943,7 +946,8 @@ namespace coshi2
         private void Show_Help(object sender, RoutedEventArgs e)
         {
             var window = new Help();
-            window.Show();
+            window.Owner = this;
+            window.ShowDialog();
             /*
             Window pomocneOkno = new Window();
             pomocneOkno.Title = "Pomoc - Klávesové skratky";
@@ -989,6 +993,14 @@ namespace coshi2
         private void TextBox_PreviewMouseLeftButtonDown(object sender, RoutedEventArgs e)
         {
             move_focus(0);
+        }
+
+        private void CanvasKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.F6)
+            {
+                e.Handled = true;
+            }
         }
     }
 }
