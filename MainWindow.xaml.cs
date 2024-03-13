@@ -456,6 +456,10 @@ namespace coshi2
 
 
         private void TextBox_KeyDown(object sender, KeyEventArgs e) {
+            if (textBox.IsFocused == false)
+            {
+                e.Handled = true;
+            }
             if (e.Key == Key.Tab) {
                 if (predictionBox.Items.Count > 0)
                 {
@@ -555,6 +559,7 @@ namespace coshi2
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         { 
+
             if (e.Key == Key.F1)
             {
                 Show_Help(null, e);
@@ -948,36 +953,6 @@ namespace coshi2
             var window = new Help();
             window.Owner = this;
             window.ShowDialog();
-            /*
-            Window pomocneOkno = new Window();
-            pomocneOkno.Title = "Pomoc - Klávesové skratky";
-            pomocneOkno.Width = 500;
-            pomocneOkno.Height = 400;
-            pomocneOkno.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-
-            // Text s klávesovými skratkami
-            TextBlock textBlock = new TextBlock();
-            textBlock.Text = "Klávesové skratky:\n\n" +
-                "CTRL + N - Nový\n" +
-                "CTRL + S - Uložiť\n" +
-                "CTRL + O - Otvoriť\n" +
-                "Alt + F4 - Koniec\n\n\n" +
-                "Fn Funkcie:\n\n"+
-                "F1 - Prepínač medzi terminálom a kódom\n" +
-                "F2 - Menu\n" +
-                "F3 - Skok po blokoch kódu\n" +
-                "F5 - Spusti program\n" +
-                "Shift+F5 - Zastav program\n" +
-                "F6 - Prepínač medzi kontrolou robota a kódom\n" +
-                "F7 - Rýchlejšie prehrávanie\n"+
-                "F8 - Pomalšie prehrávanie\n"+
-                "F9 - Prepínač medzi tmavým a svetlým režimom\n";
-            textBlock.TextAlignment = TextAlignment.Center;
-
-            pomocneOkno.Content = textBlock;
-
-            pomocneOkno.ShowDialog();
-            */
         }
 
         private void Terminal_PreviewMouseLeftButtonDown(object sender, RoutedEventArgs e)
