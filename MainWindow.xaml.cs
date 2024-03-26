@@ -545,12 +545,43 @@ namespace coshi2
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Key == Key.Up && focus == 0)
+            {
+                int caretIndex = textBox.CaretIndex;
+                int lineIndex = textBox.GetLineIndexFromCharacterIndex(caretIndex);
+                int lineStartIndex = textBox.GetCharacterIndexFromLineIndex(lineIndex);
+                int lineEndIndex = textBox.GetLineLength(lineIndex) + lineStartIndex;
+                string currentLine = textBox.Text.Substring(lineStartIndex, lineEndIndex - lineStartIndex).Replace("\r\n", "");
+
+                if (currentLine.Length != 0)
+                {
+                    textBox.CaretIndex = lineStartIndex;
+                    e.Handled = true;
+                }
+                else { e.Handled = true; }
+            }
+
             if (e.Key == Key.Down && focus == 0)
             {
-                e.Handled = true;
+                int caretIndex = textBox.CaretIndex;
+                int lineIndex = textBox.GetLineIndexFromCharacterIndex(caretIndex);
+                int lineStartIndex = textBox.GetCharacterIndexFromLineIndex(lineIndex);
+                int lineEndIndex = textBox.GetLineLength(lineIndex) + lineStartIndex;
+                string currentLine = textBox.Text.Substring(lineStartIndex, lineEndIndex - lineStartIndex).Replace("\r\n", "");
+
+                if (currentLine.Length != 0)
+                {
+                    textBox.CaretIndex = lineStartIndex + currentLine.Length; // Posunutie kurzora na koniec riadku
+                    e.Handled = true;
+                }
+                else
+                {
+                    e.Handled = true;
+                }
             }
-               
-            if (focus == 1) 
+
+
+            if (focus == 1)
             {
                 Move_Robot(e);
             }
