@@ -686,6 +686,14 @@ namespace coshi2
                 e.Handled = true;
 
             }
+
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.G)
+            {
+                ShowGoToLineDialog();
+                e.Handled = true;
+
+            }
+
         }
 
         private void FindNextKeyword()
@@ -716,12 +724,40 @@ namespace coshi2
         }
 
 
-       
-    
+
+        private void ShowGoToLineDialog()
+        {
+            // Vytvorenie dialógového okna
+            var dialog = new GoToLineDialog();
+            if (dialog.ShowDialog() == true) // Zobrazenie dialógového okna a čakanie na užívateľský vstup
+            {
+                int lineNumber;
+                if (int.TryParse(dialog.LineNumber, out lineNumber))
+                {
+                    int lineIndex = Math.Min(Math.Max(0, lineNumber - 1), textBox.LineCount - 1); // Prevedenie čísla riadku na index riadku
+
+                    if (lineNumber <= 0 || lineNumber > textBox.LineCount)
+                    {
+                        MessageBox.Show("Zadajte platné číslo riadku.", "Varovanie", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+                    }
+                    else
+                    {
+
+                        textBox.ScrollToLine(lineIndex); // Presun na zvolený riadok
+                        textBox.Focus(); // Focus na textBox, aby sa zvýraznil kurzor
+                        textBox.Select(textBox.GetCharacterIndexFromLineIndex(lineIndex), 0); // Označenie pozície kurzora
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Zadajte platné číslo riadku.", "Varovanie", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+        }
 
 
 
-       
         public void Draw_User(int riadok, int stlpec)
         {
             this.current_canvas.Children.Remove(robot);
