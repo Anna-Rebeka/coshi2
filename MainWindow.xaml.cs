@@ -10,6 +10,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Text.RegularExpressions; 
+
 
 
 namespace coshi2
@@ -215,6 +217,9 @@ namespace coshi2
 
         private void textBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            int indexC = textBox.CaretIndex;
+            //textBox.Text = textBox.Text.Replace("\r\n\r\n", "\r\n \r\n");
+            textBox.CaretIndex = indexC;
             Predict_Commands();
             UpdateLineNumbers();
         }
@@ -543,44 +548,19 @@ namespace coshi2
             
         }
 
+        private void Window_KeyUp(object sender, KeyEventArgs e)
+        {
+            int indexC = textBox.CaretIndex;
+            string text = Regex.Replace(textBox.Text, @"(?<! )\r\n", " \r\n");
+            if(text != textBox.Text)
+            {
+                textBox.Text = text;
+                textBox.CaretIndex = indexC;
+            }            
+        }
+
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Up && focus == 0)
-            {
-                int caretIndex = textBox.CaretIndex;
-                int lineIndex = textBox.GetLineIndexFromCharacterIndex(caretIndex);
-                int lineStartIndex = textBox.GetCharacterIndexFromLineIndex(lineIndex);
-                int lineEndIndex = textBox.GetLineLength(lineIndex) + lineStartIndex;
-                string currentLine = textBox.Text.Substring(lineStartIndex, lineEndIndex - lineStartIndex).Replace("\r\n", "");
-
-                if (currentLine.Length != 0)
-                {
-                    textBox.CaretIndex = lineStartIndex;
-                    e.Handled = true;
-                }
-                else { e.Handled = true; }
-            }
-
-            if (e.Key == Key.Down && focus == 0)
-            {
-                int caretIndex = textBox.CaretIndex;
-                int lineIndex = textBox.GetLineIndexFromCharacterIndex(caretIndex);
-                int lineStartIndex = textBox.GetCharacterIndexFromLineIndex(lineIndex);
-                int lineEndIndex = textBox.GetLineLength(lineIndex) + lineStartIndex;
-                string currentLine = textBox.Text.Substring(lineStartIndex, lineEndIndex - lineStartIndex).Replace("\r\n", "");
-
-                if (currentLine.Length != 0)
-                {
-                    textBox.CaretIndex = lineStartIndex + currentLine.Length - 1; // Posunutie kurzora na koniec riadku
-                    e.Handled = true;
-                }
-                else
-                {
-                    e.Handled = true;
-                }
-            }
-
-
             if (focus == 1)
             {
                 Move_Robot(e);
@@ -589,8 +569,7 @@ namespace coshi2
 
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
-        { 
-
+        {
             if (e.Key == Key.F1)
             {
                 Show_Help(null, e);

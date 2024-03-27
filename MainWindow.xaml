@@ -8,6 +8,7 @@
         Title="Coshi2" Height="450" Width="800"
         KeyDown="Window_KeyDown"
         PreviewKeyDown="Window_PreviewKeyDown"
+		KeyUp="Window_KeyUp"
         Name="Root"
         >
 
