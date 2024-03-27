@@ -571,7 +571,7 @@ namespace coshi2
 
                 if (currentLine.Length != 0)
                 {
-                    textBox.CaretIndex = lineStartIndex + currentLine.Length; // Posunutie kurzora na koniec riadku
+                    textBox.CaretIndex = lineStartIndex + currentLine.Length - 1; // Posunutie kurzora na koniec riadku
                     e.Handled = true;
                 }
                 else
