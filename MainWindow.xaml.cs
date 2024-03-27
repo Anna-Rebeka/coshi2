@@ -118,37 +118,57 @@ namespace coshi2
             }
         }
 
-        public void DrawGrid() {
+        public void DrawGrid()
+        {
             uniformGrid.Rows = Settings.MAP_SQRT_SIZE;
             uniformGrid.Columns = Settings.MAP_SQRT_SIZE;
 
             for (int i = 1; i <= Settings.MAP_SQRT_SIZE * Settings.MAP_SQRT_SIZE; i++)
             {
-
-
                 Border border = new Border();
                 border.BorderBrush = Settings.FG;
-                if(Settings.THEME == Theme.Light)
+                SolidColorBrush backgroundBrush;
+
+                if (Settings.THEME == Theme.Light)
                 {
                     border.BorderBrush = Brushes.DarkGray;
+                    // Striedanie pozadia medzi bielou a svetlomodrou pre light režim
+                    if (i % 2 == 0)
+                    {
+                        backgroundBrush = Brushes.White;
+                    }
+                    else
+                    {
+                        backgroundBrush = new SolidColorBrush(Color.FromArgb(255, 230, 240, 255)); // svetlomodrá
+                    }
                 }
+                else
+                { // Dark režim
+                    border.BorderBrush = Brushes.LightGray;
+                    // Striedanie pozadia medzi tmavosivou a čiernou pre dark režim
+                    if (i % 2 == 0)
+                    {
+                        backgroundBrush = Brushes.Black;
+                    }
+                    else
+                    {
+                        backgroundBrush = new SolidColorBrush(Color.FromArgb(255, 30, 30, 30)); // tmavosivá (blízko čiernej)
+                    }
+                }
+
                 border.BorderThickness = new Thickness(0.5);
 
                 Canvas canvas = new Canvas();
-                canvas.Background = Settings.BG;
+                canvas.Background = backgroundBrush;
                 canvas.Name = "c" + i;
                 canvas.Focusable = true;
-
-             
 
                 if (i == 1)
                 {
                     this.current_canvas = canvas;
-
                 }
 
                 border.Child = canvas;
-
                 uniformGrid.Children.Add(border);
             }
         }
