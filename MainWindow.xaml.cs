@@ -206,6 +206,7 @@ namespace coshi2
         private void UpdateLineNumbers()
         {
             int lineCount = textBox.LineCount;
+            if(lineCount <= 0) { lineCount = 1; }
             string lineNumbersText = ""; 
             for (int i = 1; i <= lineCount; i++) 
             {
@@ -349,18 +350,18 @@ namespace coshi2
         {
             switch (f)
             {
-                case 0:
+                case 0: //kod
                     textBox.Focusable = true;
                     textBox.IsReadOnly = false;
                     textBox.Focus();
                     break;
-                case 1:
+                case 1: //graf plocha
                     textBox.IsReadOnly = true;
                     textBox.Focusable = false;
                     pomocnyCanvas.Focus();
                     Keyboard.Focus(pomocnyCanvas);
                     break;
-                case 2:
+                case 2: //terminal
                     Terminal.Focus();
                     break;
             }
@@ -470,6 +471,10 @@ namespace coshi2
                 {
                     e.Handled = true;
                 }
+            }
+            if (e.Key == Key.Enter && focus == 0 && textBox.LineCount >= 200)
+            {
+                e.Handled = true;
             }
         }
 
