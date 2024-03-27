@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 
 namespace coshi2
 {
@@ -54,9 +55,11 @@ namespace coshi2
                 else if ("opakuj" == lexAnalyzer.token.ToLower())
                 {
                     lexAnalyzer.scan();
+                    check(lexAnalyzer.NUMBER);
                     int n = int.Parse(lexAnalyzer.token); //addsub()
+                    int opakuj_line_number = lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position);
                     lexAnalyzer.scan(); // Preskočíme "cislo" 
-                    check(lexAnalyzer.LOOP);
+                    check(lexAnalyzer.LOOP, null, opakuj_line_number);
                     lexAnalyzer.scan(); // Preskočíme "krát" 
                     // Parsovanie vnútorného bloku kódu pre opakovanie
                     Block innerBlock = parse();
@@ -174,7 +177,7 @@ namespace coshi2
         }
 
 
-        public void check(int expected_kind, string expected_token = null)
+        public void check(int expected_kind, string expected_token = null, int opakuj_pos = 0)
         {
             if (expected_token != null && lexAnalyzer.token.ToLower() != expected_token)
             {
@@ -187,6 +190,10 @@ namespace coshi2
             }
             if (lexAnalyzer.kind != expected_kind)
             {
+                if(expected_kind == lexAnalyzer.LOOP)
+                {
+                    throw new SyntaxError(opakuj_pos, expected_kind);
+                }
                 throw new SyntaxError(lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position), expected_kind);
             }
         }
