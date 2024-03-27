@@ -202,11 +202,10 @@ namespace coshi2
                 }
             }
         }
-
+        
         private void UpdateLineNumbers()
         {
-            string[] lines = textBox.Text.Split(new string[] { "\n" }, StringSplitOptions.None);
-            int lineCount = lines.Length;
+            int lineCount = textBox.LineCount;
             string lineNumbersText = ""; 
             for (int i = 1; i <= lineCount; i++) 
             {
@@ -217,9 +216,6 @@ namespace coshi2
 
         private void textBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            int indexC = textBox.CaretIndex;
-            //textBox.Text = textBox.Text.Replace("\r\n\r\n", "\r\n \r\n");
-            textBox.CaretIndex = indexC;
             Predict_Commands();
             UpdateLineNumbers();
         }
@@ -284,7 +280,6 @@ namespace coshi2
             {
                 e.Handled = true;
             }
-            
         }
 
         private void newFile() {
@@ -962,6 +957,7 @@ namespace coshi2
             }
             lineNumberTextBox.FontSize += 2.0;
             textBox.FontSize += 2.0;
+            predictionBox.FontSize += 2.0;
         }
 
         private void Decrease_Font(object sender, RoutedEventArgs e)
@@ -972,6 +968,7 @@ namespace coshi2
             }
             lineNumberTextBox.FontSize -= 2.0;
             textBox.FontSize -= 2.0;
+            predictionBox.FontSize -= 2.0;
         }
 
         private void Increase_Speed(object sender, RoutedEventArgs e)
