@@ -8,6 +8,7 @@
         Title="Coshi2" Height="450" Width="800"
         KeyDown="Window_KeyDown"
         PreviewKeyDown="Window_PreviewKeyDown"
+		KeyUp="Window_KeyUp"
         Name="Root"
         >
 
@@ -77,17 +78,19 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <TextBox x:Name="lineNumberTextBox" VerticalScrollBarVisibility="Disabled" IsReadOnly="True" Padding="5" TextAlignment="Right" TextChanged="lineNumberTextBox_TextChanged" Grid.RowSpan="2" />
-                    <TextBox AutomationProperties.Name="Kód" Padding="5" x:Name="textBox" Grid.Column="1" AcceptsReturn="True" TextChanged="textBox_TextChanged" Grid.ColumnSpan="2" Grid.RowSpan="2" PreviewKeyDown="TextBox_KeyDown"/>
-                    <ListView x:Name="predictionBox" Grid.Column="2" d:ItemsSource="{d:SampleData ItemCount=5}" Width="90" HorizontalAlignment="Right" PreviewKeyDown="ListBox_Selection" Grid.RowSpan="2" GotFocus="predictionBox_GotFocus" SelectionChanged="predictionBox_SelectionChanged"/>
+                    <TextBox AutomationProperties.Name="Kód" IsEnabled="True" Padding="5" x:Name="textBox" Grid.Column="1" AcceptsReturn="True" TextChanged="textBox_TextChanged" Grid.ColumnSpan="2" Grid.RowSpan="2" PreviewKeyDown="TextBox_KeyDown" PreviewMouseLeftButtonDown="TextBox_PreviewMouseLeftButtonDown"
+							 />
+                    <ListView x:Name="predictionBox" Grid.Column="2" d:ItemsSource="{d:SampleData ItemCount=5}" Width="Auto" Padding="3" HorizontalAlignment="Right" PreviewKeyDown="ListBox_Selection" Grid.RowSpan="2" GotFocus="predictionBox_GotFocus" SelectionChanged="predictionBox_SelectionChanged"/>
                 </Grid>
             </ScrollViewer>
-            <Grid x:Name="graf_plocha" Grid.Column="1">
+            
+            <Grid x:Name="graf_plocha" Grid.Column="1" GotFocus="map_click">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <Border Grid.Row="1" BorderBrush="DarkGray" BorderThickness="2" >
+                <Border Name="border_graf" Grid.Row="1" BorderBrush="DarkGray" BorderThickness="2" MouseLeftButtonDown="UniformGrid_MouseLeftButtonDown">
                     <UniformGrid x:Name="uniformGrid" Rows="3" Columns="3" Background="White">
                         <UniformGrid.Resources>
                             <Style TargetType="{x:Type Rectangle}">
@@ -101,7 +104,13 @@
             </Grid>
         </Grid>
         <Grid Grid.Row="2">
-            <TextBox AutomationProperties.Name="Terminál"  Name="Terminal" Background="LightGray" Height="50" IsReadOnly="True"/>
+            <TextBox AutomationProperties.Name="Terminál"  Name="Terminal" Background="LightGray" Height="50" IsReadOnly="True" PreviewMouseLeftButtonDown="Terminal_PreviewMouseLeftButtonDown"/>
         </Grid>
-    </Grid>
+		<!--
+				<Canvas x:Name="pomocnyCanvas"  Width="100" Height="100" Focusable="True" PreviewKeyDown="CanvasKeyDown" AutomationProperties.Name="Grafická plocha" AutomationProperties.HelpText="Grafická plocha"></Canvas>
+
+		-->
+		<Label x:Name="pomocnyCanvas"  Width="100" Height="10" Focusable="True" PreviewKeyDown="CanvasKeyDown" AutomationProperties.Name="Grafická plocha" AutomationProperties.HelpText="Grafická plocha"></Label>
+
+	</Grid>
 </Window>
