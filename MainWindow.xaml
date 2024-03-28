@@ -78,8 +78,8 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <TextBox x:Name="lineNumberTextBox" VerticalScrollBarVisibility="Disabled" IsReadOnly="True" Padding="5" TextAlignment="Right" TextChanged="lineNumberTextBox_TextChanged" Grid.RowSpan="2" />
-                    <TextBox AutomationProperties.Name="Kód" IsEnabled="True" Padding="5" x:Name="textBox" Grid.Column="1" AcceptsReturn="True" TextChanged="textBox_TextChanged" Grid.ColumnSpan="2" Grid.RowSpan="2" PreviewKeyDown="TextBox_KeyDown" PreviewMouseLeftButtonDown="TextBox_PreviewMouseLeftButtonDown"
-							 />
+                    <TextBox AutomationProperties.Name="Kód" IsEnabled="True" Padding="5" x:Name="textBox" Grid.Column="1" AcceptsReturn="True" AcceptsTab="True" LostFocus="Textbox_LostFocus" TextChanged="textBox_TextChanged" Grid.ColumnSpan="2" Grid.RowSpan="2" PreviewKeyDown="TextBox_KeyDown" PreviewMouseLeftButtonDown="TextBox_PreviewMouseLeftButtonDown"
+							 TextWrapping="Wrap" />
                     <ListView x:Name="predictionBox" Grid.Column="2" d:ItemsSource="{d:SampleData ItemCount=5}" Width="Auto" Padding="3" HorizontalAlignment="Right" PreviewKeyDown="ListBox_Selection" Grid.RowSpan="2" GotFocus="predictionBox_GotFocus" SelectionChanged="predictionBox_SelectionChanged"/>
                 </Grid>
             </ScrollViewer>
@@ -104,7 +104,7 @@
             </Grid>
         </Grid>
         <Grid Grid.Row="2">
-            <TextBox AutomationProperties.Name="Terminál"  Name="Terminal" Background="LightGray" Height="50" Padding="5" IsReadOnly="True" PreviewMouseLeftButtonDown="Terminal_PreviewMouseLeftButtonDown" LostFocus="Terminal_LostFocus"/>
+            <TextBox AutomationProperties.Name="Terminál"  Name="Terminal" Background="LightGray" Height="50" Padding="5" IsReadOnly="True" PreviewMouseLeftButtonDown="Terminal_PreviewMouseLeftButtonDown"/>
         </Grid>
 		<!--
 				<Canvas x:Name="pomocnyCanvas"  Width="100" Height="100" Focusable="True" PreviewKeyDown="CanvasKeyDown" AutomationProperties.Name="Grafická plocha" AutomationProperties.HelpText="Grafická plocha"></Canvas>

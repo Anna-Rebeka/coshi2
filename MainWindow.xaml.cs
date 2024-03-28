@@ -30,7 +30,6 @@ namespace coshi2
         public bool is_running = false;
         public string soundPackage;
         private int caretInd;
-        private bool swap_terminal_name = false;
 
         public Ellipse robot;
         double sirkaC;
@@ -489,17 +488,26 @@ namespace coshi2
                 e.Handled = true;
             }
 
-            if (e.Key == Key.Tab) {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.Space)
+            {
                 if (predictionBox.Items.Count > 0)
                 {
                     caretInd = textBox.CaretIndex;
-                    predictionBox.Focus();
+
+                    ListViewItem firstItem = (ListViewItem)predictionBox.ItemContainerGenerator.ContainerFromItem(predictionBox.Items[0]);
+                    if (firstItem != null)
+                    {
+                        firstItem.Focus();
+                    }
+
                 }
                 else
                 {
                     e.Handled = true;
                 }
             }
+
+  
 
             if (e.Key == Key.Enter && focus == 0 && textBox.LineCount >= 200)
             {
@@ -590,7 +598,7 @@ namespace coshi2
                 textBox.CaretIndex = indexC;
             }            
         }
-
+        
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (focus == 1)
@@ -608,8 +616,9 @@ namespace coshi2
                 Terminal.Text = "";
                 if(focus == 0 || focus == 2) 
                 {
+                    AutomationProperties.SetName(textBox, " ");
                     FindNextKeyword();
-                    move_focus(2);
+                   
                     e.Handled = true;
                 }
             }
@@ -619,8 +628,9 @@ namespace coshi2
                 Terminal.Text = "";
                 if (focus == 0 || focus == 2)
                 {
+                    AutomationProperties.SetName(textBox, " ");
                     FindPreviousKeyword();
-                    move_focus(2);
+                   
                     e.Handled = true;
                 }
             }
@@ -728,10 +738,9 @@ namespace coshi2
 
         }
 
-        private void Terminal_LostFocus(object sender, RoutedEventArgs e)
+        private void Textbox_LostFocus(object sender, RoutedEventArgs e)
         {
-            AutomationProperties.SetName(Terminal, "Terminál");
-            swap_terminal_name = false;
+            AutomationProperties.SetName(textBox, "Kód");
         }
 
 
@@ -743,7 +752,7 @@ namespace coshi2
             {
                 //nenasiel klucove slovo -> na zaciatok textu
                 textBox.CaretIndex = 0;
-                FindKeyword(true);
+                FindKeyword(true, true);
             }
         }
 
@@ -755,11 +764,11 @@ namespace coshi2
             {
                 //nenasiel klucove slovo -> na koniec textu
                 textBox.CaretIndex = textBox.Text.Length;
-                FindKeyword(false);
+                FindKeyword(false, true);
             }
         }
 
-        private bool FindKeyword(bool forward)
+        private bool FindKeyword(bool forward, bool rewind = false)
         {
             var regex = new System.Text.RegularExpressions.Regex(@"\b(kým|kym|ak|opakuj|urob)\b");
             var matches = regex.Matches(textBox.Text);
@@ -770,7 +779,8 @@ namespace coshi2
             
             foreach (System.Text.RegularExpressions.Match match in forward ? matches : matches.Cast<Match>().Reverse())
             {
-                if ((forward && match.Index > caret) || (!forward && match.Index < caret))
+               
+                if ((forward && ((match.Index > caret && !rewind) || (match.Index >= caret && rewind))) || (!forward && match.Index < caret))
                 {
                     string subs = textBox.Text.Substring(0, match.Index);
                     int ends = Regex.Matches(subs, @"\b" + "koniec" + @"\b").Count;
@@ -780,14 +790,11 @@ namespace coshi2
                     string message = "Riadok " + (lineIndex + 1) + " " + textBox.GetLineText(lineIndex).Trim() + " Úroveň " + (forward ? index - ends : matches.Count - 1 - ends).ToString();
                     Terminal.Text = message;
 
-                    if (swap_terminal_name) // Treba menit meno pre NVDA
-                    {
-                        AutomationProperties.SetName(Terminal, message);
-                    }
-                    else
-                    {
-                        swap_terminal_name = true;
-                    }
+                    move_focus(2);
+                    move_focus(0);
+                    textBox.Focus();
+                    Keyboard.Focus(textBox);
+                    AutomationProperties.SetName(textBox, message);
 
                     return true;
                 }
