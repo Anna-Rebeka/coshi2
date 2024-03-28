@@ -10,7 +10,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using System.Text.RegularExpressions; 
+using System.Text.RegularExpressions;
+using System.Windows.Input;
+using System.Windows.Automation;
 
 
 
@@ -28,6 +30,8 @@ namespace coshi2
         public bool is_running = false;
         public string soundPackage;
         private int caretInd;
+        private bool swap_terminal_name = false;
+
         public Ellipse robot;
         double sirkaC;
         double vyskaC;
@@ -515,6 +519,7 @@ namespace coshi2
         {
             try
             {
+                //AutomationProperties.SetName(Terminal, "Terminál");
                 Terminal.Text = "";
                 this.is_running = true;
                 this.index = 0;
@@ -600,16 +605,24 @@ namespace coshi2
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.H && !Keyboard.IsKeyDown(Key.LeftShift))
             {
-                FindNextKeyword();
-                move_focus(2);
-                e.Handled = true;
+                Terminal.Text = "";
+                if(focus == 0 || focus == 2) 
+                {
+                    FindNextKeyword();
+                    move_focus(2);
+                    e.Handled = true;
+                }
             }
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.LeftShift) && e.Key == Key.H)
             {
-                FindPreviousKeyword();
-                move_focus(2);
-                e.Handled = true;
+                Terminal.Text = "";
+                if (focus == 0 || focus == 2)
+                {
+                    FindPreviousKeyword();
+                    move_focus(2);
+                    e.Handled = true;
+                }
             }
 
 
@@ -643,6 +656,7 @@ namespace coshi2
 
             if (e.Key == Key.F6)
             {
+                //AutomationProperties.SetName(Terminal, "Terminál");
                 Stop();
                 focus_toggle();
             }
@@ -714,90 +728,73 @@ namespace coshi2
 
         }
 
+        private void Terminal_LostFocus(object sender, RoutedEventArgs e)
+        {
+            AutomationProperties.SetName(Terminal, "Terminál");
+            swap_terminal_name = false;
+        }
+
 
         private void FindNextKeyword()
         {
-            //var headerPattern = string.Join("|", Commands.get_block_starts());
-            var regex = new System.Text.RegularExpressions.Regex(@"\b(kým|kym|ak|opakuj|urob)\b");
-            var matches = regex.Matches(textBox.Text);
+            bool found = FindKeyword(true);
 
-            int caret = textBox.CaretIndex;
-            int level = 0;
-            int index = 0;
-
-            // prejdi vsetky klucove slova a najdi najblizsie dalsie
-            foreach (System.Text.RegularExpressions.Match match in matches)
+            if (!found && textBox.CaretIndex > 0)
             {
-                if (match.Index > caret)
-                {
-                    string subs = textBox.Text.Substring(0, match.Index);
-                    int ends = Regex.Matches(subs, @"\b" + "koniec" + @"\b").Count;
-                    textBox.CaretIndex = match.Index;
-                    level = index - ends;
-                    if(level < 0)
-                    {
-                        int lineIndex = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
-                        Terminal.Text = "Riadok " + (lineIndex+1) + " " + "Skok na neznámu úroveň. V kóde vyššie je navyše \"koniec\".";
-                    }
-                    else
-                    {
-                        int lineIndex = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
-                        Terminal.Text = "Riadok " + (lineIndex+1) + " " + textBox.GetLineText(lineIndex).Trim() + " Úroveň " + (index - ends).ToString();
-                    }
-                    return;
-                }
-                index++;
+                //nenasiel klucove slovo -> na zaciatok textu
+                textBox.CaretIndex = 0;
+                FindKeyword(true);
             }
-
-            // ak ani jeden nie je za aktualny caretom, nastav prvy vyskyt - cyklicke hladanie
-            if (matches.Count > 0)
-            {
-                string subs = textBox.Text.Substring(0, matches[0].Index);
-                int ends = Regex.Matches(subs, @"\b" + "koniec" + @"\b").Count;
-                textBox.CaretIndex = matches[0].Index;
-
-                int lineIndex = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
-                Terminal.Text = "Riadok " + (lineIndex + 1) + " " + textBox.GetLineText(lineIndex).Trim() + " Úroveň 0";
-                return;
-            }
-
-            //inak zostan kde si
         }
 
         private void FindPreviousKeyword()
         {
+            bool found = FindKeyword(false);
+
+            if (!found && textBox.CaretIndex < textBox.Text.Length)
+            {
+                //nenasiel klucove slovo -> na koniec textu
+                textBox.CaretIndex = textBox.Text.Length;
+                FindKeyword(false);
+            }
+        }
+
+        private bool FindKeyword(bool forward)
+        {
             var regex = new System.Text.RegularExpressions.Regex(@"\b(kým|kym|ak|opakuj|urob)\b");
             var matches = regex.Matches(textBox.Text);
 
             int caret = textBox.CaretIndex;
-            int index = matches.Count - 1;
+            int index = forward ? 0 : matches.Count - 1;
 
-            // Prehladavanie v opacnom poradi
-            foreach (System.Text.RegularExpressions.Match match in matches.Cast<Match>().Reverse())
+            
+            foreach (System.Text.RegularExpressions.Match match in forward ? matches : matches.Cast<Match>().Reverse())
             {
-                if (match.Index < caret)
-                {   
+                if ((forward && match.Index > caret) || (!forward && match.Index < caret))
+                {
                     string subs = textBox.Text.Substring(0, match.Index);
                     int ends = Regex.Matches(subs, @"\b" + "koniec" + @"\b").Count;
                     textBox.CaretIndex = match.Index;
 
                     int lineIndex = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
-                    Terminal.Text = "Riadok " + (lineIndex + 1) + " " + textBox.GetLineText(lineIndex).Trim() + " Úroveň " + (index - ends).ToString();
-                    return;
+                    string message = "Riadok " + (lineIndex + 1) + " " + textBox.GetLineText(lineIndex).Trim() + " Úroveň " + (forward ? index - ends : matches.Count - 1 - ends).ToString();
+                    Terminal.Text = message;
+
+                    if (swap_terminal_name) // Treba menit meno pre NVDA
+                    {
+                        AutomationProperties.SetName(Terminal, message);
+                    }
+                    else
+                    {
+                        swap_terminal_name = true;
+                    }
+
+                    return true;
                 }
-                index--;
+                index = forward ? index + 1 : index - 1;
             }
 
-            // Ak zhoda nie je pred caret, nastav posledné klucove slovo
-            if (matches.Count > 0)
-            {
-                string subs = textBox.Text.Substring(0, matches[matches.Count - 1].Index);
-                int ends = Regex.Matches(subs, @"\b" + "koniec" + @"\b").Count;
-                textBox.CaretIndex = matches[matches.Count - 1].Index;
-                int lineIndex = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
-                Terminal.Text = "Riadok " + (lineIndex + 1) + " " + textBox.GetLineText(lineIndex).Trim() + " Úroveň " + (matches.Count - 1 - ends).ToString();
-
-            }
+            return false;
         }
 
 
