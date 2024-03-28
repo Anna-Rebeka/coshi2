@@ -502,17 +502,6 @@ namespace coshi2
                 e.Handled = true;
             }
 
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.H && !Keyboard.IsKeyDown(Key.LeftShift))
-            {
-                FindNextKeyword();
-                e.Handled = true;
-            }
-
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.LeftShift) && e.Key == Key.H)
-            {
-                FindPreviousKeyword();
-                e.Handled = true;
-            }
         }
 
         private void Stop()
@@ -546,6 +535,7 @@ namespace coshi2
             catch (Exception ex)
             {
                 Terminal.Text = "Chyba: " + ex.Message;
+                move_focus(2);
             }
             this.is_running = false;
         }
@@ -607,6 +597,22 @@ namespace coshi2
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
+
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.H && !Keyboard.IsKeyDown(Key.LeftShift))
+            {
+                FindNextKeyword();
+                move_focus(2);
+                e.Handled = true;
+            }
+
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.LeftShift) && e.Key == Key.H)
+            {
+                FindPreviousKeyword();
+                move_focus(2);
+                e.Handled = true;
+            }
+
+
             if (e.Key == Key.F1)
             {
                 Show_Help(null, e);
@@ -730,11 +736,13 @@ namespace coshi2
                     level = index - ends;
                     if(level < 0)
                     {
-                        Terminal.Text = "Skok na neznámu úroveň. V kóde je navyše \"koniec\".";
+                        int lineIndex = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
+                        Terminal.Text = "Riadok " + (lineIndex+1) + " " + "Skok na neznámu úroveň. V kóde vyššie je navyše \"koniec\".";
                     }
                     else
                     {
-                        Terminal.Text = "Skok na úroveň " + (index - ends).ToString();
+                        int lineIndex = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
+                        Terminal.Text = "Riadok " + (lineIndex+1) + " " + textBox.GetLineText(lineIndex).Trim() + " Úroveň " + (index - ends).ToString();
                     }
                     return;
                 }
@@ -747,7 +755,9 @@ namespace coshi2
                 string subs = textBox.Text.Substring(0, matches[0].Index);
                 int ends = Regex.Matches(subs, @"\b" + "koniec" + @"\b").Count;
                 textBox.CaretIndex = matches[0].Index;
-                Terminal.Text = "Skok na úroveň 0";
+
+                int lineIndex = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
+                Terminal.Text = "Riadok " + (lineIndex + 1) + " " + textBox.GetLineText(lineIndex).Trim() + " Úroveň 0";
                 return;
             }
 
@@ -770,7 +780,9 @@ namespace coshi2
                     string subs = textBox.Text.Substring(0, match.Index);
                     int ends = Regex.Matches(subs, @"\b" + "koniec" + @"\b").Count;
                     textBox.CaretIndex = match.Index;
-                    Terminal.Text = "Úroveň " + (index - ends).ToString();
+
+                    int lineIndex = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
+                    Terminal.Text = "Riadok " + (lineIndex + 1) + " " + textBox.GetLineText(lineIndex).Trim() + " Úroveň " + (index - ends).ToString();
                     return;
                 }
                 index--;
@@ -782,7 +794,9 @@ namespace coshi2
                 string subs = textBox.Text.Substring(0, matches[matches.Count - 1].Index);
                 int ends = Regex.Matches(subs, @"\b" + "koniec" + @"\b").Count;
                 textBox.CaretIndex = matches[matches.Count - 1].Index;
-                Terminal.Text = "Úroveň " + (matches.Count - 1 - ends).ToString();
+                int lineIndex = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
+                Terminal.Text = "Riadok " + (lineIndex + 1) + " " + textBox.GetLineText(lineIndex).Trim() + " Úroveň " + (matches.Count - 1 - ends).ToString();
+
             }
         }
 
