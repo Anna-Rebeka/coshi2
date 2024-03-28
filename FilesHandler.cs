@@ -82,7 +82,7 @@ namespace coshi2
                     return firstline + reader.ReadToEnd(); ;
                 }
             }
-            return "";
+            return null;
         }
 
         public static void delete() { }

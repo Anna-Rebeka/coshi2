@@ -50,10 +50,8 @@ namespace coshi2
             {
                 "kým",
                 "kym",
-                "do ",
                 "ak",
                 "opakuj",
-                "zobraz",
                 "urob"
             };
         }

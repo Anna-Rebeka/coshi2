@@ -21,17 +21,29 @@ namespace coshi2
         public GoToLineDialog()
         {
             InitializeComponent();
-            txtLineNumber.Focus(); // Focus na textbox pre pohodlný vstup
+
+            if (Settings.THEME == Theme.Dark)
+            {
+                textBlock.Foreground = Brushes.White;
+                textBlock.Background = Brushes.Black;
+            }
+            else
+            {
+                textBlock.Foreground = Brushes.Black;
+                textBlock.Background = Brushes.White;
+            }
+
+            txtLineNumber.Focus(); 
         }
 
         private void BtnOK_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = true; // Nastavenie výsledku dialógového okna na True, èo indikuje stlaèenie tlaèidla OK
+            DialogResult = true; 
         }
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = false; // Nastavenie výsledku dialógového okna na False, èo indikuje zrušenie dialógového okna
+            DialogResult = false; 
         }
     }
 }

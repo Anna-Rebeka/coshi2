@@ -104,7 +104,7 @@
             </Grid>
         </Grid>
         <Grid Grid.Row="2">
-            <TextBox AutomationProperties.Name="Terminál"  Name="Terminal" Background="LightGray" Height="50" IsReadOnly="True" PreviewMouseLeftButtonDown="Terminal_PreviewMouseLeftButtonDown"/>
+            <TextBox AutomationProperties.Name="Terminál"  Name="Terminal" Background="LightGray" Height="50" Padding="5" IsReadOnly="True" PreviewMouseLeftButtonDown="Terminal_PreviewMouseLeftButtonDown"/>
         </Grid>
 		<!--
 				<Canvas x:Name="pomocnyCanvas"  Width="100" Height="100" Focusable="True" PreviewKeyDown="CanvasKeyDown" AutomationProperties.Name="Grafická plocha" AutomationProperties.HelpText="Grafická plocha"></Canvas>

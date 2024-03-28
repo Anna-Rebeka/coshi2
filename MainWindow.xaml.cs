@@ -132,7 +132,6 @@ namespace coshi2
                 if (Settings.THEME == Theme.Light)
                 {
                     border.BorderBrush = Brushes.DarkGray;
-                    // Striedanie pozadia medzi bielou a svetlomodrou pre light režim
                     if (i % 2 == 0)
                     {
                         backgroundBrush = Brushes.White;
@@ -145,14 +144,13 @@ namespace coshi2
                 else
                 { // Dark režim
                     border.BorderBrush = Brushes.LightGray;
-                    // Striedanie pozadia medzi tmavosivou a čiernou pre dark režim
                     if (i % 2 == 0)
                     {
                         backgroundBrush = Brushes.Black;
                     }
                     else
                     {
-                        backgroundBrush = new SolidColorBrush(Color.FromArgb(255, 30, 30, 30)); // tmavosivá (blízko čiernej)
+                        backgroundBrush = new SolidColorBrush(Color.FromArgb(255, 30, 30, 35)); 
                     }
                 }
 
@@ -319,10 +317,13 @@ namespace coshi2
             string code = FilesHandler.open();
             Title = "Coshi2 - " + Settings.CURRENTFILEPATH;
             changeSize(Settings.MAP_SQRT_SIZE);
-
-
             DrawLabels();
-            textBox.Text = code;
+
+            //tlačidlo "Zrušiť"
+            if (code != null)
+            {
+                textBox.Text = code;
+            }
         }
 
 
@@ -477,10 +478,13 @@ namespace coshi2
 
 
         private void TextBox_KeyDown(object sender, KeyEventArgs e) {
+            
+
             if (textBox.IsFocused == false)
             {
                 e.Handled = true;
             }
+
             if (e.Key == Key.Tab) {
                 if (predictionBox.Items.Count > 0)
                 {
@@ -492,8 +496,21 @@ namespace coshi2
                     e.Handled = true;
                 }
             }
+
             if (e.Key == Key.Enter && focus == 0 && textBox.LineCount >= 200)
             {
+                e.Handled = true;
+            }
+
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.H && !Keyboard.IsKeyDown(Key.LeftShift))
+            {
+                FindNextKeyword();
+                e.Handled = true;
+            }
+
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.LeftShift) && e.Key == Key.H)
+            {
+                FindPreviousKeyword();
                 e.Handled = true;
             }
         }
@@ -667,10 +684,6 @@ namespace coshi2
                 e.Handled = true;
             }
 
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.H)
-            {
-                FindNextKeyword();
-            }
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.OemPlus)
             {
@@ -695,31 +708,82 @@ namespace coshi2
 
         }
 
+
         private void FindNextKeyword()
         {
-            var headerPattern = string.Join("|", Commands.get_block_starts());
-            var regex = new System.Text.RegularExpressions.Regex(headerPattern);
+            //var headerPattern = string.Join("|", Commands.get_block_starts());
+            var regex = new System.Text.RegularExpressions.Regex(@"\b(kým|kym|ak|opakuj|urob)\b");
             var matches = regex.Matches(textBox.Text);
-            int caret = textBox.CaretIndex;
 
-            // prejdi vsetky nalezi kluc. slov a najdi najblizsi dalsi
+            int caret = textBox.CaretIndex;
+            int level = 0;
+            int index = 0;
+
+            // prejdi vsetky klucove slova a najdi najblizsie dalsie
             foreach (System.Text.RegularExpressions.Match match in matches)
             {
                 if (match.Index > caret)
                 {
+                    string subs = textBox.Text.Substring(0, match.Index);
+                    int ends = Regex.Matches(subs, @"\b" + "koniec" + @"\b").Count;
                     textBox.CaretIndex = match.Index;
+                    level = index - ends;
+                    if(level < 0)
+                    {
+                        Terminal.Text = "Skok na neznámu úroveň. V kóde je navyše \"koniec\".";
+                    }
+                    else
+                    {
+                        Terminal.Text = "Skok na úroveň " + (index - ends).ToString();
+                    }
                     return;
                 }
+                index++;
             }
 
             // ak ani jeden nie je za aktualny caretom, nastav prvy vyskyt - cyklicke hladanie
             if (matches.Count > 0)
             {
+                string subs = textBox.Text.Substring(0, matches[0].Index);
+                int ends = Regex.Matches(subs, @"\b" + "koniec" + @"\b").Count;
                 textBox.CaretIndex = matches[0].Index;
+                Terminal.Text = "Skok na úroveň 0";
                 return;
             }
 
             //inak zostan kde si
+        }
+
+        private void FindPreviousKeyword()
+        {
+            var regex = new System.Text.RegularExpressions.Regex(@"\b(kým|kym|ak|opakuj|urob)\b");
+            var matches = regex.Matches(textBox.Text);
+
+            int caret = textBox.CaretIndex;
+            int index = matches.Count - 1;
+
+            // Prehladavanie v opacnom poradi
+            foreach (System.Text.RegularExpressions.Match match in matches.Cast<Match>().Reverse())
+            {
+                if (match.Index < caret)
+                {   
+                    string subs = textBox.Text.Substring(0, match.Index);
+                    int ends = Regex.Matches(subs, @"\b" + "koniec" + @"\b").Count;
+                    textBox.CaretIndex = match.Index;
+                    Terminal.Text = "Úroveň " + (index - ends).ToString();
+                    return;
+                }
+                index--;
+            }
+
+            // Ak zhoda nie je pred caret, nastav posledné klucove slovo
+            if (matches.Count > 0)
+            {
+                string subs = textBox.Text.Substring(0, matches[matches.Count - 1].Index);
+                int ends = Regex.Matches(subs, @"\b" + "koniec" + @"\b").Count;
+                textBox.CaretIndex = matches[matches.Count - 1].Index;
+                Terminal.Text = "Úroveň " + (matches.Count - 1 - ends).ToString();
+            }
         }
 
 
@@ -737,7 +801,7 @@ namespace coshi2
 
                     if (lineNumber <= 0 || lineNumber > textBox.LineCount)
                     {
-                        MessageBox.Show("Zadajte platné číslo riadku.", "Varovanie", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBox.Show("Riadok s takým číslom neexistuje.", "Varovanie", MessageBoxButton.OK, MessageBoxImage.Warning);
 
                     }
                     else
@@ -750,7 +814,7 @@ namespace coshi2
                 }
                 else
                 {
-                    MessageBox.Show("Zadajte platné číslo riadku.", "Varovanie", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Neplatné číslo riadku.", "Varovanie", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
         }
@@ -941,22 +1005,19 @@ namespace coshi2
             if(Settings.THEME == Theme.Dark)
             {
                 ThemeState.Header = "_Svetlý režim";
+                Terminal.Background = new SolidColorBrush(Color.FromArgb(255, 30, 30, 35));
             }
             else
             {
                 ThemeState.Header = "_Tmavý režim";
+                Terminal.Background = Brushes.LightGray;
             }
 
             textBox.Background = Settings.BG;
             textBox.Foreground = Settings.FG;
 
-            Terminal.Background = Settings.BG;
+            
             Terminal.Foreground = Settings.FG;
-
-            if(Settings.THEME == Theme.Light)
-            {
-                Terminal.Background = Brushes.LightGray;
-            }
             
             lineNumberTextBox.Background = Settings.BG;
             lineNumberTextBox.Foreground = Settings.FG;
@@ -981,6 +1042,7 @@ namespace coshi2
                 return;
             }
             lineNumberTextBox.FontSize += 2.0;
+            Terminal.FontSize += 1.5;
             textBox.FontSize += 2.0;
             predictionBox.FontSize += 2.0;
         }
@@ -992,6 +1054,7 @@ namespace coshi2
                 return;
             }
             lineNumberTextBox.FontSize -= 2.0;
+            Terminal.FontSize -= 1.5;
             textBox.FontSize -= 2.0;
             predictionBox.FontSize -= 2.0;
         }

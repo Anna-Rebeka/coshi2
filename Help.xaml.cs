@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+
 namespace coshi2
 {
     /// <summary>
@@ -23,7 +24,18 @@ namespace coshi2
         {
             InitializeComponent();
             AddText();
+            if (Settings.THEME == Theme.Dark)
+            {
+                helptextbox.Foreground = Brushes.White;
+                helptextbox.Background = Brushes.Black;
+            }
+            else
+            {
+                helptextbox.Foreground = Brushes.Black;
+                helptextbox.Background = Brushes.White;
+            }
             helptextbox.Focus();
+
         }
 
         private void AddText()
