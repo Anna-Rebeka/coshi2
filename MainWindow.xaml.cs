@@ -53,7 +53,7 @@ namespace coshi2
             Console.WriteLine();
            
             InitializeComponent();
-            string iconpath = System.IO.Path.GetFullPath("../../../c2.ico");
+            string iconpath = System.IO.Path.GetFullPath("c2.ico");
             Root.Icon = new BitmapImage(new Uri(iconpath));
             
             WindowState = WindowState.Maximized; 
@@ -89,7 +89,7 @@ namespace coshi2
 
         public void WritePackagesMenu()
         {
-            string soundsDirectory = "../../../sounds";
+            string soundsDirectory = "./sounds";
 
             if (Directory.Exists(soundsDirectory))
             {
