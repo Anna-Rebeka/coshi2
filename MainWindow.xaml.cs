@@ -13,6 +13,7 @@ using System.Windows.Threading;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
 using System.Windows.Automation;
+using System.Windows.Media.Imaging;
 
 
 
@@ -50,7 +51,11 @@ namespace coshi2
         {
             //priprav canvas
             Console.WriteLine();
+           
             InitializeComponent();
+            string iconpath = System.IO.Path.GetFullPath("../../../c2.ico");
+            Root.Icon = new BitmapImage(new Uri(iconpath));
+            
             WindowState = WindowState.Maximized; 
 
             DrawGrid();
