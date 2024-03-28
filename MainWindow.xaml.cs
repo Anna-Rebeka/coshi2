@@ -382,8 +382,8 @@ namespace coshi2
                 case 1: //graf plocha
                     textBox.IsReadOnly = true;
                     textBox.Focusable = false;
-                    pomocnyCanvas.Focus();
-                    Keyboard.Focus(pomocnyCanvas);
+                    pomocnyLabel.Focus();
+                    Keyboard.Focus(pomocnyLabel);
                     break;
                 case 2: //terminal
                     Terminal.Focus();
@@ -452,6 +452,7 @@ namespace coshi2
             Settings.set_size(size);
             uniformGrid.Children.Clear();
             DrawGrid();
+            Robot.position = 1;
             Settings.MAP = this.get_map();
             SoundsHandler.fill_sound_map();
             DrawLabels();
@@ -787,7 +788,7 @@ namespace coshi2
                     textBox.CaretIndex = match.Index;
 
                     int lineIndex = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
-                    string message = "Riadok " + (lineIndex + 1) + " " + textBox.GetLineText(lineIndex).Trim() + " Úroveň " + (forward ? index - ends : matches.Count - 1 - ends).ToString();
+                    string message = "Riadok " + (lineIndex + 1) + " " + textBox.GetLineText(lineIndex).Trim() + " Úroveň " + (index - ends).ToString();
                     Terminal.Text = message;
 
                     move_focus(2);
@@ -1119,12 +1120,40 @@ namespace coshi2
             move_focus(0);
         }
 
-        private void CanvasKeyDown(object sender, KeyEventArgs e)
+        private void LabelKeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Key == Key.P)
+            {
+                string toggle = "";
+                if (AutomationProperties.GetName(pomocnyLabel).Contains("-")){
+                    toggle = "";
+                }
+                else
+                {
+                    toggle = "-";
+                }
+                AutomationProperties.SetName(pomocnyLabel, " ");
+                move_focus(0);
+                move_focus(1);
+
+                int x = (Robot.position - 1) / Settings.MAP_SQRT_SIZE;
+                int y = (Robot.position - 1) % Settings.MAP_SQRT_SIZE;
+
+           
+                AutomationProperties.SetName(pomocnyLabel, toggle + "Riadok " + (x + 1).ToString() + " stĺpec " + (y + 1).ToString());
+
+                e.Handled = true;
+            }
+
             if (e.Key != Key.F6)
             {
                 e.Handled = true;
             }
+        }
+
+        private void Label_LostFocus(object sender, RoutedEventArgs e)
+        {
+            AutomationProperties.SetName(pomocnyLabel, "Grafická plocha");
         }
     }
 }

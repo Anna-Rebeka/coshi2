@@ -44,14 +44,18 @@ namespace coshi2
             "- CTRL + N  Nový \n" +
             "- CTRL + S  Uložiť\n" +
             "- CTRL + O  Otvoriť\n" +
+            "- CTRL + G  Skok na ľubovoľný riadok\n" +
+            "- CTRL + H  Skok po blokoch kódu smerom nadol\n" +
+            "- CTRL + Shift + H  Skok po blokoch kódu smerom nahor\n" +
+            "- CTRL + Medzerník  Výber z predikcie kódu\n" +
+            "- P Aktuálna poloha robota (ak sme na grafickej ploche)\n" +
             "- Alt + F4  Koniec\n\n\n" +
-            "Fn Funkcie:\n\n" +
+            "- Fn Funkcie:\n\n" +
             "- F1  Zobraz pomoc\n" +
             "- F2  Menu\n" +
-            "- F3  Skok po blokoch kódu\n" +
             "- F5  Spusti program\n" +
             "- Shift+F5  Zastav program\n" +
-            "- F6  Prepínač medzi kódom, robotom a terminálom\n" +
+            "- F6  Prepínač medzi kódom, grafickou plochou a terminálom\n" +
             "- F7  Rýchlejšie prehrávanie\n" +
             "- F8  Pomalšie prehrávanie\n" +
             "- F9  Prepínač medzi tmavým a svetlým režimom\n";

@@ -41,7 +41,7 @@
             <MenuItem Header="_Program">
                 <MenuItem Header="_Spustiť" InputGestureText="F5" Click="Play_Click"/>
                 <MenuItem Header="_Zastaviť" InputGestureText="Shift+F5" Click="Stop_Click"/>
-				<MenuItem Name="robotMoving" Header="_Prepnúť na robota" InputGestureText="F6" Click="Robot_Click"/>
+				<MenuItem Name="robotMoving" Header="_Prepnúť focus" InputGestureText="F6" Click="Robot_Click"/>
 				<MenuItem Header="_Pomalšie" Click="Decrease_Speed" InputGestureText="F7"/>
 				<MenuItem Header="_Rýchlejšie" Click="Increase_Speed" InputGestureText="F8"/>
             </MenuItem>
@@ -106,11 +106,8 @@
         <Grid Grid.Row="2">
             <TextBox AutomationProperties.Name="Terminál"  Name="Terminal" Background="LightGray" Height="50" Padding="5" IsReadOnly="True" PreviewMouseLeftButtonDown="Terminal_PreviewMouseLeftButtonDown"/>
         </Grid>
-		<!--
-				<Canvas x:Name="pomocnyCanvas"  Width="100" Height="100" Focusable="True" PreviewKeyDown="CanvasKeyDown" AutomationProperties.Name="Grafická plocha" AutomationProperties.HelpText="Grafická plocha"></Canvas>
 
-		-->
-		<Label x:Name="pomocnyCanvas"  Width="100" Height="10" Focusable="True" PreviewKeyDown="CanvasKeyDown" AutomationProperties.Name="Grafická plocha" AutomationProperties.HelpText="Grafická plocha"></Label>
+		<Label x:Name="pomocnyLabel"  Width="100" Height="10" Focusable="True" PreviewKeyDown="LabelKeyDown" LostFocus="Label_LostFocus" AutomationProperties.Name="Grafická plocha" AutomationProperties.HelpText="Grafická plocha"></Label>
 
 	</Grid>
 </Window>
