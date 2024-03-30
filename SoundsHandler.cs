@@ -46,7 +46,7 @@ namespace coshi2
                         {
                             int x = int.Parse(parts[0]);
                             int y = int.Parse(parts[1]);
-                            string soundName = parts[2];
+                            string soundName = parts[2].ToLower();
                             string filePath = Path.Combine(directory, parts[3]);
 
                             // SoundItem pre každý zvuk v balíčku

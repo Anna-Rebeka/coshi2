@@ -183,7 +183,7 @@ namespace coshi2
             {
                 throw new SyntaxError(lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position), expected_kind, expected_token);
             }
-            if (expected_kind == lexAnalyzer.END && lexAnalyzer.token == "koniec" ||
+            if (expected_kind == lexAnalyzer.END && lexAnalyzer.token.ToLower() == "koniec" ||
                 expected_kind == lexAnalyzer.LOOP && new List<string> { "krát", "krat" }.Contains(lexAnalyzer.token.ToLower()))
             {
                 return;

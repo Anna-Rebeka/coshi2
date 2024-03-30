@@ -63,6 +63,7 @@ namespace coshi2
                 while (Char.IsLetter(look))
                 {
                     token += look;
+                    token = token.ToLower();
                     next();
                 }
                 kind = WORD;
