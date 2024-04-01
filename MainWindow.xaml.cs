@@ -821,7 +821,7 @@ namespace coshi2
                 int lineNumber;
                 if (int.TryParse(dialog.LineNumber, out lineNumber))
                 {
-                    int lineIndex = Math.Min(Math.Max(0, lineNumber - 1), textBox.LineCount - 1); // Prevedenie čísla riadku na index riadku
+                    int lineIndex = Math.Min(Math.Max(0, lineNumber - 1), textBox.LineCount - 1);
 
                     if (lineNumber <= 0 || lineNumber > textBox.LineCount)
                     {
@@ -832,7 +832,7 @@ namespace coshi2
                     {
 
                         textBox.ScrollToLine(lineIndex); // Presun na zvolený riadok
-                        textBox.Focus(); // Focus na textBox, aby sa zvýraznil kurzor
+                        move_focus(0);
                         textBox.Select(textBox.GetCharacterIndexFromLineIndex(lineIndex), 0); // Označenie pozície kurzora
                     }
                 }

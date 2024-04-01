@@ -4,6 +4,7 @@
         Title="Skok na riadok" SizeToContent="WidthAndHeight"
         WindowStyle="None" ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True" Background="#FFF0F0F0" BorderBrush="#FF707070" BorderThickness="1"
 		x:Name="textBlock"
+		PreviewKeyDown="GoToLine_PreviewKeyDown"
 		>
     <Grid Margin="20">
         <Grid.RowDefinitions>
