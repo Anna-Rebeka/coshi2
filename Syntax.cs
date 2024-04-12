@@ -553,6 +553,19 @@ namespace coshi2
         }
     }
 
+    public class Play : RobotCommand
+    {
+        public Play() : base()
+        {
+        }
+
+        public override void generate()
+        {        //.. generuje inštrukcie pre príkaz dopredu
+            VirtualMachine.poke(VirtualMachine.INSTRUCTION_PLAY); //.. inštrukcia FD dĺžka
+        }
+    }
+
+
     public class Silence : RobotCommand
     {
         public Silence() : base()

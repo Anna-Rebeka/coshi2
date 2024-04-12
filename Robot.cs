@@ -33,6 +33,7 @@ namespace coshi2
 
         }
 
+
         public static void down()
         {
             if (position + Settings.MAP_SQRT_SIZE > Settings.MAP_SIZE)
@@ -66,6 +67,10 @@ namespace coshi2
             positions.Add(new int[] { pos / Settings.MAP_SQRT_SIZE, pos % Settings.MAP_SQRT_SIZE });
         }
 
+        public static void play()
+        {
+            positions.Add(new int[] { -100, 100 });
+        }
 
         public static void silence()
         {

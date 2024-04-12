@@ -53,6 +53,7 @@ namespace coshi2
         public static int INSTRUCTION_SILENCE = 29;
         public static int INSTRUCTION_LOUD = 30;
         public static int INSTRUCTION_PAUSE = 31;
+        public static int INSTRUCTION_PLAY = 32;
 
 
         public static int[] mem = new int[100];    //pamäť – pole celých čísel 
@@ -320,6 +321,13 @@ namespace coshi2
                 int answ = (Robot.position) % (Settings.MAP_SQRT_SIZE) != 0 ? 1 : 0;
                 mem[top] = answ;
             }
+
+            else if (mem[pc] == INSTRUCTION_PLAY)
+            {
+                pc = pc + 1;
+                Robot.play();
+            }
+
 
             else if (mem[pc] == INSTRUCTION_SILENCE)
             {

@@ -546,7 +546,7 @@ namespace coshi2
                 cmp.jumpOverVariables();
                 tree.generate();
                 VirtualMachine.execute_all();
-
+                Robot.position = 1;
 
                 this.index += 1;
                 this.timer.Start();
@@ -911,6 +911,12 @@ namespace coshi2
             else if (row == -100 && column == -100)
             {
                 Settings.SILENCE = true;
+            }
+            else if (row == -100 && column == 100)
+            {
+                int r = (Robot.position - 1) / Settings.MAP_SQRT_SIZE;
+                int c = (Robot.position - 1) % Settings.MAP_SQRT_SIZE;
+                SoundsHandler.play_sound(r, c);
             }
             else
             {

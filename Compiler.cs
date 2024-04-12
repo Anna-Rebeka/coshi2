@@ -92,7 +92,7 @@ namespace coshi2
                     check(lexAnalyzer.WORD, "tak");
                     lexAnalyzer.scan();
                     IfElse ifelse = new IfElse(test, parse(), null);
-                    
+
                     if (lexAnalyzer.token.ToLower() == "inak")
                     {
                         lexAnalyzer.scan();
@@ -109,6 +109,13 @@ namespace coshi2
                     lexAnalyzer.scan();
                     result.add(new Print(addSub()));
                 }
+
+                else if ("prehraj" == lexAnalyzer.token.ToLower())
+                {
+                    lexAnalyzer.scan();
+                    result.add(new Play());
+                }
+
 
                 else if ("ticho" == lexAnalyzer.token.ToLower())
                 {

@@ -1,0 +1,36 @@
+\section{Klávesové skratky}
+Klávesové skratky sme zvolili na základe zaužívaných konvencií z iných textových editorov a programovacích prostredí.
+
+\subsection{Ctrl+}
+Používame ich najmä na prácu so súborom alebo pre rýchlejší pohyb po texte kódu:
+\begin{itemize}
+    \item \textbf{CTRL + N} -- Nový
+    \item \textbf{CTRL + S} -- Uložiť
+    \item \textbf{CTRL + Shift + S} -- Uložiť ako
+    \item \textbf{CTRL + O} -- Otvoriť
+    \item \textbf{CTRL + G} -- Skok na riadok
+    \item \textbf{CTRL + H} -- Skok po blokoch kódu nadol
+    \item \textbf{CTRL + Shift + H} -- Skok po blokoch kódu nahor
+\end{itemize}
+
+Taktiež fungujú aj klasické CTRL skratky:
+\begin{itemize}
+    \item \textbf{CTRL + Z} -- Späť
+    \item \textbf{CTRL + Y} -- Opakovať
+    \item \textbf{CTRL + C} -- Kopírovať
+    \item \textbf{CTRL + X} -- Vystrihnúť
+    \item \textbf{CTRL + V} -- Vložiť
+\end{itemize}
+
+\subsection{Fn funkcie}
+Fn funkcie máme priradené najmä pre akcie alebo nastavenia editoru:
+\begin{itemize}
+    \item \textbf{F1} -- Zobraz pomocníka
+    \item \textbf{F2} -- Menu
+    \item \textbf{F5} -- Spusti program
+    \item \textbf{Shift + F5} -- Zastav program
+    \item \textbf{F6} -- Prepínač medzi kódom, grafickou plochou a terminálom
+    \item \textbf{F7} -- Rýchlejšie prehrávanie programu
+    \item \textbf{F8} -- Pomalšie prehrávanie programu
+    \item \textbf{F9} -- Prepínač medzi tmavým a svetlým režimom
+\end{itemize}
