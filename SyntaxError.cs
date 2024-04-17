@@ -37,6 +37,8 @@ namespace coshi2
                     return "koniec";
                 case 5:
                     return "krát";
+                case 6:
+                    return "názov zvuku";
                 default:
                     return "";
             }

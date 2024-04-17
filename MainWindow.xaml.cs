@@ -31,6 +31,7 @@ namespace coshi2
         public bool is_running = false;
         public string soundPackage;
         private int caretInd;
+        private bool success = true;
 
         public Ellipse robot;
         double sirkaC;
@@ -545,15 +546,26 @@ namespace coshi2
                 Block tree = cmp.parse();
                 cmp.jumpOverVariables();
                 tree.generate();
-                VirtualMachine.execute_all();
-                Robot.position = 1;
+                success = VirtualMachine.execute_all();
 
+                Robot.position = 1;
                 this.index += 1;
                 this.timer.Start();
+                if (!success)
+                {
+                    Terminal.Text = "Pozor! Program obsahuje nekonečný cyklus.";
+                }
             }
             catch (Exception ex)
             {
-                Terminal.Text = "Chyba: " + ex.Message;
+                if(!(ex is VariableNotFoundException) && !(ex is RobotOutOfMapException) && !(ex is SyntaxError))
+                {
+                    Terminal.Text = "Chyba: Syntax error.";
+                }
+                else
+                {
+                    Terminal.Text = "Chyba: " + ex.Message;
+                }
                 move_focus(2);
             }
             this.is_running = false;
@@ -721,14 +733,14 @@ namespace coshi2
             }
 
 
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.OemPlus)
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && (e.Key == Key.OemPlus || e.Key == Key.Add))
             {
                 Increase_Font(sender, null);
                 e.Handled = true;
                     
             }
 
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.OemMinus)
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && ( e.Key == Key.OemMinus || e.Key == Key.Subtract))
             {
                 Decrease_Font(sender, null);
                 e.Handled = true;
@@ -889,14 +901,19 @@ namespace coshi2
             {
                 this.timer.Stop();
                 DrawRobotOnCanvas(0, 0);
-                Terminal.Text += " Program úspešne zbehol.";
+                if (success) {
+                    Terminal.Text += " Program úspešne zbehol.";
+                }
                 return;
             }
 
             if (this.index >= Robot.positions.Count)
             {
                 this.timer.Stop();
-                Terminal.Text += " Program úspešne zbehol.";
+                if (success)
+                {
+                    Terminal.Text += " Program úspešne zbehol.";
+                }
                 return;
             }
 

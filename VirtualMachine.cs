@@ -55,6 +55,7 @@ namespace coshi2
         public static int INSTRUCTION_PAUSE = 31;
         public static int INSTRUCTION_PLAY = 32;
 
+        public static int loop_limit = 500;
 
         public static int[] mem = new int[100];    //pamäť – pole celých čísel 
         public static int counter_adr = mem.Length - 1;
@@ -95,12 +96,23 @@ namespace coshi2
             subroutines = new Dictionary<string, Subroutine>();
         }
 
-        public static void execute_all()
+        public static bool execute_all()
         {
+            loop_limit = 500;
             while (!terminated)
             {
-                execute();
+                if(loop_limit > 0)
+                {
+                    execute();
+                    loop_limit -= 1;
+                }
+                else
+                {
+                    terminated = true;
+                    return false;
+                }
             }
+            return true;
         }
 
         public static void execute()

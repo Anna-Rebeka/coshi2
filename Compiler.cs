@@ -33,7 +33,7 @@ namespace coshi2
                     robot_position -= Settings.MAP_SQRT_SIZE;
                 }
 
-                else if ("vlavo" == lexAnalyzer.token.ToLower())
+                else if ("vlavo" == lexAnalyzer.token.ToLower() || "vľavo" == lexAnalyzer.token.ToLower())
                 {
                     lexAnalyzer.scan();
                     result.add(new Lt());
@@ -389,15 +389,7 @@ namespace coshi2
                 lexAnalyzer.scan();
                 string name = lexAnalyzer.token.ToLower();
                 if (!SoundsHandler.sound_codes.ContainsKey(name)) {
-                    if (neg)
-                    {
-                        result = new IsNotSound(-1);
-                    }
-                    else
-                    {
-                        result = new IsSound(-1);
-                    }
-                    
+                    check(lexAnalyzer.SOUND_NAME);
                 }
                 else {
                     if (neg)
