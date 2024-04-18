@@ -541,6 +541,7 @@ namespace coshi2
                 VirtualMachine.reset();
                 VirtualMachine.SetTextBoxReference(Terminal);
                 Robot.reset();
+                DrawRobotOnCanvas(0,0);
                 Settings.reset_program_settings();
                 Compiler cmp = new Compiler(textBox.Text);
                 Block tree = cmp.parse();
@@ -1027,6 +1028,25 @@ namespace coshi2
                 textBox.Focus();
                 textBox.CaretIndex = caretInd;
             }
+
+            if (e.Key == Key.Z)
+            {
+                predictionBox.Items.Clear();
+                    foreach (string command in Commands.labelnames)
+                    {
+                        predictionBox.Items.Add(command);
+                    }
+                //pockaj na vykreslenie
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    ListViewItem firstItem = (ListViewItem)predictionBox.ItemContainerGenerator.ContainerFromItem(predictionBox.Items[0]);
+                    if (firstItem != null)
+                    {
+                        firstItem.Focus();
+                    }
+                }), System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+            }
+
             if (e.Key == Key.Escape) {
                 textBox.Focus();
                 textBox.CaretIndex = caretInd;
