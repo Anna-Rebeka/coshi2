@@ -54,7 +54,8 @@ namespace coshi2
                 "- F9  Prepínač medzi tmavým a svetlým režimom",
                 "",
                 "Iné:",
-                "- P Aktuálna poloha robota (ak sme na grafickej ploche)",
+                "- P  Aktuálna poloha robota (ak sme na grafickej ploche)",
+                "- Z  Vypíše zoznam zvukov z balíčku (ak sme na paneli s predikciou)",
                 "- Alt + F4  Koniec"
             };
 
@@ -113,7 +114,8 @@ namespace coshi2
             "- F9  Prepínač medzi tmavým a svetlým režimom\n" +
 
             "- Iné:\n\n" +
-            "- P Aktuálna poloha robota (ak sme na grafickej ploche)\n" +
+            "- P  Aktuálna poloha robota (ak sme na grafickej ploche)\n" +
+            "- Z  Vypíše zoznam zvukov z balíčku (ak sme na paneli s predikciou)\n" +
             "- Alt + F4  Koniec\n\n\n";
 
 
