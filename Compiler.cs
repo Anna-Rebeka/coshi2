@@ -388,7 +388,24 @@ namespace coshi2
             else if ("zvuk" == lexAnalyzer.token.ToLower()) {                
                 lexAnalyzer.scan();
                 string name = lexAnalyzer.token.ToLower();
+                string prefix = name;
+
+                if (!SoundsHandler.sound_codes.ContainsKey(prefix))
+                {
+                    while (SoundsHandler.sound_codes.Keys.Any(key => key.StartsWith(prefix)))
+                    {
+                        lexAnalyzer.scan();
+                        prefix += " " + lexAnalyzer.token.ToLower();
+                        if (SoundsHandler.sound_codes.ContainsKey(prefix))
+                        {
+                            name = prefix;
+                            break;
+                        }
+                    }
+                }
+
                 if (!SoundsHandler.sound_codes.ContainsKey(name)) {
+
                     check(lexAnalyzer.SOUND_NAME);
                 }
                 else {
@@ -410,6 +427,7 @@ namespace coshi2
 
             return result;
         }
+
 
 
         public void jumpOverVariables()
