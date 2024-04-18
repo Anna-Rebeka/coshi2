@@ -33,7 +33,7 @@ namespace coshi2
                     robot_position -= Settings.MAP_SQRT_SIZE;
                 }
 
-                else if ("vlavo" == lexAnalyzer.token.ToLower())
+                else if ("vlavo" == lexAnalyzer.token.ToLower() || "vľavo" == lexAnalyzer.token.ToLower())
                 {
                     lexAnalyzer.scan();
                     result.add(new Lt());
@@ -92,7 +92,7 @@ namespace coshi2
                     check(lexAnalyzer.WORD, "tak");
                     lexAnalyzer.scan();
                     IfElse ifelse = new IfElse(test, parse(), null);
-                    
+
                     if (lexAnalyzer.token.ToLower() == "inak")
                     {
                         lexAnalyzer.scan();
@@ -109,6 +109,13 @@ namespace coshi2
                     lexAnalyzer.scan();
                     result.add(new Print(addSub()));
                 }
+
+                else if ("prehraj" == lexAnalyzer.token.ToLower())
+                {
+                    lexAnalyzer.scan();
+                    result.add(new Play());
+                }
+
 
                 else if ("ticho" == lexAnalyzer.token.ToLower())
                 {
@@ -183,7 +190,7 @@ namespace coshi2
             {
                 throw new SyntaxError(lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position), expected_kind, expected_token);
             }
-            if (expected_kind == lexAnalyzer.END && lexAnalyzer.token == "koniec" ||
+            if (expected_kind == lexAnalyzer.END && lexAnalyzer.token.ToLower() == "koniec" ||
                 expected_kind == lexAnalyzer.LOOP && new List<string> { "krát", "krat" }.Contains(lexAnalyzer.token.ToLower()))
             {
                 return;
@@ -382,15 +389,7 @@ namespace coshi2
                 lexAnalyzer.scan();
                 string name = lexAnalyzer.token.ToLower();
                 if (!SoundsHandler.sound_codes.ContainsKey(name)) {
-                    if (neg)
-                    {
-                        result = new IsNotSound(-1);
-                    }
-                    else
-                    {
-                        result = new IsSound(-1);
-                    }
-                    
+                    check(lexAnalyzer.SOUND_NAME);
                 }
                 else {
                     if (neg)

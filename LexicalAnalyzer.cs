@@ -13,6 +13,7 @@ namespace coshi2
         public int SYMBOL = 3;
         public int END = 4;
         public int LOOP = 5;
+        public int SOUND_NAME = 6;
 
         public string token;
         public int kind;
@@ -63,6 +64,7 @@ namespace coshi2
                 while (Char.IsLetter(look))
                 {
                     token += look;
+                    token = token.ToLower();
                     next();
                 }
                 kind = WORD;

@@ -16,7 +16,7 @@ namespace coshi2
     {
         public static SoundItem[,] sounds_map = new SoundItem[Settings.MAP_SQRT_SIZE, Settings.MAP_SQRT_SIZE]; //z tohto pustame zvuky
         public static SoundPlayer player;
-        public static string mainDirectory = "../../../sounds";
+        public static string mainDirectory = "./sounds";
         public static Dictionary<String, int> sound_codes = new Dictionary<string, int>();
 
 
@@ -39,7 +39,6 @@ namespace coshi2
                 if (File.Exists(definitionFile))
                 {
                     string[] lines = File.ReadAllLines(definitionFile);
-
                     foreach (string line in lines)
                     {
                         string[] parts = line.Split(';');
@@ -47,7 +46,7 @@ namespace coshi2
                         {
                             int x = int.Parse(parts[0]);
                             int y = int.Parse(parts[1]);
-                            string soundName = parts[2];
+                            string soundName = parts[2].ToLower();
                             string filePath = Path.Combine(directory, parts[3]);
 
                             // SoundItem pre každý zvuk v balíčku

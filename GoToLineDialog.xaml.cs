@@ -45,5 +45,20 @@ namespace coshi2
         {
             DialogResult = false; 
         }
+
+        private void GoToLine_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                this.Close();
+                e.Handled = true;
+            }
+            if (e.Key == Key.Enter)
+            {
+                DialogResult = true;
+                e.Handled = true;
+            }
+
+        }
     }
 }

@@ -4,6 +4,7 @@
         Title="Skok na riadok" SizeToContent="WidthAndHeight"
         WindowStyle="None" ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True" Background="#FFF0F0F0" BorderBrush="#FF707070" BorderThickness="1"
 		x:Name="textBlock"
+		PreviewKeyDown="GoToLine_PreviewKeyDown"
 		>
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -12,7 +13,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Margin="0,0,0,10" Text="Zadaj číslo riadku:" FontSize="14" HorizontalAlignment="Center"/>
-        <TextBox x:Name="txtLineNumber" Grid.Row="1" Margin="0,0,0,10" VerticalAlignment="Center" FontSize="14"/>
+        <TextBox x:Name="txtLineNumber" Grid.Row="1" Margin="0,0,0,10" VerticalAlignment="Center" FontSize="14" MaxLength="3"/>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
             <Button Content="OK" Width="75" Margin="0,0,10,0" Click="BtnOK_Click"/>
             <Button Content="Zrušiť" Width="75" Margin="0,0,0,0" Click="BtnCancel_Click"/>

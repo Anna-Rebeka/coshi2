@@ -13,6 +13,7 @@ using System.Windows.Threading;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
 using System.Windows.Automation;
+using System.Windows.Media.Imaging;
 
 
 
@@ -30,6 +31,7 @@ namespace coshi2
         public bool is_running = false;
         public string soundPackage;
         private int caretInd;
+        private bool success = true;
 
         public Ellipse robot;
         double sirkaC;
@@ -50,7 +52,11 @@ namespace coshi2
         {
             //priprav canvas
             Console.WriteLine();
+           
             InitializeComponent();
+            string iconpath = System.IO.Path.GetFullPath("c2.ico");
+            Root.Icon = new BitmapImage(new Uri(iconpath));
+            
             WindowState = WindowState.Maximized; 
 
             DrawGrid();
@@ -84,7 +90,7 @@ namespace coshi2
 
         public void WritePackagesMenu()
         {
-            string soundsDirectory = "../../../sounds";
+            string soundsDirectory = "./sounds";
 
             if (Directory.Exists(soundsDirectory))
             {
@@ -535,20 +541,32 @@ namespace coshi2
                 VirtualMachine.reset();
                 VirtualMachine.SetTextBoxReference(Terminal);
                 Robot.reset();
+                DrawRobotOnCanvas(0,0);
                 Settings.reset_program_settings();
                 Compiler cmp = new Compiler(textBox.Text);
                 Block tree = cmp.parse();
                 cmp.jumpOverVariables();
                 tree.generate();
-                VirtualMachine.execute_all();
+                success = VirtualMachine.execute_all();
 
-
+                Robot.position = 1;
                 this.index += 1;
                 this.timer.Start();
+                if (!success)
+                {
+                    Terminal.Text = "Pozor! Program obsahuje nekonečný cyklus.";
+                }
             }
             catch (Exception ex)
             {
-                Terminal.Text = "Chyba: " + ex.Message;
+                if(!(ex is VariableNotFoundException) && !(ex is RobotOutOfMapException) && !(ex is SyntaxError))
+                {
+                    Terminal.Text = "Chyba: Syntax error.";
+                }
+                else
+                {
+                    Terminal.Text = "Chyba: " + ex.Message;
+                }
                 move_focus(2);
             }
             this.is_running = false;
@@ -716,14 +734,14 @@ namespace coshi2
             }
 
 
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.OemPlus)
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && (e.Key == Key.OemPlus || e.Key == Key.Add))
             {
                 Increase_Font(sender, null);
                 e.Handled = true;
                     
             }
 
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) && e.Key == Key.OemMinus)
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && ( e.Key == Key.OemMinus || e.Key == Key.Subtract))
             {
                 Decrease_Font(sender, null);
                 e.Handled = true;
@@ -816,7 +834,7 @@ namespace coshi2
                 int lineNumber;
                 if (int.TryParse(dialog.LineNumber, out lineNumber))
                 {
-                    int lineIndex = Math.Min(Math.Max(0, lineNumber - 1), textBox.LineCount - 1); // Prevedenie čísla riadku na index riadku
+                    int lineIndex = Math.Min(Math.Max(0, lineNumber - 1), textBox.LineCount - 1);
 
                     if (lineNumber <= 0 || lineNumber > textBox.LineCount)
                     {
@@ -827,7 +845,7 @@ namespace coshi2
                     {
 
                         textBox.ScrollToLine(lineIndex); // Presun na zvolený riadok
-                        textBox.Focus(); // Focus na textBox, aby sa zvýraznil kurzor
+                        move_focus(0);
                         textBox.Select(textBox.GetCharacterIndexFromLineIndex(lineIndex), 0); // Označenie pozície kurzora
                     }
                 }
@@ -884,14 +902,19 @@ namespace coshi2
             {
                 this.timer.Stop();
                 DrawRobotOnCanvas(0, 0);
-                Terminal.Text += " Program úspešne zbehol.";
+                if (success) {
+                    Terminal.Text += " Program úspešne zbehol.";
+                }
                 return;
             }
 
             if (this.index >= Robot.positions.Count)
             {
                 this.timer.Stop();
-                Terminal.Text += " Program úspešne zbehol.";
+                if (success)
+                {
+                    Terminal.Text += " Program úspešne zbehol.";
+                }
                 return;
             }
 
@@ -906,6 +929,12 @@ namespace coshi2
             else if (row == -100 && column == -100)
             {
                 Settings.SILENCE = true;
+            }
+            else if (row == -100 && column == 100)
+            {
+                int r = (Robot.position - 1) / Settings.MAP_SQRT_SIZE;
+                int c = (Robot.position - 1) % Settings.MAP_SQRT_SIZE;
+                SoundsHandler.play_sound(r, c);
             }
             else
             {
@@ -999,6 +1028,25 @@ namespace coshi2
                 textBox.Focus();
                 textBox.CaretIndex = caretInd;
             }
+
+            if (e.Key == Key.Z)
+            {
+                predictionBox.Items.Clear();
+                    foreach (string command in Commands.labelnames)
+                    {
+                        predictionBox.Items.Add(command);
+                    }
+                //pockaj na vykreslenie
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    ListViewItem firstItem = (ListViewItem)predictionBox.ItemContainerGenerator.ContainerFromItem(predictionBox.Items[0]);
+                    if (firstItem != null)
+                    {
+                        firstItem.Focus();
+                    }
+                }), System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+            }
+
             if (e.Key == Key.Escape) {
                 textBox.Focus();
                 textBox.CaretIndex = caretInd;

@@ -6,13 +6,20 @@
         xmlns:local="clr-namespace:coshi2"
         mc:Ignorable="d"
         Title="Pomoc" Height="450" Width="800"
-        PreviewKeyDown="Help_PreviewKeyDown"
-        >
-        
-
-
-
-    <Grid>
-        <TextBox Name="helptextbox" IsReadOnly="True" HorizontalScrollBarVisibility="Auto"></TextBox>
-    </Grid>
+        PreviewKeyDown="Help_PreviewKeyDown">
+	<Grid Background="#FFF0F0F0">
+		<ListView Name="commandsListView" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                  Margin="20" FontSize="14" FontFamily="Segoe UI">
+			<ListView.ItemContainerStyle>
+				<Style TargetType="ListViewItem">
+					<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+				</Style>
+			</ListView.ItemContainerStyle>
+			<ListView.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
+	</Grid>
 </Window>

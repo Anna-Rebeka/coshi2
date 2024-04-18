@@ -22,34 +22,86 @@ namespace coshi2
     {
         public Help()
         {
+
             InitializeComponent();
-            AddText();
+
+            List<string> helpItems = new List<string>
+            {
+                "Klávesové skratky",
+                "CTRL+ Funkcie:",
+                "- CTRL + N  Nový",
+                "- CTRL + O  Otvoriť",
+                "- CTRL + S  Uložiť",
+                "- CTRL + Shift + S  Uložiť ako",
+                "- CTRL + Z  Späť",
+                "- CTRL + Y  Opakovať",
+                "- CTRL + X  Vystrihnuť",
+                "- CTRL + C  Kopírovať",
+                "- CTRL + V  Vložiť",
+                "- CTRL + G  Skok na ľubovoľný riadok",
+                "- CTRL + H  Skok po blokoch kódu smerom nadol",
+                "- CTRL + Shift + H  Skok po blokoch kódu smerom nahor",
+                "- CTRL + Medzerník  Výber z predikcie kódu",
+                "",
+                "Fn Funkcie:",
+                "- F1  Zobraz pomoc",
+                "- F2  Menu",
+                "- F5  Spusti program",
+                "- Shift+F5  Zastav program",
+                "- F6  Prepínač medzi kódom, grafickou plochou a terminálom",
+                "- F7  Rýchlejšie prehrávanie",
+                "- F8  Pomalšie prehrávanie",
+                "- F9  Prepínač medzi tmavým a svetlým režimom",
+                "",
+                "Iné:",
+                "- P Aktuálna poloha robota (ak sme na grafickej ploche)",
+                "- Alt + F4  Koniec"
+            };
+
+
+            commandsListView.ItemsSource = helpItems;
             if (Settings.THEME == Theme.Dark)
             {
-                helptextbox.Foreground = Brushes.White;
-                helptextbox.Background = Brushes.Black;
+                commandsListView.Foreground = Brushes.White;
+                commandsListView.Background = Brushes.Black;
             }
             else
             {
-                helptextbox.Foreground = Brushes.Black;
-                helptextbox.Background = Brushes.White;
+                commandsListView.Foreground = Brushes.Black;
+                commandsListView.Background = Brushes.White;
             }
-            helptextbox.Focus();
 
+            //pockaj na vykreslenie
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                ListViewItem firstItem = (ListViewItem)commandsListView.ItemContainerGenerator.ContainerFromItem(commandsListView.Items[0]);
+                if(firstItem != null)
+                {
+                    firstItem.Focus();
+                }
+            }), System.Windows.Threading.DispatcherPriority.ApplicationIdle);
         }
 
         private void AddText()
         {
+            /*
             helptextbox.Text = "Klávesové skratky:\n\n" +
+
+            "- CTL+ Funkcie:\n\n" +
             "- CTRL + N  Nový \n" +
-            "- CTRL + S  Uložiť\n" +
             "- CTRL + O  Otvoriť\n" +
+            "- CTRL + S  Uložiť\n" +
+            "- CTRL + Shift + S  Uložiť ako\n" +
+            "- CTRL + Z  Späť\n" +
+            "- CTRL + Y  Opakovať\n" +
+            "- CTRL + X  Vystrihnuť\n" +
+            "- CTRL + C  Kopírovať\n" +
+            "- CTRL + V  Vložiť\n" +
             "- CTRL + G  Skok na ľubovoľný riadok\n" +
             "- CTRL + H  Skok po blokoch kódu smerom nadol\n" +
             "- CTRL + Shift + H  Skok po blokoch kódu smerom nahor\n" +
             "- CTRL + Medzerník  Výber z predikcie kódu\n" +
-            "- P Aktuálna poloha robota (ak sme na grafickej ploche)\n" +
-            "- Alt + F4  Koniec\n\n\n" +
+
             "- Fn Funkcie:\n\n" +
             "- F1  Zobraz pomoc\n" +
             "- F2  Menu\n" +
@@ -58,9 +110,15 @@ namespace coshi2
             "- F6  Prepínač medzi kódom, grafickou plochou a terminálom\n" +
             "- F7  Rýchlejšie prehrávanie\n" +
             "- F8  Pomalšie prehrávanie\n" +
-            "- F9  Prepínač medzi tmavým a svetlým režimom\n";
+            "- F9  Prepínač medzi tmavým a svetlým režimom\n" +
+
+            "- Iné:\n\n" +
+            "- P Aktuálna poloha robota (ak sme na grafickej ploche)\n" +
+            "- Alt + F4  Koniec\n\n\n";
+
+
             helptextbox.TextAlignment = TextAlignment.Center;
-            
+            */
         }
 
         private void Help_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -69,11 +127,8 @@ namespace coshi2
             {
                 this.Close();
             }
-            else
-            {
-                e.Handled = true;
-            }
-            
+           
+
         }
         
 

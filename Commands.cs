@@ -26,6 +26,7 @@ namespace coshi2
             "rovný",
             "pričítaj",
             "odčítaj",
+            "prehraj",
             "zvuk",
             "ticho",
             "nahlas",
