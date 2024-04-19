@@ -554,7 +554,7 @@ namespace coshi2
                 this.timer.Start();
                 if (!success)
                 {
-                    Terminal.Text = "Pozor! Program obsahuje nekonečný cyklus.";
+                    Terminal.Text = "Pozor! Vykonávaním programu sa prekročil povolený počet inštrukcií.";
                 }
             }
             catch (Exception ex)
