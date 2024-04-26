@@ -456,7 +456,7 @@ namespace coshi2
             Settings.set_size(size);
             uniformGrid.Children.Clear();
             DrawGrid();
-            Robot.position = 1;
+            Robot.position = 1;  
             Settings.MAP = this.get_map();
             SoundsHandler.fill_sound_map();
             DrawLabels();
@@ -466,7 +466,16 @@ namespace coshi2
 
 
         private void CloseApp(object sender, RoutedEventArgs e) {
-            MessageBoxResult result = MessageBox.Show("Neuložené zmeny budú stratené. Chcete ich uložiť a zatvoriť aplikáciu?", "Upozornenie", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+            string message = "Chcete uložiť zmeny";
+            if (!string.IsNullOrEmpty(Settings.CURRENTFILEPATH)) {
+                message += " do " + System.IO.Path.GetFileName(Settings.CURRENTFILEPATH + "?");
+            }
+            else
+            {
+                message += "?";
+            }
+
+            MessageBoxResult result = MessageBox.Show(message, "Upozornenie", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
             if (result == MessageBoxResult.Yes)
             {
                 SaveToFile(); // Uložiť zmeny
