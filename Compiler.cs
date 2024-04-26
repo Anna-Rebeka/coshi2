@@ -55,17 +55,17 @@ namespace coshi2
                 else if ("opakuj" == lexAnalyzer.token.ToLower())
                 {
                     lexAnalyzer.scan();
-                    check(lexAnalyzer.NUMBER);
-                    int n = int.Parse(lexAnalyzer.token); //addsub()
+                    check(lexAnalyzer.NUMBER); //Kontrola typov
+                    int n = int.Parse(lexAnalyzer.token); //Povoľujeme iba číslo, nie premenné
                     int opakuj_line_number = lexAnalyzer.CalculateLineNumberOfError(lexAnalyzer.position);
-                    lexAnalyzer.scan(); // Preskočíme "cislo" 
-                    check(lexAnalyzer.LOOP, null, opakuj_line_number);
-                    lexAnalyzer.scan(); // Preskočíme "krát" 
+                    lexAnalyzer.scan(); // Posunieme sa na ďalší znak po čísle
+                    check(lexAnalyzer.LOOP, null, opakuj_line_number); //Skontrolujeme či nasleduje slovo "krát"
+                    lexAnalyzer.scan(); // Posunieme sa na ďalší znak po krát
                     // Parsovanie vnútorného bloku kódu pre opakovanie
                     Block innerBlock = parse();
                     result.add(new Repeat(new Const(n), innerBlock)); // Pridáme vrchol stromu pre opakovanie
-                    check(lexAnalyzer.END);
-                    lexAnalyzer.scan(); // Preskočíme "koniec" 
+                    check(lexAnalyzer.END); //Skontrolujeme či nasleduje slovo "koniec"
+                    lexAnalyzer.scan(); // Posunieme sa na ďalší znak
                 }
 
                 else if ("ku" == lexAnalyzer.token.ToLower() || "od" == lexAnalyzer.token.ToLower())

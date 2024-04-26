@@ -5,13 +5,14 @@ namespace coshi2
 {
     internal class LexicalAnalyzer
     {
-        public char KONIEC = '\0';
+        public char THE_END = '\0';
 
         public int NOTHING = 0;
         public int NUMBER = 1;
         public int WORD = 2;
         public int SYMBOL = 3;
         public int END = 4;
+
         public int LOOP = 5;
         public int SOUND_NAME = 6;
 
@@ -69,7 +70,7 @@ namespace coshi2
                 }
                 kind = WORD;
             }
-            else if (look != KONIEC)
+            else if (look != THE_END)
             {
                 token = look.ToString();
                 next();
@@ -86,7 +87,7 @@ namespace coshi2
         {
             if (index >= input.Length)
             {
-                look = KONIEC;
+                look = THE_END;
             }
             else
             {

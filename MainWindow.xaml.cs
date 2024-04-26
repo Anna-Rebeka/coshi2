@@ -398,20 +398,18 @@ namespace coshi2
             focus = f;
         }
 
-        private void focus_toggle()
+        private void focus_toggle(bool reversed = false)
         {
-            switch (focus)
+            int newFocus;
+            if (reversed)
             {
-                case 0:
-                    move_focus(1);
-                    break;
-                case 1:
-                    move_focus(2);
-                    break;
-                case 2:
-                    move_focus(0);
-                    break;
+                newFocus = (focus == 0) ? 2 : (focus - 1);
             }
+            else
+            {
+                newFocus = (focus == 2) ? 0 : (focus + 1);
+            }
+            move_focus(newFocus);
         }
 
 
@@ -683,11 +681,18 @@ namespace coshi2
             }
 
 
-            if (e.Key == Key.F6)
+            if (!Keyboard.IsKeyDown(Key.LeftShift) && e.Key == Key.F6)
             {
                 //AutomationProperties.SetName(Terminal, "Terminál");
                 Stop();
                 focus_toggle();
+            }
+
+            if (Keyboard.IsKeyDown(Key.LeftShift) && e.Key == Key.F6)
+            {
+                //AutomationProperties.SetName(Terminal, "Terminál");
+                Stop();
+                focus_toggle(true);
             }
 
             if (e.Key == Key.F7)
@@ -1172,14 +1177,8 @@ namespace coshi2
         {
             if (e.Key == Key.P)
             {
-                string toggle = "";
-                if (AutomationProperties.GetName(pomocnyLabel).Contains("-")){
-                    toggle = "";
-                }
-                else
-                {
-                    toggle = "-";
-                }
+                string toggle = AutomationProperties.GetName(pomocnyLabel).Contains("-") ? "" : "-";
+
                 AutomationProperties.SetName(pomocnyLabel, " ");
                 move_focus(0);
                 move_focus(1);

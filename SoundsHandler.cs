@@ -15,7 +15,6 @@ namespace coshi2
     public static class SoundsHandler
     {
         public static SoundItem[,] sounds_map = new SoundItem[Settings.MAP_SQRT_SIZE, Settings.MAP_SQRT_SIZE]; //z tohto pustame zvuky
-        public static SoundPlayer player;
         public static string mainDirectory = "./sounds";
         public static Dictionary<String, int> sound_codes = new Dictionary<string, int>();
 
@@ -94,7 +93,7 @@ namespace coshi2
             //with open... zahodime player
             if (y >= Settings.MAP_SQRT_SIZE || x >= Settings.MAP_SQRT_SIZE || x < 0 || y < 0) { return; }
             if (x >= Math.Sqrt(sounds_map.Length)|| y >= Math.Sqrt(sounds_map.Length) || ( sounds_map[x, y]  == null)) { return; }
-            using (player = new SoundPlayer(sounds_map[x, y].Path))
+            using (SoundPlayer player = new SoundPlayer(sounds_map[x, y].Path))
             {
                 player.Play();
             };

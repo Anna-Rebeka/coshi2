@@ -1,0 +1,263 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="coshi2.Syntax" Collapsed="true">
+    <Position X="30.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.Const" Collapsed="true">
+    <Position X="29.5" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.RobotCommand" Collapsed="true">
+    <Position X="28.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.Up" Collapsed="true">
+    <Position X="27.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.Lt" Collapsed="true">
+    <Position X="27.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.Rt" Collapsed="true">
+    <Position X="29.25" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.Dw" Collapsed="true">
+    <Position X="29.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.Block" Collapsed="true">
+    <Position X="29.25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAQAAAAAACAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.Repeat" Collapsed="true">
+    <Position X="29.25" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAQAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.UnaryOperation" Collapsed="true">
+    <Position X="29.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.BinaryOperation" Collapsed="true">
+    <Position X="32.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAABAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.Minus" Collapsed="true">
+    <Position X="27.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.Add" Collapsed="true">
+    <Position X="33.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.Sub" Collapsed="true">
+    <Position X="31.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.Variable" Collapsed="true">
+    <Position X="27.75" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAACAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.Assign" Collapsed="true">
+    <Position X="27.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAgA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.While" Collapsed="true">
+    <Position X="27.5" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAIQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.IfFalse" Collapsed="true">
+    <Position X="27.75" Y="14" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAgAAAAAAAAAAAAAAAAIQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.Subroutine" Collapsed="true">
+    <Position X="31.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAQAEAAAAQAAAIAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.Call" Collapsed="true">
+    <Position X="31.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.Print" Collapsed="true">
+    <Position X="33.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAgA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.Lower" Collapsed="true">
+    <Position X="31.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.Greater" Collapsed="true">
+    <Position X="31.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.Equal" Collapsed="true">
+    <Position X="31.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.NotEqual" Collapsed="true">
+    <Position X="33.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.LowEqual" Collapsed="true">
+    <Position X="33.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.GreatEqual" Collapsed="true">
+    <Position X="33.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.IsSound" Collapsed="true">
+    <Position X="33.5" Y="14" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.IsNotSound" Collapsed="true">
+    <Position X="31.75" Y="14" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.FreeUp" Collapsed="true">
+    <Position X="31.75" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.FreeDown" Collapsed="true">
+    <Position X="33.5" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.FreeLeft" Collapsed="true">
+    <Position X="31.75" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.FreeRight" Collapsed="true">
+    <Position X="33.5" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.IfElse" Collapsed="true">
+    <Position X="29.5" Y="14" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAgAAAAAAAAAAAAAAAAIQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.Play" Collapsed="true">
+    <Position X="27.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.Silence" Collapsed="true">
+    <Position X="29.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="coshi2.Loud" Collapsed="true">
+    <Position X="26.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Syntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
