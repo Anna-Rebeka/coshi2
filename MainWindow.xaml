@@ -58,9 +58,10 @@
                     <MenuItem Header="_Menší" Click="Decrease_Font" InputGestureText="Ctrl-"/>
                 </MenuItem>
                 <MenuItem Name="ThemeState" Header="_Tmavý režim" Click="SwitchColorTheme" InputGestureText="F9"/>
-                <MenuItem Header="_Pomoc"  Click="Show_Help" InputGestureText="F1" />
             </MenuItem>
-        </Menu>
+			<MenuItem Header="_Pomoc"  Click="Show_Help" InputGestureText="F1" />
+
+		</Menu>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="50*"/>

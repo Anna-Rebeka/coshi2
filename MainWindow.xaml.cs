@@ -1032,6 +1032,7 @@ namespace coshi2
                 }
                 textBox.Focus();
                 textBox.CaretIndex = caretInd;
+                e.Handled = true;
             }
 
             if (e.Key == Key.Z)
