@@ -37,6 +37,8 @@ namespace coshi2
         double sirkaC;
         double vyskaC;
 
+        private bool move_robot = false;
+
 
         public List<int[]> positions;
 
@@ -74,7 +76,7 @@ namespace coshi2
             }
             changeSize(Settings.PACKAGE_SIZE);
             WritePackagesMenu();
-
+            Predict_Commands();
             textBox.Focus();
             //spusti kreslenie
             timer.Interval = TimeSpan.FromSeconds(Settings.SPEED);
@@ -244,17 +246,14 @@ namespace coshi2
 
         private void textBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            Predict_Commands();
             UpdateLineNumbers();
         }
 
         private void Predict_Commands() 
         {
-            int currentCursorPosition = textBox.CaretIndex - 1;
+            int currentCursorPosition = textBox.CaretIndex;
             startIndex = currentCursorPosition;
-
-            if (currentCursorPosition != lastCursorPosition)
-            {
+            
                 string zmeneneSlovo = "";
 
                 while (startIndex > 0 && !char.IsWhiteSpace(textBox.Text[startIndex - 1]))
@@ -264,10 +263,10 @@ namespace coshi2
 
                 if (startIndex < currentCursorPosition)
                 {
-                    zmeneneSlovo = textBox.Text.Substring(startIndex, currentCursorPosition - startIndex + 1);
+                    zmeneneSlovo = textBox.Text.Substring(startIndex, currentCursorPosition - startIndex);
                 }
 
-                if (zmeneneSlovo != null && zmeneneSlovo.Length >= 2)
+                if (zmeneneSlovo != null)
                 {
                     predictionBox.Items.Clear();
                     List<string> commands = Commands.find_command(zmeneneSlovo.ToLower());
@@ -279,10 +278,14 @@ namespace coshi2
                 else
                 {
                     predictionBox.Items.Clear();
+                    List<string> commands = Commands.find_command("");
+                    foreach (string command in commands)
+                    {
+                        predictionBox.Items.Add(command);
+                    }
                 }
 
                 lastCursorPosition = currentCursorPosition;
-            }
         }
 
         private void map_click(object sender, RoutedEventArgs e)
@@ -384,15 +387,18 @@ namespace coshi2
                     textBox.Focusable = true;
                     textBox.IsReadOnly = false;
                     textBox.Focus();
+                    move_robot = false;
                     break;
                 case 1: //graf plocha
                     textBox.IsReadOnly = true;
                     textBox.Focusable = false;
+                    move_robot = true;
                     pomocnyLabel.Focus();
                     Keyboard.Focus(pomocnyLabel);
                     break;
                 case 2: //terminal
                     Terminal.Focus();
+                    move_robot = false;
                     break;
             }
             focus = f;
@@ -624,13 +630,10 @@ namespace coshi2
                 textBox.CaretIndex = indexC;
             }            
         }
-        
-        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+
+        private void TextBox_KeyUp(object sender, KeyEventArgs e)
         {
-            if (focus == 1)
-            {
-                Move_Robot(e);
-            }
+            Predict_Commands();
         }
 
 
@@ -1031,9 +1034,8 @@ namespace coshi2
                         string part1 = textBox.Text[0..startIndex];
                         string part2 = textBox.Text.Substring(textBox.CaretIndex);
                         textBox.Text = part1 + selected + part2;
-                        caretInd += selected.Length - 2;
+                        caretInd += selected.Length;
                     }
-
                 }
                 catch
                 {
@@ -1185,7 +1187,13 @@ namespace coshi2
 
         private void LabelKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.P)
+            if (e.Key == Key.Up || e.Key == Key.Down || e.Key == Key.Left || e.Key == Key.Right)
+            {
+                Move_Robot(e);
+            }
+
+
+            else if (e.Key == Key.P)
             {
                 string toggle = AutomationProperties.GetName(pomocnyLabel).Contains("-") ? "" : "-";
 
@@ -1200,6 +1208,12 @@ namespace coshi2
                 AutomationProperties.SetName(pomocnyLabel, toggle + "Riadok " + (x + 1).ToString() + " stĺpec " + (y + 1).ToString());
 
                 e.Handled = true;
+            }
+
+            else if (e.Key == Key.System && Keyboard.Modifiers == ModifierKeys.Alt)
+            {
+                move_robot = false;
+                subor_volba.Focus();
             }
 
             if (e.Key != Key.F6)

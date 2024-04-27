@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Coshi2" Height="450" Width="800"
         KeyDown="Window_KeyDown"
-        PreviewKeyDown="Window_PreviewKeyDown"
+        
 		KeyUp="Window_KeyUp"
         Name="Root"
         >
@@ -80,7 +80,7 @@
                     </Grid.ColumnDefinitions>
                     <TextBox x:Name="lineNumberTextBox" VerticalScrollBarVisibility="Disabled" IsReadOnly="True" Padding="5" TextAlignment="Right" TextChanged="lineNumberTextBox_TextChanged" Grid.RowSpan="2" />
                     <TextBox AutomationProperties.Name="Kód" IsEnabled="True" Padding="5" x:Name="textBox" Grid.Column="1" AcceptsReturn="True" AcceptsTab="True" LostFocus="Textbox_LostFocus" TextChanged="textBox_TextChanged" Grid.ColumnSpan="2" Grid.RowSpan="2" PreviewKeyDown="TextBox_KeyDown" PreviewMouseLeftButtonDown="TextBox_PreviewMouseLeftButtonDown"
-							 TextWrapping="Wrap" MaxLength="12000" />
+							 TextWrapping="Wrap" MaxLength="12000" KeyUp="TextBox_KeyUp"/>
                     <ListView x:Name="predictionBox" Grid.Column="2" d:ItemsSource="{d:SampleData ItemCount=5}" Width="Auto" Padding="3" HorizontalAlignment="Right" PreviewKeyDown="ListBox_Selection" Grid.RowSpan="2" GotFocus="predictionBox_GotFocus" SelectionChanged="predictionBox_SelectionChanged"/>
                 </Grid>
             </ScrollViewer>
