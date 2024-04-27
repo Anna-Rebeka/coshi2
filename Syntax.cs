@@ -196,7 +196,7 @@ namespace coshi2
 
     public class Variable : Syntax
     {
-        string name;
+        public string name;
         public Variable(string nname)
         {
             name = nname;
@@ -334,9 +334,11 @@ namespace coshi2
     }
 
 
+
     public class Print : Syntax
     {
         Syntax exp;
+        int variableAddress;
 
         public Print(Syntax nexp)
         {
@@ -345,8 +347,20 @@ namespace coshi2
 
         public override void generate()
         {
-            exp.generate();
-            VirtualMachine.poke(VirtualMachine.INSTRUCTION_PRINT);
+            //exp.generate();
+            string variableName = "";
+            if(exp is Variable) 
+            {
+                Variable var = (Variable)exp;
+                variableName = var.name;
+                VirtualMachine.poke(VirtualMachine.INSTRUCTION_PUSH);
+                VirtualMachine.poke(VirtualMachine.variables[variableName]);
+                VirtualMachine.poke(VirtualMachine.INSTRUCTION_PRINT);
+            }
+            else
+            {
+                
+            }
         }
     }
 

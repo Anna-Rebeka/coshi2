@@ -574,7 +574,8 @@ namespace coshi2
             {
                 if(!(ex is VariableNotFoundException) && !(ex is RobotOutOfMapException) && !(ex is SyntaxError))
                 {
-                    Terminal.Text = "Chyba: Syntax error.";
+                    //Terminal.Text = "Chyba: Syntax error.";
+                    Terminal.Text = ex.Message;
                 }
                 else
                 {

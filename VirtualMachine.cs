@@ -161,7 +161,9 @@ namespace coshi2
             else if (mem[pc] == INSTRUCTION_PRINT)
             {
                 pc = pc + 1;
-                AppendTextToTextBox(mem[top].ToString());
+                int variableAddress = mem[top];
+                var variableName = variables.First(p => p.Value == variableAddress);  
+                AppendTextToTextBox($"{variableName.Key} = {mem[variableName.Value]}, ");
                 top = top + 1;
             }
             else if (mem[pc] == INSTRUCTION_JUMP)
