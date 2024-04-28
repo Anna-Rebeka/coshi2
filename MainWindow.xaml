@@ -105,7 +105,7 @@
             </Grid>
         </Grid>
         <Grid Grid.Row="2">
-            <TextBox AutomationProperties.Name="Terminál"  Name="Terminal" Background="LightGray" Height="50" Padding="5" IsReadOnly="True" PreviewMouseLeftButtonDown="Terminal_PreviewMouseLeftButtonDown"/>
+            <TextBox AutomationProperties.Name="Terminál"  TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Name="Terminal" Background="LightGray" Height="50" Padding="5" IsReadOnly="True" PreviewMouseLeftButtonDown="Terminal_PreviewMouseLeftButtonDown"/>
         </Grid>
 
 		<Label x:Name="pomocnyLabel"  Width="100" Height="10" Focusable="True" PreviewKeyDown="LabelKeyDown" LostFocus="Label_LostFocus" AutomationProperties.Name="Grafická plocha" AutomationProperties.HelpText="Grafická plocha"></Label>
