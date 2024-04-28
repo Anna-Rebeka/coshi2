@@ -359,7 +359,8 @@ namespace coshi2
             }
             else
             {
-                
+                exp.generate();
+                VirtualMachine.poke(VirtualMachine.INSTRUCTION_PRINT);
             }
         }
     }

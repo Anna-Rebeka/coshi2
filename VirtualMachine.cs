@@ -162,8 +162,15 @@ namespace coshi2
             {
                 pc = pc + 1;
                 int variableAddress = mem[top];
-                var variableName = variables.First(p => p.Value == variableAddress);  
-                AppendTextToTextBox($"{variableName.Key} = {mem[variableName.Value]}, ");
+                try {
+                    var variableName = variables.First(p => p.Value == variableAddress);
+                    AppendTextToTextBox($"{variableName.Key} = {mem[variableName.Value]}, ");
+                }
+                catch
+                {
+                    AppendTextToTextBox($"hodnota = {variableAddress}, ");
+                }
+
                 top = top + 1;
             }
             else if (mem[pc] == INSTRUCTION_JUMP)
