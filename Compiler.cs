@@ -244,6 +244,12 @@ namespace coshi2
          public Syntax addSub()
         {
             var result = operand();
+           
+            if(lexAnalyzer.token == "*" || lexAnalyzer.token == "/" || lexAnalyzer.token == "%")
+            {
+                check(0, "+ alebo -");
+            }
+
             while ("+" == lexAnalyzer.token || lexAnalyzer.token == "pričítaj" || 
                    "-" == lexAnalyzer.token || lexAnalyzer.token == "odčítaj" || lexAnalyzer.token == "pricitaj" || lexAnalyzer.token == "odcitaj")
             {
