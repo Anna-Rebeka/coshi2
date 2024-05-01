@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Input;
 using System.Windows.Automation;
 using System.Windows.Media.Imaging;
+using System.Xml.Linq;
 
 
 
@@ -63,9 +64,6 @@ namespace coshi2
 
             DrawGrid();
             UpdateLineNumbers();
-            //nastavenia
-            Settings.MAP = this.get_map();
-
 
             //nacitaj zvukove balicky
             string[] subdirectories = Directory.GetDirectories(SoundsHandler.mainDirectory);
@@ -73,9 +71,14 @@ namespace coshi2
             {
                 string firstPackageName = System.IO.Path.GetFileName(subdirectories[0]);
                 Settings.set_sound_package(firstPackageName);
+                changeSize(Settings.PACKAGE_SIZE);
+                WritePackagesMenu();
             }
-            changeSize(Settings.PACKAGE_SIZE);
-            WritePackagesMenu();
+            else
+            {
+                System.Windows.MessageBox.Show("Chyba: Nenašli sa žiadne zvukové balíčky v podpriečinku /sounds.", "Upozornenie", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+                changeSize(Settings.PACKAGE_SIZE);
+            }
             Predict_Commands();
             textBox.Focus();
             //spusti kreslenie

@@ -9,6 +9,7 @@ using System.IO;
 using System.Windows;
 using System.Threading;
 using System.Security.Policy;
+using System.Collections;
 
 namespace coshi2
 {
@@ -67,22 +68,22 @@ namespace coshi2
 
         public static void fill_sound_map()
         {
-            sounds_map = new SoundItem[Settings.MAP_SQRT_SIZE, Settings.MAP_SQRT_SIZE]; 
-            foreach(SoundItem sound in Settings.SOUND_PACKAGE.SoundItems.Values)
+            sounds_map = new SoundItem[Settings.MAP_SQRT_SIZE, Settings.MAP_SQRT_SIZE];
+
+            for (int i = 0; i < Settings.MAP_SQRT_SIZE; i++)
             {
-                int x = sound.X;
-                int y = sound.Y;
-
-                // názov zvuku
-                string soundName = sound.Name;
-
-                // na príslušné miesto v sounds_map
-                if (x >= 0 && x < sounds_map.GetLength(0) && y >= 0 && y < sounds_map.GetLength(1))
+                for (int j = 0; j < Settings.MAP_SQRT_SIZE; j++)
                 {
-                    sounds_map[x, y] = sound;
+                    if (Settings.SOUND_PACKAGE.SoundItems.ContainsKey((i, j)))
+                    {
+                        sounds_map[i, j] = Settings.SOUND_PACKAGE.SoundItems[(i, j)];
+                    }
+                    else
+                    {
+                        sounds_map[i, j] = new SoundItem(i, j, "nič", "./sounds\\nic.wav"); //default
+                    }
                 }
             }
-           
         }
 
         public static void play_sound(int x, int y)
@@ -95,7 +96,11 @@ namespace coshi2
             if (x >= Math.Sqrt(sounds_map.Length)|| y >= Math.Sqrt(sounds_map.Length) || ( sounds_map[x, y]  == null)) { return; }
             using (SoundPlayer player = new SoundPlayer(sounds_map[x, y].Path))
             {
-                player.Play();
+                try
+                {
+                    player.Play();
+                }
+                catch (System.IO.FileNotFoundException ex) { }
             };
 
         }
