@@ -1025,7 +1025,6 @@ namespace coshi2
         }
 
 
-
         private void ListBox_Selection(object sender, KeyEventArgs e)
         {
             if(e.Key == Key.Enter || e.Key == Key.Space)
@@ -1034,7 +1033,7 @@ namespace coshi2
                 {
                     if (predictionBox.SelectedItem != null)
                     {
-                        string selected = predictionBox.SelectedItem.ToString();
+                        string selected = predictionBox.SelectedItem.ToString() + " ";
                         string part1 = textBox.Text[0..startIndex];
                         string part2 = textBox.Text.Substring(textBox.CaretIndex);
                         textBox.Text = part1 + selected + part2;
